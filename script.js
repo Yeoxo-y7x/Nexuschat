@@ -1,336 +1,272 @@
-// =====================================================
-// NEXUSCHAT - Full JavaScript (Cloudflare Ready)
-// =====================================================
-// Ce fichier contient toute la logique de l'application.
-// Assure-toi de l'inclure dans un fichier script.js et de le lier dans ton index.html
-
-// --- ÉTAT GLOBAL ---
-const state = {
-    currentServer: 'Général',
-    adminMode: false,
-    userName: 'Toi',
-    userBadges: ['⭐'],
-    friends: ['Y7X', 'Zack', 'Luna', 'Kira'],
-    userBadgeDB: {
-        'Toi': ['⭐'],
-        'Y7X': ['👑', '🔥'],
-        'Zack': ['💎'],
-        'Luna': ['🌈'],
-        'Kira': ['⚡']
+// ===== STATE =====
+let state = {
+    currentUser: 'Toi',
+    currentChat: { type: 'server', name: 'Général' },
+    users: {
+        'Toi': { badges: ['⭐'], avatar: '', banner: '', friends: ['Y7X', 'Zack', 'Luna'] },
+        'Y7X': { badges: ['👑', '🔥'], avatar: '', banner: '', friends: ['Toi'] },
+        'Zack': { badges: ['💎'], avatar: '', banner: '', friends: ['Toi'] },
+        'Luna': { badges: ['🌈'], avatar: '', banner: '', friends: ['Toi'] }
     },
-    servers: [
-        { name: 'Général', badgeCount: 12 },
-        { name: 'Tech', badgeCount: 8 },
-        { name: 'Gaming', badgeCount: 5 }
-    ],
-    messages: [
-        { user: 'Y7X', content: 'Bienvenue sur NexusChat ! 🚀', time: '12:00', isOwn: false },
-        { user: 'Toi', content: 'Merci ! 🔥', time: '12:01', isOwn: true }
-    ]
+    servers: {
+        'Général': { members: ['Toi', 'Y7X', 'Zack', 'Luna'], messages: [] },
+        'Tech': { members: ['Toi', 'Y7X'], messages: [] },
+        'Gaming': { members: ['Toi', 'Zack', 'Luna'], messages: [] }
+    },
+    dms: {} // { 'Toi-Y7X': [{ user, content, time }] }
 };
 
-// =====================================================
-// 1. FONCTIONS DE RENDU
-// =====================================================
+// ===== INIT =====
+function init() {
+    loadState();
+    renderServers();
+    renderFriends();
+    renderMessages();
+    updateUserUI();
+    updateUserSelect();
+    renderAllBadges();
 
-// Rendu de la liste des serveurs
+    document.getElementById('msgInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage();
+    });
+}
+
+// ===== LOCAL STORAGE =====
+function saveState() {
+    try { localStorage.setItem('nexuschat_state', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+    try {
+        const saved = localStorage.getItem('nexuschat_state');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Merge pour garder les nouvelles clés
+            state = { ...state, ...parsed };
+        }
+    } catch(e) {}
+}
+
+// ===== RENDER =====
 function renderServers() {
-    const serverList = document.getElementById('serverList');
-    if (!serverList) return;
-    serverList.innerHTML = state.servers.map(server => `
-        <div class="server-item" onclick="selectServer('${server.name}')">
-            # ${server.name} <span class="badge">${server.badgeCount}</span>
+    const list = document.getElementById('serverList');
+    list.innerHTML = Object.keys(state.servers).map(name => `
+        <div class="server-item" onclick="switchChat('server','${name}')">
+            # ${name} <span class="badge-count">${state.servers[name].members.length}</span>
         </div>
     `).join('');
 }
 
-// Rendu des messages
-function renderMessages() {
-    const chatArea = document.getElementById('chatArea');
-    if (!chatArea) return;
-    chatArea.innerHTML = state.messages.map(msg => `
-        <div class="message ${msg.isOwn ? 'own' : ''}">
-            <span class="msg-user">${msg.user}</span> ${msg.content} 
-            <span class="msg-time">${msg.time}</span>
-        </div>
-    `).join('');
-    chatArea.scrollTop = chatArea.scrollHeight;
-}
-
-// Rendu de la liste d'amis
 function renderFriends() {
-    const friendList = document.getElementById('friendList');
-    if (!friendList) return;
-    friendList.innerHTML = state.friends.map(f => `
-        <div class="friend-item">
-            <span>${f}</span> <span style="color:#43b581;">🟢</span>
+    const list = document.getElementById('friendList');
+    const friends = state.users[state.currentUser]?.friends || [];
+    list.innerHTML = friends.map(f => `
+        <div class="friend-item" onclick="openDMWith('${f}')">
+            ${f} <span style="color:#43b581;">🟢</span>
         </div>
     `).join('');
 }
 
-// Rendu des badges de l'utilisateur courant
-function renderUserBadges() {
-    const badgeContainer = document.getElementById('userBadges');
-    if (badgeContainer) {
-        badgeContainer.textContent = state.userBadges.join(' ');
+function renderMessages() {
+    const chat = document.getElementById('chatArea');
+    let msgs = [];
+    const chatKey = state.currentChat.type + '_' + state.currentChat.name;
+    
+    if (state.currentChat.type === 'server') {
+        msgs = state.servers[state.currentChat.name]?.messages || [];
+    } else if (state.currentChat.type === 'dm') {
+        const dmKey = [state.currentUser, state.currentChat.name].sort().join('-');
+        msgs = state.dms[dmKey] || [];
     }
+
+    chat.innerHTML = msgs.map(m => {
+        const isOwn = m.user === state.currentUser;
+        const userBadges = state.users[m.user]?.badges || [];
+        const badgeStr = userBadges.length ? userBadges.join('') : '';
+        return `<div class="message ${isOwn ? 'own' : ''}">
+            <span class="msg-user">${m.user}</span>
+            ${badgeStr ? `<span class="msg-badge">${badgeStr}</span>` : ''}
+            ${m.content} <span class="msg-time">${m.time}</span>
+        </div>`;
+    }).join('');
+    chat.scrollTop = chat.scrollHeight;
 }
 
-// Rendu de tous les badges (panel admin)
-function renderAllBadges() {
-    const container = document.getElementById('allUserBadges');
-    if (!container) return;
-    container.innerHTML = Object.entries(state.userBadgeDB).map(([user, badges]) => `
-        <div class="user-item">
-            <span>${user} : ${badges.length > 0 ? badges.join(' ') : 'Aucun badge'}</span>
-        </div>
-    `).join('');
+function updateUserUI() {
+    document.getElementById('userNameDisplay').textContent = state.currentUser;
+    document.getElementById('userBadges').textContent = state.users[state.currentUser]?.badges?.join(' ') || '⭐';
+    const avatar = document.getElementById('profileAvatar');
+    if (state.users[state.currentUser]?.avatar) {
+        avatar.src = state.users[state.currentUser].avatar;
+    }
+    const chatName = document.getElementById('currentChatName');
+    chatName.textContent = state.currentChat.type === 'server' ? '#' + state.currentChat.name : '@' + state.currentChat.name;
+    document.getElementById('currentChatType').textContent = state.currentChat.type === 'server' ? '(public)' : '(privé)';
 }
 
-// Mise à jour du select utilisateur dans le panel admin
 function updateUserSelect() {
     const select = document.getElementById('userSelect');
-    if (!select) return;
-    select.innerHTML = Object.keys(state.userBadgeDB).map(user => `
-        <option value="${user}">${user}</option>
+    select.innerHTML = Object.keys(state.users).map(u => `<option value="${u}">${u}</option>`).join('');
+}
+
+function renderAllBadges() {
+    const container = document.getElementById('allUserBadges');
+    container.innerHTML = Object.entries(state.users).map(([u, data]) => `
+        <div class="user-item"><span>${u}</span> <span>${data.badges?.join(' ') || 'Aucun'}</span></div>
     `).join('');
 }
 
-// =====================================================
-// 2. FONCTIONS D'ACTION
-// =====================================================
+// ===== CHAT SWITCH =====
+function switchChat(type, name) {
+    state.currentChat = { type, name };
+    document.getElementById('currentChatName').textContent = type === 'server' ? '#' + name : '@' + name;
+    document.getElementById('currentChatType').textContent = type === 'server' ? '(public)' : '(privé)';
+    renderMessages();
+    saveState();
+}
 
-// Envoyer un message
+function openDMWith(user) {
+    if (user === state.currentUser) { alert("Tu ne peux pas te DM toi-même !"); return; }
+    switchChat('dm', user);
+    closeModal('dmModal');
+}
+
+function openDM() {
+    const select = document.getElementById('dmUserSelect');
+    const user = select.value;
+    if (!user || user === state.currentUser) { alert("Choisis un autre utilisateur."); return; }
+    openDMWith(user);
+}
+
+// ===== SEND MESSAGE =====
 function sendMessage() {
     const input = document.getElementById('msgInput');
-    if (!input) return;
     const content = input.value.trim();
     if (!content) return;
 
-    state.messages.push({
-        user: state.userName,
+    const msg = {
+        user: state.currentUser,
         content: content,
-        time: new Date().toLocaleTimeString(),
-        isOwn: true
-    });
+        time: new Date().toLocaleTimeString()
+    };
+
+    if (state.currentChat.type === 'server') {
+        if (!state.servers[state.currentChat.name]) state.servers[state.currentChat.name] = { members: [], messages: [] };
+        state.servers[state.currentChat.name].messages.push(msg);
+    } else if (state.currentChat.type === 'dm') {
+        const dmKey = [state.currentUser, state.currentChat.name].sort().join('-');
+        if (!state.dms[dmKey]) state.dms[dmKey] = [];
+        state.dms[dmKey].push(msg);
+    }
 
     input.value = '';
     renderMessages();
+    saveState();
 }
 
-// Ajouter un emoji dans le champ de saisie
 function addEmoji(emoji) {
     const input = document.getElementById('msgInput');
-    if (!input) return;
     input.value += emoji;
     input.focus();
 }
 
-// Changer de serveur
-function selectServer(name) {
-    state.currentServer = name;
-    document.getElementById('currentServer').textContent = '#' + name;
-    
-    // Ajouter un message système
-    state.messages.push({
-        user: 'Système',
-        content: `Vous êtes maintenant dans #${name} 🎉`,
-        time: new Date().toLocaleTimeString(),
-        isOwn: false
-    });
-    renderMessages();
-}
-
-// Créer un nouveau serveur
+// ===== CREATE SERVER =====
 function createServer() {
     const input = document.getElementById('newServerName');
-    if (!input) return;
     const name = input.value.trim();
     if (!name) return;
-
-    state.servers.push({ name, badgeCount: 0 });
+    if (state.servers[name]) { alert('Ce serveur existe déjà.'); return; }
+    state.servers[name] = { members: [state.currentUser], messages: [] };
     renderServers();
     closeModal('serverModal');
     input.value = '';
+    saveState();
 }
 
-// =====================================================
-// 3. FONCTIONS ADMIN
-// =====================================================
-
-// Activer le mode admin
+// ===== ADMIN =====
 function activateAdmin() {
-    const codeInput = document.getElementById('adminCode');
-    if (!codeInput) return;
-    const code = codeInput.value;
-
-    if (code === 'Y7X') {
-        state.adminMode = true;
-        document.getElementById('adminStatus').textContent = '✅ Admin activé';
-        document.getElementById('adminStatus').style.color = '#43b581';
-        document.querySelector('.shop-panel').style.border = '2px solid #b48aff';
-        
-        const adminPanel = document.getElementById('adminPanel');
-        if (adminPanel) {
-            adminPanel.classList.add('active');
-        }
-        
-        updateUserSelect();
-        renderAllBadges();
-        alert('🔐 Mode Admin activé ! Tu peux donner/retirer des badges.');
-    } else {
-        alert('❌ Code invalide.');
-    }
+    const code = document.getElementById('adminCode');
+    if (code.value !== 'Y7X') { alert('Code invalide.'); return; }
+    document.getElementById('adminStatus').textContent = '✅ Admin';
+    document.getElementById('adminStatus').style.color = '#43b581';
+    document.getElementById('adminControls').style.display = 'block';
+    document.getElementById('adminPanel').classList.add('active');
+    updateUserSelect();
+    renderAllBadges();
 }
 
-// Donner un badge
 function giveBadge() {
-    if (!state.adminMode) {
-        alert('⛔ Pas admin.');
-        return;
-    }
-
-    const userSelect = document.getElementById('userSelect');
-    const badgeSelect = document.getElementById('badgeSelect');
-    if (!userSelect || !badgeSelect) return;
-
-    const user = userSelect.value;
-    const badge = badgeSelect.value;
-
-    if (!state.userBadgeDB[user]) {
-        state.userBadgeDB[user] = [];
-    }
-
-    if (!state.userBadgeDB[user].includes(badge)) {
-        state.userBadgeDB[user].push(badge);
-        
-        if (user === state.userName) {
-            state.userBadges = state.userBadgeDB[user];
-            renderUserBadges();
-        }
-        
+    const user = document.getElementById('userSelect').value;
+    const badge = document.getElementById('badgeSelect').value;
+    if (!state.users[user]) { alert('Utilisateur inconnu.'); return; }
+    if (!state.users[user].badges) state.users[user].badges = [];
+    if (!state.users[user].badges.includes(badge)) {
+        state.users[user].badges.push(badge);
         renderAllBadges();
+        updateUserUI();
+        saveState();
         alert(`✅ Badge ${badge} donné à ${user}`);
     } else {
         alert(`❌ ${user} a déjà ce badge.`);
     }
 }
 
-// Retirer un badge
 function removeBadge() {
-    if (!state.adminMode) {
-        alert('⛔ Pas admin.');
-        return;
-    }
-
-    const userSelect = document.getElementById('userSelect');
-    const badgeSelect = document.getElementById('badgeSelect');
-    if (!userSelect || !badgeSelect) return;
-
-    const user = userSelect.value;
-    const badge = badgeSelect.value;
-
-    if (state.userBadgeDB[user] && state.userBadgeDB[user].includes(badge)) {
-        state.userBadgeDB[user] = state.userBadgeDB[user].filter(b => b !== badge);
-        
-        if (user === state.userName) {
-            state.userBadges = state.userBadgeDB[user];
-            renderUserBadges();
-        }
-        
-        renderAllBadges();
-        alert(`✅ Badge ${badge} retiré de ${user}`);
-    } else {
-        alert(`❌ ${user} n'a pas ce badge.`);
-    }
-}
-
-// =====================================================
-// 4. FONCTIONS PROFIL
-// =====================================================
-
-// Mettre à jour le profil
-function updateProfile() {
-    const input = document.getElementById('profileName');
-    if (!input) return;
-    const newName = input.value.trim();
-    if (!newName) return;
-
-    // Mettre à jour la DB des badges
-    const oldName = state.userName;
-    if (state.userBadgeDB[oldName]) {
-        state.userBadgeDB[newName] = state.userBadgeDB[oldName];
-        delete state.userBadgeDB[oldName];
-    }
-
-    // Mettre à jour le nom dans les messages
-    state.messages.forEach(msg => {
-        if (msg.user === oldName) {
-            msg.user = newName;
-        }
-    });
-
-    state.userName = newName;
-    document.getElementById('userName').textContent = newName;
-    updateUserSelect();
+    const user = document.getElementById('userSelect').value;
+    const badge = document.getElementById('badgeSelect').value;
+    if (!state.users[user]?.badges) return;
+    state.users[user].badges = state.users[user].badges.filter(b => b !== badge);
     renderAllBadges();
-    renderMessages();
-    closeModal('profileModal');
-    input.value = '';
+    updateUserUI();
+    saveState();
+    alert(`✅ Badge ${badge} retiré de ${user}`);
 }
 
-// =====================================================
-// 5. FONCTIONS MODAL
-// =====================================================
+// ===== PROFILE =====
+function updateProfile() {
+    const newName = document.getElementById('profileName').value.trim();
+    const avatar = document.getElementById('profileAvatarUrl').value.trim();
+    const banner = document.getElementById('profileBannerUrl').value.trim();
 
-function openModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) modal.style.display = 'flex';
-}
+    if (newName && newName !== state.currentUser) {
+        // Renommer l'utilisateur
+        if (state.users[newName]) { alert('Ce pseudo est déjà pris.'); return; }
+        state.users[newName] = { ...state.users[state.currentUser] };
+        delete state.users[state.currentUser];
+        state.currentUser = newName;
+    }
+    if (avatar) state.users[state.currentUser].avatar = avatar;
+    if (banner) state.users[state.currentUser].banner = banner;
 
-function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) modal.style.display = 'none';
-}
-
-// =====================================================
-// 6. INITIALISATION
-// =====================================================
-
-function init() {
-    // Rendu initial
-    renderServers();
+    updateUserUI();
     renderMessages();
     renderFriends();
-    renderUserBadges();
-
-    // Mettre à jour le nom du serveur courant
-    const serverDisplay = document.getElementById('currentServer');
-    if (serverDisplay) {
-        serverDisplay.textContent = '#' + state.currentServer;
-    }
-
-    // Événement Entrée pour envoyer un message
-    const msgInput = document.getElementById('msgInput');
-    if (msgInput) {
-        msgInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-    }
-
-    // Fermer les modals en cliquant à côté
-    window.onclick = function(e) {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    };
-
-    // Initialiser le select admin
-    updateUserSelect();
-    renderAllBadges();
-
-    console.log('🚀 NexusChat initialisé !');
+    renderServers();
+    saveState();
+    closeModal('profileModal');
 }
 
-// Lancer l'application quand le DOM est chargé
+// ===== MODALS =====
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+window.onclick = function(e) {
+    if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+};
+
+// ===== DM SELECT =====
+function updateDMSelect() {
+    const select = document.getElementById('dmUserSelect');
+    select.innerHTML = Object.keys(state.users)
+        .filter(u => u !== state.currentUser)
+        .map(u => `<option value="${u}">${u}</option>`).join('');
+}
+
+// Override openModal pour mettre à jour le select DM
+const originalOpenModal = openModal;
+openModal = function(id) {
+    if (id === 'dmModal') updateDMSelect();
+    originalOpenModal(id);
+};
+
+// ===== START =====
 document.addEventListener('DOMContentLoaded', init);
