@@ -3,347 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusChat - Par Y7X</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #1e1e2f; color: #fff; display: flex; height: 100vh; }
-        .sidebar { width: 260px; background: #2b2b3e; padding: 20px; border-right: 1px solid #3a3a52; display: flex; flex-direction: column; }
-        .sidebar h2 { color: #b48aff; margin-bottom: 20px; font-size: 22px; }
-        .sidebar .server-list { flex: 1; overflow-y: auto; }
-        .server-item { padding: 10px; background: #3a3a52; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
-        .server-item:hover { background: #4a4a6a; }
-        .badge { background: #f04747; color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 12px; }
-        .create-server-btn { background: #b48aff; color: #1e1e2f; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .main { flex: 1; display: flex; flex-direction: column; }
-        .header { background: #2b2b3e; padding: 15px 25px; border-bottom: 1px solid #3a3a52; display: flex; justify-content: space-between; align-items: center; }
-        .profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .profile img { width: 40px; height: 40px; border-radius: 50%; background: #b48aff; }
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; background: #1e1e2f; display: flex; flex-direction: column; }
-        .message { background: #2b2b3e; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; max-width: 70%; }
-        .message.own { background: #b48aff; align-self: flex-end; }
-        .msg-user { font-weight: bold; color: #b48aff; }
-        .msg-time { font-size: 10px; color: #888; margin-left: 10px; }
-        .input-area { display: flex; padding: 15px; background: #2b2b3e; border-top: 1px solid #3a3a52; gap: 10px; flex-wrap: wrap; }
-        .input-area input { flex: 1; padding: 12px; border-radius: 30px; border: none; background: #3a3a52; color: #fff; outline: none; min-width: 120px; }
-        .input-area button { background: #b48aff; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; }
-        .emoji-picker { display: flex; gap: 6px; flex-wrap: wrap; background: #3a3a52; padding: 8px; border-radius: 30px; }
-        .emoji-picker span { cursor: pointer; font-size: 22px; transition: 0.2s; }
-        .emoji-picker span:hover { transform: scale(1.3); }
-        .shop-panel { background: #2b2b3e; padding: 20px; border-top: 1px solid #3a3a52; }
-        .shop-panel input { padding: 10px; border-radius: 8px; border: none; background: #3a3a52; color: #fff; width: 200px; }
-        .shop-panel button { background: #f04747; border: none; padding: 10px 20px; border-radius: 8px; color: #fff; font-weight: bold; margin-left: 10px; cursor: pointer; }
-        .badge-shop { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .badge-item { background: #3a3a52; padding: 8px 16px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
-        .modal-content { background: #2b2b3e; padding: 30px; border-radius: 16px; width: 400px; }
-        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: none; background: #3a3a52; color: #fff; }
-        .modal-content button { background: #b48aff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
-        .close { float: right; cursor: pointer; font-size: 24px; }
-        .friend-list { margin-top: 15px; background: #2b2b3e; padding: 10px; border-radius: 8px; }
-        .friend-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #3a3a52; }
-        .admin-badge { background: #f04747; border-radius: 12px; padding: 2px 10px; font-size: 12px; margin-left: 8px; }
-        .admin-panel { display: none; background: #2b2b3e; padding: 20px; border-top: 2px solid #b48aff; }
-        .admin-panel.active { display: block; }
-        .admin-panel select, .admin-panel input { padding: 8px; border-radius: 8px; border: none; background: #3a3a52; color: #fff; }
-        .admin-panel button { background: #b48aff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .admin-panel .user-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #3a3a52; }
-        .admin-panel .user-item span { display: flex; gap: 8px; align-items: center; }
-    </style>
+    <title>⚡ NexusChat</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
         <h2>⚡ NexusChat</h2>
-        <div class="server-list" id="serverList">
-            <div class="server-item" onclick="selectServer('Général')"># Général <span class="badge">12</span></div>
-            <div class="server-item" onclick="selectServer('Tech')"># Tech <span class="badge">8</span></div>
-            <div class="server-item" onclick="selectServer('Gaming')"># Gaming <span class="badge">5</span></div>
-        </div>
+        <div class="server-list" id="serverList"></div>
         <button class="create-server-btn" onclick="openModal('serverModal')">+ Créer un serveur</button>
-        <div style="margin-top: 20px; font-size: 14px; color: #888;">Badges: <span id="userBadges">⭐</span></div>
+        <div style="margin-top:15px;font-size:13px;color:#888;">Badges: <span id="userBadges">⭐</span></div>
         <div class="friend-list">
-            <div style="font-weight: bold; margin-bottom: 6px;">👥 Amis</div>
+            <div style="font-weight:bold;margin-bottom:6px;">👥 Amis</div>
             <div id="friendList"></div>
         </div>
+        <div class="profile-card" onclick="openModal('profileModal')">
+            <img id="profileAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23b48aff'/%3E%3Ctext x='35' y='65' font-size='40' fill='%231e1e2f'%3E👤%3C/text%3E%3C/svg%3E" alt="avatar">
+            <div>
+                <span id="userNameDisplay">Toi</span>
+                <span style="font-size:11px;color:#888;">Clique pour modifier</span>
+            </div>
+        </div>
     </div>
 
-    <!-- Main -->
+    <!-- MAIN CHAT -->
     <div class="main">
         <div class="header">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <span id="currentServer"># Général</span>
-                <span style="font-size: 14px; color: #888;">👥 12 en ligne</span>
+            <div>
+                <span id="currentChatName"># Général</span>
+                <span id="currentChatType" style="font-size:13px;color:#888;margin-left:10px;">(public)</span>
             </div>
-            <div class="profile" onclick="openModal('profileModal')">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23b48aff'/%3E%3Ctext x='35' y='65' font-size='40' fill='%231e1e2f'%3E👤%3C/text%3E%3C/svg%3E" alt="avatar">
-                <span id="userName">Toi</span>
-            </div>
+            <button class="dm-btn" onclick="openModal('dmModal')">💬 DM</button>
         </div>
-        <div class="chat-area" id="chatArea">
-            <div class="message"><span class="msg-user">Y7X</span> Bienvenue sur NexusChat ! 🚀 <span class="msg-time">12:00</span></div>
-            <div class="message own"><span class="msg-user">Toi</span> Merci ! 🔥 <span class="msg-time">12:01</span></div>
-        </div>
+        <div class="chat-area" id="chatArea"></div>
         <div class="input-area">
-            <input type="text" id="msgInput" placeholder="Écrire un message...">
-            <div class="emoji-picker">
-                <span onclick="addEmoji('😀')">😀</span>
-                <span onclick="addEmoji('😂')">😂</span>
-                <span onclick="addEmoji('🔥')">🔥</span>
-                <span onclick="addEmoji('💀')">💀</span>
-                <span onclick="addEmoji('❤️')">❤️</span>
-                <span onclick="addEmoji('🚀')">🚀</span>
-                <span onclick="addEmoji('👑')">👑</span>
-                <span onclick="addEmoji('💎')">💎</span>
-                <span onclick="addEmoji('🤣')">🤣</span>
-                <span onclick="addEmoji('😈')">😈</span>
-                <span onclick="addEmoji('🎮')">🎮</span>
-                <span onclick="addEmoji('📱')">📱</span>
-                <span onclick="addEmoji('💻')">💻</span>
-                <span onclick="addEmoji('⚡')">⚡</span>
-                <span onclick="addEmoji('✅')">✅</span>
-                <span onclick="addEmoji('❌')">❌</span>
-                <span onclick="addEmoji('💯')">💯</span>
-                <span onclick="addEmoji('🤡')">🤡</span>
-                <span onclick="addEmoji('👾')">👾</span>
-                <span onclick="addEmoji('🎉')">🎉</span>
+            <div class="emoji-picker" id="emojiPicker">
+                <span onclick="addEmoji('😀')">😀</span><span onclick="addEmoji('😂')">😂</span>
+                <span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('💀')">💀</span>
+                <span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('🚀')">🚀</span>
+                <span onclick="addEmoji('👑')">👑</span><span onclick="addEmoji('💎')">💎</span>
+                <span onclick="addEmoji('🤣')">🤣</span><span onclick="addEmoji('😈')">😈</span>
+                <span onclick="addEmoji('🎮')">🎮</span><span onclick="addEmoji('📱')">📱</span>
+                <span onclick="addEmoji('💻')">💻</span><span onclick="addEmoji('⚡')">⚡</span>
+                <span onclick="addEmoji('✅')">✅</span><span onclick="addEmoji('❌')">❌</span>
+                <span onclick="addEmoji('💯')">💯</span><span onclick="addEmoji('🤡')">🤡</span>
+                <span onclick="addEmoji('👾')">👾</span><span onclick="addEmoji('🎉')">🎉</span>
             </div>
+            <input type="text" id="msgInput" placeholder="Écrire un message...">
             <button onclick="sendMessage()">Envoyer</button>
         </div>
-        <!-- Admin Shop -->
-        <div class="shop-panel">
-            <span style="font-weight: bold;">🏪 Boutique Admin</span>
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="adminCode" placeholder="Code admin (Y7X)">
-                <button onclick="activateAdmin()">Activer mode admin</button>
-                <span id="adminStatus" style="color: #f04747; margin-left: 10px;">❌</span>
-            </div>
-        </div>
-        <!-- Admin Panel (visible uniquement en mode admin) -->
+        <!-- Admin Panel -->
         <div id="adminPanel" class="admin-panel">
             <h3>🛠️ Panel Admin</h3>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0;">
-                <select id="userSelect">
-                    <option value="Toi">Toi</option>
-                    <option value="Y7X">Y7X</option>
-                    <option value="Zack">Zack</option>
-                    <option value="Luna">Luna</option>
-                    <option value="Kira">Kira</option>
-                </select>
-                <select id="badgeSelect">
-                    <option value="⭐">⭐ Star</option>
-                    <option value="🔥">🔥 Fire</option>
-                    <option value="💎">💎 Diamond</option>
-                    <option value="👑">👑 Royal</option>
-                    <option value="💀">💀 Skull</option>
-                    <option value="🌈">🌈 Rainbow</option>
-                    <option value="⚡">⚡ Lightning</option>
-                </select>
-                <button onclick="giveBadge()">➕ Donner le badge</button>
-                <button onclick="removeBadge()">➖ Retirer le badge</button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0;">
+                <input type="text" id="adminCode" placeholder="Code (Y7X)">
+                <button onclick="activateAdmin()">🔓 Activer</button>
+                <span id="adminStatus" style="color:#f04747;">❌</span>
             </div>
-            <div id="userBadgeList">
-                <h4>Badges des utilisateurs</h4>
-                <div id="allUserBadges"></div>
+            <div id="adminControls" style="display:none;">
+                <select id="userSelect"></select>
+                <select id="badgeSelect">
+                    <option value="⭐">⭐</option><option value="🔥">🔥</option>
+                    <option value="💎">💎</option><option value="👑">👑</option>
+                    <option value="💀">💀</option><option value="🌈">🌈</option>
+                    <option value="⚡">⚡</option>
+                </select>
+                <button onclick="giveBadge()">➕ Donner</button>
+                <button onclick="removeBadge()">➖ Retirer</button>
+                <div id="allUserBadges" style="margin-top:10px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modal créer serveur -->
+    <!-- MODALS -->
     <div id="serverModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('serverModal')">&times;</span>
             <h3>Créer un serveur</h3>
-            <input type="text" id="newServerName" placeholder="Nom du serveur">
+            <input type="text" id="newServerName" placeholder="Nom">
             <button onclick="createServer()">Créer</button>
         </div>
     </div>
-
-    <!-- Modal profil -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
-            <h3>Modifier profil</h3>
+            <h3>👤 Mon profil</h3>
+            <label>Pseudo</label>
             <input type="text" id="profileName" placeholder="Nouveau pseudo">
+            <label>Avatar (URL)</label>
+            <input type="text" id="profileAvatarUrl" placeholder="https://exemple.com/avatar.png">
+            <label>Bannière (URL)</label>
+            <input type="text" id="profileBannerUrl" placeholder="https://exemple.com/banner.png">
             <button onclick="updateProfile()">Mettre à jour</button>
         </div>
     </div>
+    <div id="dmModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('dmModal')">&times;</span>
+            <h3>💬 Nouveau message privé</h3>
+            <select id="dmUserSelect"></select>
+            <button onclick="openDM()">Ouvrir le DM</button>
+        </div>
+    </div>
 
-    <script>
-        // --- État ---
-        let currentServer = 'Général';
-        let adminMode = false;
-        let userBadges = ['⭐'];
-        let userName = 'Toi';
-        let friends = ['Y7X', 'Zack', 'Luna', 'Kira'];
-        // Base de données des badges par utilisateur
-        let userBadgeDB = {
-            'Toi': ['⭐'],
-            'Y7X': ['👑', '🔥'],
-            'Zack': ['💎'],
-            'Luna': ['🌈'],
-            'Kira': ['⚡']
-        };
-
-        // --- Chat ---
-        function sendMessage() {
-            const input = document.getElementById('msgInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-            const chat = document.getElementById('chatArea');
-            const div = document.createElement('div');
-            div.className = 'message own';
-            div.innerHTML = `<span class="msg-user">${userName}</span> ${msg} <span class="msg-time">${new Date().toLocaleTimeString()}</span>`;
-            chat.appendChild(div);
-            input.value = '';
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function addEmoji(emoji) {
-            const input = document.getElementById('msgInput');
-            input.value += emoji;
-            input.focus();
-        }
-
-        // --- Serveurs ---
-        function selectServer(name) {
-            currentServer = name;
-            document.getElementById('currentServer').textContent = '#' + name;
-            const chat = document.getElementById('chatArea');
-            chat.innerHTML = `<div class="message"><span class="msg-user">Système</span> Vous êtes maintenant dans #${name} 🎉 <span class="msg-time">${new Date().toLocaleTimeString()}</span></div>`;
-        }
-
-        function createServer() {
-            const name = document.getElementById('newServerName').value.trim();
-            if (!name) return;
-            const list = document.getElementById('serverList');
-            const div = document.createElement('div');
-            div.className = 'server-item';
-            div.setAttribute('onclick', `selectServer('${name}')`);
-            div.innerHTML = `# ${name} <span class="badge">0</span>`;
-            list.appendChild(div);
-            closeModal('serverModal');
-            document.getElementById('newServerName').value = '';
-        }
-
-        // --- Admin ---
-        function activateAdmin() {
-            const code = document.getElementById('adminCode').value;
-            if (code === 'Y7X') {
-                adminMode = true;
-                document.getElementById('adminStatus').textContent = '✅ Admin activé';
-                document.getElementById('adminStatus').style.color = '#43b581';
-                document.querySelector('.shop-panel').style.border = '2px solid #b48aff';
-                document.getElementById('adminPanel').classList.add('active');
-                updateUserSelect();
-                renderAllBadges();
-                alert('🔐 Mode Admin activé ! Tu peux donner/retirer des badges.');
-            } else {
-                alert('❌ Code invalide.');
-            }
-        }
-
-        // --- Admin : Gestion des badges ---
-        function updateUserSelect() {
-            const select = document.getElementById('userSelect');
-            select.innerHTML = '';
-            const users = Object.keys(userBadgeDB);
-            users.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.textContent = u;
-                select.appendChild(opt);
-            });
-        }
-
-        function renderAllBadges() {
-            const container = document.getElementById('allUserBadges');
-            container.innerHTML = '';
-            for (const [user, badges] of Object.entries(userBadgeDB)) {
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `<span>${user} : ${badges.join(' ') || 'Aucun badge'}</span>`;
-                container.appendChild(div);
-            }
-        }
-
-        function giveBadge() {
-            if (!adminMode) return alert('⛔ Pas admin.');
-            const user = document.getElementById('userSelect').value;
-            const badge = document.getElementById('badgeSelect').value;
-            if (!userBadgeDB[user]) userBadgeDB[user] = [];
-            if (!userBadgeDB[user].includes(badge)) {
-                userBadgeDB[user].push(badge);
-                // Si c'est l'utilisateur courant, on met à jour l'affichage
-                if (user === userName) {
-                    userBadges = userBadgeDB[user];
-                    document.getElementById('userBadges').textContent = userBadges.join(' ');
-                }
-                renderAllBadges();
-                alert(`✅ Badge ${badge} donné à ${user}`);
-            } else {
-                alert(`❌ ${user} a déjà ce badge.`);
-            }
-        }
-
-        function removeBadge() {
-            if (!adminMode) return alert('⛔ Pas admin.');
-            const user = document.getElementById('userSelect').value;
-            const badge = document.getElementById('badgeSelect').value;
-            if (userBadgeDB[user] && userBadgeDB[user].includes(badge)) {
-                userBadgeDB[user] = userBadgeDB[user].filter(b => b !== badge);
-                if (user === userName) {
-                    userBadges = userBadgeDB[user];
-                    document.getElementById('userBadges').textContent = userBadges.join(' ');
-                }
-                renderAllBadges();
-                alert(`✅ Badge ${badge} retiré de ${user}`);
-            } else {
-                alert(`❌ ${user} n'a pas ce badge.`);
-            }
-        }
-
-        // --- Profil ---
-        function updateProfile() {
-            const newName = document.getElementById('profileName').value.trim();
-            if (newName) {
-                // On met à jour le nom dans la DB
-                const oldName = userName;
-                if (userBadgeDB[oldName]) {
-                    userBadgeDB[newName] = userBadgeDB[oldName];
-                    delete userBadgeDB[oldName];
-                }
-                userName = newName;
-                document.getElementById('userName').textContent = userName;
-                updateUserSelect();
-                renderAllBadges();
-                closeModal('profileModal');
-                document.getElementById('profileName').value = '';
-            }
-        }
-
-        // --- Friends ---
-        function renderFriends() {
-            const list = document.getElementById('friendList');
-            list.innerHTML = friends.map(f => `<div class="friend-item"><span>${f}</span> <span style="color:#43b581;">🟢</span></div>`).join('');
-        }
-        renderFriends();
-
-        // --- Modals ---
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        }
-
-        document.getElementById('msgInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        // Initialisation des badges affichés
-        document.getElementById('userBadges').textContent = userBadges.join(' ');
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
