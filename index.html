@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 NEXUSCHAT - ÉDITION ULTIME</title>
+    <title>🔥 NEXUSCHAT - ÉDITION ULTIME V3</title>
     <style>
         /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -258,7 +258,16 @@
             color: #888;
             margin-left: 10px;
         }
-        .message .msg-badge { font-size: 14px; margin-left: 6px; }
+        .message .msg-badge {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 4px;
+            vertical-align: middle;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px) scale(0.95); }
@@ -347,12 +356,59 @@
             font-weight: 700;
             cursor: pointer;
             color: #fff;
+            transition: 0.3s;
+        }
+        .admin-panel button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(180,138,255,0.3);
         }
         .user-item {
             display: flex;
             justify-content: space-between;
             padding: 6px 0;
             border-bottom: 1px solid #2a2a4a;
+            align-items: center;
+        }
+        .user-item .badge-display {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .user-item .badge-display .badge-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* ===== BADGE CONFIG ===== */
+        .badge-config {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1a1a3a;
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+        }
+        .badge-config .badge-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .badge-config .badge-row input {
+            flex: 1;
+            min-width: 100px;
+        }
+        .badge-config .badge-row .badge-preview {
+            width: 30px;
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 4px;
         }
 
         /* ===== MODALS ===== */
@@ -371,10 +427,12 @@
             background: #14142b;
             padding: 35px;
             border-radius: 20px;
-            width: 450px;
+            width: 500px;
             max-width: 92%;
             border: 1px solid #2a2a4a;
             animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.9) translateY(30px); }
@@ -479,7 +537,6 @@
                 <span onclick="addEmoji('✅')">✅</span><span onclick="addEmoji('❌')">❌</span>
                 <span onclick="addEmoji('💯')">💯</span><span onclick="addEmoji('🤡')">🤡</span>
                 <span onclick="addEmoji('👾')">👾</span><span onclick="addEmoji('🎉')">🎉</span>
-                <span onclick="addEmoji('💀')">💀</span><span onclick="addEmoji('👽')">👽</span>
             </div>
             <input type="text" id="msgInput" placeholder="Écrire un message...">
             <button onclick="sendMessage()">➤ Envoyer</button>
@@ -487,21 +544,18 @@
         <!-- Admin Panel -->
         <div id="adminPanel" class="admin-panel">
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                <input type="text" id="adminCode" placeholder="Code admin (Y7X)" style="flex:1;min-width:120px;">
+                <input type="password" id="adminCode" placeholder="Code admin (Y7X)" style="flex:1;min-width:120px;">
                 <button onclick="activateAdmin()">🔓 Activer</button>
                 <span id="adminStatus" style="color:#f04747;">❌</span>
             </div>
             <div id="adminControls" style="display:none;margin-top:12px;">
+                <!-- Gestion des badges -->
                 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                     <select id="userSelect"></select>
-                    <select id="badgeSelect">
-                        <option value="⭐">⭐</option><option value="🔥">🔥</option>
-                        <option value="💎">💎</option><option value="👑">👑</option>
-                        <option value="💀">💀</option><option value="🌈">🌈</option>
-                        <option value="⚡">⚡</option>
-                    </select>
+                    <select id="badgeSelect"></select>
                     <button onclick="giveBadge()">➕ Donner</button>
                     <button onclick="removeBadge()">➖ Retirer</button>
+                    <button onclick="openModal('badgeConfigModal')">⚙️ Config badges</button>
                 </div>
                 <div id="allUserBadges" style="margin-top:10px;"></div>
             </div>
@@ -538,6 +592,17 @@
             <button onclick="openDM()">Ouvrir le DM</button>
         </div>
     </div>
+    <!-- Badge Config Modal -->
+    <div id="badgeConfigModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('badgeConfigModal')">&times;</span>
+            <h3>⚙️ Configurer les badges</h3>
+            <p style="color:#888;font-size:13px;margin-bottom:15px;">Chaque badge doit avoir une icône (emoji) et une image URL.</p>
+            <div id="badgeConfigList"></div>
+            <button onclick="addBadgeConfig()">➕ Ajouter un badge</button>
+            <button onclick="saveBadgeConfig()" style="margin-top:10px;">💾 Sauvegarder</button>
+        </div>
+    </div>
 
     <script>
         // ===== STATE =====
@@ -556,7 +621,17 @@
                 'Tech': { members: ['Toi', 'Y7X'], messages: [] },
                 'Gaming': { members: ['Toi', 'Zack', 'Luna', 'Kira'], messages: [] }
             },
-            dms: {}
+            dms: {},
+            badgeConfig: {
+                '⭐': { emoji: '⭐', image: '' },
+                '🔥': { emoji: '🔥', image: '' },
+                '💎': { emoji: '💎', image: '' },
+                '👑': { emoji: '👑', image: '' },
+                '💀': { emoji: '💀', image: '' },
+                '🌈': { emoji: '🌈', image: '' },
+                '⚡': { emoji: '⚡', image: '' }
+            },
+            adminCode: 'Y7X'
         };
 
         // ===== INIT =====
@@ -569,6 +644,7 @@
             updateUserSelect();
             renderAllBadges();
             updateDMSelect();
+            renderBadgeConfigList();
 
             document.getElementById('msgInput').addEventListener('keypress', e => {
                 if (e.key === 'Enter') sendMessage();
@@ -622,10 +698,16 @@
             chat.innerHTML = msgs.map(m => {
                 const isOwn = m.user === state.currentUser;
                 const userBadges = state.users[m.user]?.badges || [];
-                const badgeStr = userBadges.length ? userBadges.join('') : '';
+                const badgeHTML = userBadges.map(b => {
+                    const config = state.badgeConfig[b];
+                    if (config && config.image) {
+                        return `<span class="msg-badge" style="background-image:url('${config.image}');"></span>`;
+                    }
+                    return `<span class="msg-badge" style="font-size:16px;">${b}</span>`;
+                }).join('');
                 return `<div class="message ${isOwn ? 'own' : ''}">
                     <span class="msg-user">${m.user}</span>
-                    ${badgeStr ? `<span class="msg-badge">${badgeStr}</span>` : ''}
+                    ${badgeHTML}
                     ${m.content} <span class="msg-time">${m.time}</span>
                 </div>`;
             }).join('');
@@ -634,7 +716,8 @@
 
         function updateUserUI() {
             document.getElementById('userNameDisplay').textContent = state.currentUser;
-            document.getElementById('userBadges').textContent = state.users[state.currentUser]?.badges?.join(' ') || '⭐';
+            const userBadges = state.users[state.currentUser]?.badges || [];
+            document.getElementById('userBadges').textContent = userBadges.join(' ') || '⭐';
             const avatar = document.getElementById('profileAvatar');
             if (state.users[state.currentUser]?.avatar) {
                 avatar.src = state.users[state.currentUser].avatar;
@@ -650,9 +733,19 @@
 
         function renderAllBadges() {
             const container = document.getElementById('allUserBadges');
-            container.innerHTML = Object.entries(state.users).map(([u, data]) => `
-                <div class="user-item"><span>${u}</span> <span>${data.badges?.join(' ') || 'Aucun'}</span></div>
-            `).join('');
+            container.innerHTML = Object.entries(state.users).map(([u, data]) => {
+                const badgesHTML = (data.badges || []).map(b => {
+                    const config = state.badgeConfig[b];
+                    if (config && config.image) {
+                        return `<span class="badge-icon" style="background-image:url('${config.image}');"></span>`;
+                    }
+                    return `<span style="font-size:18px;">${b}</span>`;
+                }).join('');
+                return `<div class="user-item">
+                    <span>${u}</span>
+                    <span class="badge-display">${badgesHTML || 'Aucun'}</span>
+                </div>`;
+            }).join('');
         }
 
         function updateDMSelect() {
@@ -660,6 +753,60 @@
             select.innerHTML = Object.keys(state.users)
                 .filter(u => u !== state.currentUser)
                 .map(u => `<option value="${u}">${u}</option>`).join('');
+        }
+
+        // ===== BADGE CONFIG =====
+        function renderBadgeConfigList() {
+            const container = document.getElementById('badgeConfigList');
+            container.innerHTML = Object.entries(state.badgeConfig).map(([key, config]) => `
+                <div class="badge-row" data-key="${key}">
+                    <span style="font-size:20px;width:30px;">${config.emoji || key}</span>
+                    <input type="text" class="badge-emoji-input" value="${config.emoji || key}" placeholder="Emoji" style="width:60px;">
+                    <input type="text" class="badge-image-input" value="${config.image || ''}" placeholder="URL de l'image" style="flex:1;">
+                    <div class="badge-preview" style="background-image:url('${config.image || ''}');"></div>
+                    <button onclick="removeBadgeConfig('${key}')" style="background:#f04747;padding:6px 12px;width:auto;">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addBadgeConfig() {
+            const keys = Object.keys(state.badgeConfig);
+            let newKey = 'NEW' + (keys.length + 1);
+            state.badgeConfig[newKey] = { emoji: '🏷️', image: '' };
+            renderBadgeConfigList();
+            updateBadgeSelect();
+        }
+
+        function removeBadgeConfig(key) {
+            if (key === '⭐') { alert('Le badge ⭐ est obligatoire.'); return; }
+            delete state.badgeConfig[key];
+            renderBadgeConfigList();
+            updateBadgeSelect();
+            saveState();
+        }
+
+        function saveBadgeConfig() {
+            const rows = document.querySelectorAll('.badge-row');
+            const newConfig = {};
+            rows.forEach(row => {
+                const key = row.dataset.key;
+                const emoji = row.querySelector('.badge-emoji-input').value.trim() || key;
+                const image = row.querySelector('.badge-image-input').value.trim();
+                newConfig[key] = { emoji, image };
+            });
+            state.badgeConfig = newConfig;
+            updateBadgeSelect();
+            renderAllBadges();
+            renderMessages();
+            saveState();
+            alert('✅ Configuration des badges sauvegardée !');
+        }
+
+        function updateBadgeSelect() {
+            const select = document.getElementById('badgeSelect');
+            select.innerHTML = Object.keys(state.badgeConfig).map(key => `
+                <option value="${key}">${state.badgeConfig[key].emoji || key}</option>
+            `).join('');
         }
 
         // ===== CHAT =====
@@ -733,12 +880,13 @@
         // ===== ADMIN =====
         function activateAdmin() {
             const code = document.getElementById('adminCode');
-            if (code.value !== 'Y7X') { alert('Code invalide.'); return; }
+            if (code.value !== state.adminCode) { alert('Code invalide.'); return; }
             document.getElementById('adminStatus').textContent = '✅ Admin';
             document.getElementById('adminStatus').style.color = '#43b581';
             document.getElementById('adminControls').style.display = 'block';
             document.getElementById('adminPanel').classList.add('active');
             updateUserSelect();
+            updateBadgeSelect();
             renderAllBadges();
         }
 
@@ -797,6 +945,7 @@
         // ===== MODALS =====
         function openModal(id) {
             if (id === 'dmModal') updateDMSelect();
+            if (id === 'badgeConfigModal') renderBadgeConfigList();
             document.getElementById(id).style.display = 'flex';
         }
         function closeModal(id) {
