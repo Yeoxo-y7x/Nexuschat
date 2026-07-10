@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 NEXUSCHAT - ÉDITION ULTIME V3</title>
+    <title>🔥 NEXUSCHAT - ÉDITION FINALE</title>
     <style>
         /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -115,6 +115,8 @@
             padding: 10px;
             border-radius: 12px;
             border: 1px solid #2a2a4a;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .friend-item {
             display: flex;
@@ -123,10 +125,33 @@
             border-bottom: 1px solid #2a2a4a;
             cursor: pointer;
             transition: 0.3s;
+            align-items: center;
         }
         .friend-item:hover {
             color: #b48aff;
             padding-left: 8px;
+        }
+        .friend-item .friend-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #b48aff;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+        .add-friend-btn {
+            background: #2a2a5a;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            color: #b48aff;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        .add-friend-btn:hover {
+            background: #b48aff;
+            color: #0a0a14;
         }
 
         .profile-card {
@@ -203,19 +228,27 @@
             font-size: 13px;
             color: #888;
         }
-        .dm-btn {
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header-actions button {
             background: linear-gradient(135deg, #b48aff, #7c5cfc);
             border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
+            padding: 8px 16px;
+            border-radius: 20px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
             color: #fff;
+            transition: 0.3s;
+            font-size: 13px;
         }
-        .dm-btn:hover {
+        .header-actions button:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(180,138,255,0.3);
+            box-shadow: 0 0 20px rgba(180,138,255,0.3);
+        }
+        .header-actions .shop-btn {
+            background: linear-gradient(135deg, #ff6b9d, #f04747);
         }
 
         .chat-area {
@@ -251,6 +284,10 @@
             font-weight: 700;
             color: #b48aff;
             margin-right: 8px;
+            cursor: pointer;
+        }
+        .message .msg-user:hover {
+            text-decoration: underline;
         }
         .message.own .msg-user { color: #fff; }
         .message .msg-time {
@@ -411,6 +448,54 @@
             border-radius: 4px;
         }
 
+        /* ===== SHOP ===== */
+        .shop-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .shop-item {
+            background: #1a1a3a;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .shop-item:hover {
+            border-color: #b48aff;
+            transform: scale(1.02);
+        }
+        .shop-item .shop-icon {
+            font-size: 40px;
+        }
+        .shop-item .shop-name {
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        .shop-item .shop-price {
+            color: #ff6b9d;
+            font-weight: 700;
+        }
+        .shop-item button {
+            background: linear-gradient(135deg, #b48aff, #7c5cfc);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #fff;
+            margin-top: 8px;
+            transition: 0.3s;
+        }
+        .shop-item button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(180,138,255,0.3);
+        }
+
         /* ===== MODALS ===== */
         .modal {
             display: none;
@@ -427,7 +512,7 @@
             background: #14142b;
             padding: 35px;
             border-radius: 20px;
-            width: 500px;
+            width: 520px;
             max-width: 92%;
             border: 1px solid #2a2a4a;
             animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -476,16 +561,47 @@
             transform: scale(1.02);
             box-shadow: 0 0 40px rgba(180,138,255,0.3);
         }
-        .close {
+        .modal-content .close {
             float: right;
             cursor: pointer;
             font-size: 28px;
             color: #888;
             transition: 0.3s;
         }
-        .close:hover {
+        .modal-content .close:hover {
             color: #fff;
             transform: rotate(90deg);
+        }
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #b48aff;
+            object-fit: cover;
+            border: 3px solid #b48aff;
+            margin: 10px auto;
+            display: block;
+        }
+        .profile-banner-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            background: #1a1a3a;
+            object-fit: cover;
+            margin: 10px 0;
+            border: 1px solid #2a2a4a;
+        }
+        .server-settings-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a4a;
+            align-items: center;
+        }
+        .server-settings-item button {
+            width: auto;
+            padding: 6px 16px;
+            margin: 0;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -493,6 +609,7 @@
             .sidebar { width: 240px; padding: 15px; }
             .modal-content { width: 95%; padding: 25px; }
             .emoji-picker span { font-size: 16px; }
+            .header-actions button { font-size: 11px; padding: 6px 12px; }
         }
     </style>
 </head>
@@ -503,10 +620,13 @@
         <div class="server-list" id="serverList"></div>
         <button class="create-server-btn" onclick="openModal('serverModal')">+ Créer un serveur</button>
         <div class="friend-list">
-            <div style="font-weight:700;margin-bottom:8px;">👥 Amis</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-weight:700;">👥 Amis</span>
+                <button class="add-friend-btn" onclick="openModal('addFriendModal')">+ Ajouter</button>
+            </div>
             <div id="friendList"></div>
         </div>
-        <div class="profile-card" onclick="openModal('profileModal')">
+        <div class="profile-card" onclick="openModal('profileViewModal')">
             <img id="profileAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23b48aff'/%3E%3Ctext x='35' y='65' font-size='40' fill='%231e1e2f'%3E👤%3C/text%3E%3C/svg%3E" alt="avatar">
             <div>
                 <span id="userNameDisplay" style="font-weight:700;">Toi</span>
@@ -522,7 +642,11 @@
                 <h3 id="currentChatName"># Général</h3>
                 <span id="currentChatType">(public)</span>
             </div>
-            <button class="dm-btn" onclick="openModal('dmModal')">💬 DM</button>
+            <div class="header-actions">
+                <button onclick="openModal('shopModal')" class="shop-btn">🏪 Boutique</button>
+                <button onclick="openModal('serverSettingsModal')">⚙️ Serveur</button>
+                <button class="dm-btn" onclick="openModal('dmModal')">💬 DM</button>
+            </div>
         </div>
         <div class="chat-area" id="chatArea"></div>
         <div class="input-area">
@@ -549,7 +673,6 @@
                 <span id="adminStatus" style="color:#f04747;">❌</span>
             </div>
             <div id="adminControls" style="display:none;margin-top:12px;">
-                <!-- Gestion des badges -->
                 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                     <select id="userSelect"></select>
                     <select id="badgeSelect"></select>
@@ -562,7 +685,9 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- ===== MODALS ===== -->
+
+    <!-- Server Modal -->
     <div id="serverModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('serverModal')">&times;</span>
@@ -571,10 +696,27 @@
             <button onclick="createServer()">Créer</button>
         </div>
     </div>
+
+    <!-- Profile View Modal -->
+    <div id="profileViewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('profileViewModal')">&times;</span>
+            <h3>👤 Mon profil</h3>
+            <img id="profileViewAvatar" class="profile-avatar-large" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23b48aff'/%3E%3Ctext x='35' y='65' font-size='40' fill='%231e1e2f'%3E👤%3C/text%3E%3C/svg%3E" alt="avatar">
+            <div style="text-align:center;">
+                <h2 id="profileViewName" style="font-size:24px;">Toi</h2>
+                <div style="color:#888;font-size:14px;">Badges: <span id="profileViewBadges">⭐</span></div>
+            </div>
+            <img id="profileViewBanner" class="profile-banner-preview" src="" alt="Bannière">
+            <button onclick="closeModal('profileViewModal');openModal('profileModal');">✏️ Modifier le profil</button>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
-            <h3>👤 Mon profil</h3>
+            <h3>✏️ Modifier mon profil</h3>
             <label>Pseudo</label>
             <input type="text" id="profileName" placeholder="Nouveau pseudo">
             <label>Avatar (URL)</label>
@@ -584,6 +726,8 @@
             <button onclick="updateProfile()">Mettre à jour</button>
         </div>
     </div>
+
+    <!-- DM Modal -->
     <div id="dmModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('dmModal')">&times;</span>
@@ -592,6 +736,84 @@
             <button onclick="openDM()">Ouvrir le DM</button>
         </div>
     </div>
+
+    <!-- Add Friend Modal -->
+    <div id="addFriendModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
+            <h3>➕ Ajouter un ami</h3>
+            <input type="text" id="newFriendName" placeholder="Pseudo de l'ami">
+            <button onclick="addFriend()">Ajouter</button>
+            <div id="friendSearchResults" style="margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div id="shopModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('shopModal')">&times;</span>
+            <h3>🏪 Boutique</h3>
+            <div class="shop-items" id="shopItems">
+                <div class="shop-item">
+                    <div class="shop-icon">👑</div>
+                    <div class="shop-name">Badge Royal</div>
+                    <div class="shop-price">💰 100 coins</div>
+                    <button onclick="buyItem('👑', 100)">Acheter</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-icon">💎</div>
+                    <div class="shop-name">Badge Diamant</div>
+                    <div class="shop-price">💰 200 coins</div>
+                    <button onclick="buyItem('💎', 200)">Acheter</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-icon">🔥</div>
+                    <div class="shop-name">Badge Feu</div>
+                    <div class="shop-price">💰 150 coins</div>
+                    <button onclick="buyItem('🔥', 150)">Acheter</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-icon">🌈</div>
+                    <div class="shop-name">Badge Arc-en-ciel</div>
+                    <div class="shop-price">💰 250 coins</div>
+                    <button onclick="buyItem('🌈', 250)">Acheter</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-icon">⚡</div>
+                    <div class="shop-name">Badge Éclair</div>
+                    <div class="shop-price">💰 120 coins</div>
+                    <button onclick="buyItem('⚡', 120)">Acheter</button>
+                </div>
+            </div>
+            <div style="text-align:center;padding:10px;background:#1a1a3a;border-radius:12px;margin-top:10px;">
+                💰 Vos coins: <span id="userCoins">100</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Settings Modal -->
+    <div id="serverSettingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('serverSettingsModal')">&times;</span>
+            <h3>⚙️ Paramètres du serveur</h3>
+            <div id="serverSettingsList"></div>
+            <div style="margin-top:15px;">
+                <label>Ajouter un membre (pseudo)</label>
+                <div style="display:flex;gap:10px;">
+                    <input type="text" id="addMemberInput" placeholder="Pseudo">
+                    <button onclick="addMemberToServer()" style="width:auto;padding:12px 20px;">➕</button>
+                </div>
+                <div style="margin-top:10px;">
+                    <label>Supprimer un membre (pseudo)</label>
+                    <div style="display:flex;gap:10px;">
+                        <input type="text" id="removeMemberInput" placeholder="Pseudo">
+                        <button onclick="removeMemberFromServer()" style="width:auto;padding:12px 20px;background:#f04747;">➖</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Badge Config Modal -->
     <div id="badgeConfigModal" class="modal">
         <div class="modal-content">
@@ -610,11 +832,11 @@
             currentUser: 'Toi',
             currentChat: { type: 'server', name: 'Général' },
             users: {
-                'Toi': { badges: ['⭐'], avatar: '', banner: '', friends: ['Y7X', 'Zack', 'Luna', 'Kira'] },
-                'Y7X': { badges: ['👑', '🔥'], avatar: '', banner: '', friends: ['Toi'] },
-                'Zack': { badges: ['💎'], avatar: '', banner: '', friends: ['Toi'] },
-                'Luna': { badges: ['🌈'], avatar: '', banner: '', friends: ['Toi'] },
-                'Kira': { badges: ['⚡'], avatar: '', banner: '', friends: ['Toi'] }
+                'Toi': { badges: ['⭐'], avatar: '', banner: '', friends: ['Y7X', 'Zack', 'Luna', 'Kira'], coins: 100 },
+                'Y7X': { badges: ['👑', '🔥'], avatar: '', banner: '', friends: ['Toi'], coins: 500 },
+                'Zack': { badges: ['💎'], avatar: '', banner: '', friends: ['Toi'], coins: 200 },
+                'Luna': { badges: ['🌈'], avatar: '', banner: '', friends: ['Toi'], coins: 300 },
+                'Kira': { badges: ['⚡'], avatar: '', banner: '', friends: ['Toi'], coins: 150 }
             },
             servers: {
                 'Général': { members: ['Toi', 'Y7X', 'Zack', 'Luna', 'Kira'], messages: [] },
@@ -631,7 +853,14 @@
                 '🌈': { emoji: '🌈', image: '' },
                 '⚡': { emoji: '⚡', image: '' }
             },
-            adminCode: 'Y7X'
+            adminCode: 'Y7X',
+            shopItems: [
+                { id: '👑', name: 'Badge Royal', price: 100 },
+                { id: '💎', name: 'Badge Diamant', price: 200 },
+                { id: '🔥', name: 'Badge Feu', price: 150 },
+                { id: '🌈', name: 'Badge Arc-en-ciel', price: 250 },
+                { id: '⚡', name: 'Badge Éclair', price: 120 }
+            ]
         };
 
         // ===== INIT =====
@@ -645,6 +874,7 @@
             renderAllBadges();
             updateDMSelect();
             renderBadgeConfigList();
+            updateCoinsDisplay();
 
             document.getElementById('msgInput').addEventListener('keypress', e => {
                 if (e.key === 'Enter') sendMessage();
@@ -678,11 +908,16 @@
         function renderFriends() {
             const list = document.getElementById('friendList');
             const friends = state.users[state.currentUser]?.friends || [];
-            list.innerHTML = friends.map(f => `
-                <div class="friend-item" onclick="openDMWith('${f}')">
-                    ${f} <span style="color:#43b581;">🟢</span>
-                </div>
-            `).join('');
+            list.innerHTML = friends.map(f => {
+                const avatar = state.users[f]?.avatar || '';
+                return `<div class="friend-item" onclick="openDMWith('${f}')">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        ${avatar ? `<img src="${avatar}" class="friend-avatar">` : `<div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:14px;">👤</div>`}
+                        ${f}
+                    </div>
+                    <span style="color:#43b581;">🟢</span>
+                </div>`;
+            }).join('');
         }
 
         function renderMessages() {
@@ -706,7 +941,7 @@
                     return `<span class="msg-badge" style="font-size:16px;">${b}</span>`;
                 }).join('');
                 return `<div class="message ${isOwn ? 'own' : ''}">
-                    <span class="msg-user">${m.user}</span>
+                    <span class="msg-user" onclick="viewUserProfile('${m.user}')">${m.user}</span>
                     ${badgeHTML}
                     ${m.content} <span class="msg-time">${m.time}</span>
                 </div>`;
@@ -722,8 +957,29 @@
             if (state.users[state.currentUser]?.avatar) {
                 avatar.src = state.users[state.currentUser].avatar;
             }
+            // Profile view
+            const viewAvatar = document.getElementById('profileViewAvatar');
+            if (state.users[state.currentUser]?.avatar) {
+                viewAvatar.src = state.users[state.currentUser].avatar;
+            }
+            document.getElementById('profileViewName').textContent = state.currentUser;
+            document.getElementById('profileViewBadges').textContent = userBadges.join(' ') || '⭐';
+            const banner = document.getElementById('profileViewBanner');
+            if (state.users[state.currentUser]?.banner) {
+                banner.src = state.users[state.currentUser].banner;
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
             document.getElementById('currentChatName').textContent = state.currentChat.type === 'server' ? '#' + state.currentChat.name : '@' + state.currentChat.name;
             document.getElementById('currentChatType').textContent = state.currentChat.type === 'server' ? '(public)' : '(privé)';
+            updateCoinsDisplay();
+        }
+
+        function updateCoinsDisplay() {
+            const coins = state.users[state.currentUser]?.coins || 0;
+            const el = document.getElementById('userCoins');
+            if (el) el.textContent = coins;
         }
 
         function updateUserSelect() {
@@ -753,6 +1009,22 @@
             select.innerHTML = Object.keys(state.users)
                 .filter(u => u !== state.currentUser)
                 .map(u => `<option value="${u}">${u}</option>`).join('');
+        }
+
+        function renderServerSettings() {
+            const container = document.getElementById('serverSettingsList');
+            const server = state.servers[state.currentChat.name];
+            if (!server) { container.innerHTML = '<p style="color:#888;">Aucun serveur sélectionné.</p>'; return; }
+            container.innerHTML = `
+                <h4 style="margin-bottom:10px;">#${state.currentChat.name}</h4>
+                <div style="color:#888;font-size:13px;margin-bottom:10px;">Membres (${server.members.length})</div>
+                ${server.members.map(m => `
+                    <div class="server-settings-item">
+                        <span>${m}</span>
+                        ${m !== state.currentUser ? `<button onclick="kickMember('${m}')" style="background:#f04747;width:auto;padding:4px 12px;">Expulser</button>` : '<span style="color:#888;font-size:12px;">(vous)</span>'}
+                    </div>
+                `).join('')}
+            `;
         }
 
         // ===== BADGE CONFIG =====
@@ -844,7 +1116,7 @@
 
             if (state.currentChat.type === 'server') {
                 if (!state.servers[state.currentChat.name]) {
-                    state.servers[state.currentChat.name] = { members: [], messages: [] };
+                    state.servers[state.currentChat.name] = { members: [state.currentUser], messages: [] };
                 }
                 state.servers[state.currentChat.name].messages.push(msg);
             } else if (state.currentChat.type === 'dm') {
@@ -864,6 +1136,12 @@
             input.focus();
         }
 
+        function viewUserProfile(username) {
+            const user = state.users[username];
+            if (!user) return;
+            alert(`👤 Profil de ${username}\nBadges: ${user.badges?.join(' ') || 'Aucun'}\n💰 Coins: ${user.coins || 0}`);
+        }
+
         // ===== SERVER =====
         function createServer() {
             const input = document.getElementById('newServerName');
@@ -875,6 +1153,84 @@
             closeModal('serverModal');
             input.value = '';
             saveState();
+        }
+
+        function addMemberToServer() {
+            const input = document.getElementById('addMemberInput');
+            const name = input.value.trim();
+            if (!name) return;
+            const server = state.servers[state.currentChat.name];
+            if (!server) { alert('Aucun serveur sélectionné.'); return; }
+            if (!state.users[name]) { alert('Utilisateur inconnu.'); return; }
+            if (server.members.includes(name)) { alert('Déjà membre.'); return; }
+            server.members.push(name);
+            renderServerSettings();
+            renderServers();
+            input.value = '';
+            saveState();
+        }
+
+        function removeMemberFromServer() {
+            const input = document.getElementById('removeMemberInput');
+            const name = input.value.trim();
+            if (!name) return;
+            const server = state.servers[state.currentChat.name];
+            if (!server) { alert('Aucun serveur sélectionné.'); return; }
+            if (name === state.currentUser) { alert('Tu ne peux pas te retirer toi-même.'); return; }
+            server.members = server.members.filter(m => m !== name);
+            renderServerSettings();
+            renderServers();
+            input.value = '';
+            saveState();
+        }
+
+        function kickMember(name) {
+            if (name === state.currentUser) { alert('Tu ne peux pas t\'expulser toi-même.'); return; }
+            const server = state.servers[state.currentChat.name];
+            if (!server) return;
+            server.members = server.members.filter(m => m !== name);
+            renderServerSettings();
+            renderServers();
+            saveState();
+        }
+
+        // ===== FRIENDS =====
+        function addFriend() {
+            const input = document.getElementById('newFriendName');
+            const name = input.value.trim();
+            if (!name) return;
+            if (!state.users[name]) { alert('Utilisateur inconnu.'); return; }
+            if (name === state.currentUser) { alert('Tu ne peux pas t\'ajouter toi-même.'); return; }
+            const friends = state.users[state.currentUser].friends || [];
+            if (friends.includes(name)) { alert('Déjà ami.'); return; }
+            friends.push(name);
+            state.users[state.currentUser].friends = friends;
+            renderFriends();
+            input.value = '';
+            closeModal('addFriendModal');
+            saveState();
+        }
+
+        // ===== SHOP =====
+        function buyItem(badgeId, price) {
+            const user = state.users[state.currentUser];
+            if (!user) return;
+            if (user.coins < price) {
+                alert('❌ Pas assez de coins !');
+                return;
+            }
+            if (user.badges.includes(badgeId)) {
+                alert('❌ Tu as déjà ce badge.');
+                return;
+            }
+            user.coins -= price;
+            user.badges.push(badgeId);
+            updateCoinsDisplay();
+            updateUserUI();
+            renderAllBadges();
+            renderMessages();
+            saveState();
+            alert(`✅ Badge ${badgeId} acheté !`);
         }
 
         // ===== ADMIN =====
@@ -946,6 +1302,8 @@
         function openModal(id) {
             if (id === 'dmModal') updateDMSelect();
             if (id === 'badgeConfigModal') renderBadgeConfigList();
+            if (id === 'serverSettingsModal') renderServerSettings();
+            if (id === 'profileViewModal') updateUserUI();
             document.getElementById(id).style.display = 'flex';
         }
         function closeModal(id) {
