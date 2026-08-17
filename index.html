@@ -34,7 +34,7 @@
             position: relative;
         }
 
-        /* Sidebar gauche */
+        /* Sidebar gauche - Serveurs */
         .sidebar-left {
             width: 80px;
             background: #12121f;
@@ -44,6 +44,7 @@
             align-items: center;
             gap: 15px;
             border-right: 1px solid #2a2a4a;
+            overflow-y: auto;
         }
 
         .server-icon {
@@ -60,6 +61,7 @@
             transition: 0.3s;
             border: 3px solid transparent;
             position: relative;
+            flex-shrink: 0;
         }
 
         .server-icon:hover {
@@ -82,6 +84,13 @@
             font-size: 10px;
             padding: 2px 6px;
             border-radius: 10px;
+        }
+
+        .server-icon .crown {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 18px;
         }
 
         /* Sidebar serveurs */
@@ -156,6 +165,27 @@
             color: #ff6b6b;
         }
 
+        .channel-item .voice-indicator {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .channel-item .voice-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
         /* Chat principal */
         .main-chat {
             flex: 1;
@@ -209,6 +239,9 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .chat-header .right .admin-badge:hover {
@@ -255,6 +288,14 @@
             font-weight: bold;
             font-size: 14px;
             background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            position: relative;
+        }
+
+        .message .avatar .badge-icon {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            font-size: 14px;
         }
 
         .message .content-wrap {
@@ -267,6 +308,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .message .username .tag {
@@ -283,10 +325,38 @@
             color: #fff;
         }
 
+        .message .username .role-badge.owner {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .message .username .role-badge.admin {
+            background: #7b2ffc;
+            color: #fff;
+        }
+
+        .message .username .role-badge.moderator {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .message .username .role-badge.booster {
+            background: #ff66ff;
+            color: #fff;
+        }
+
         .message .content {
             font-size: 15px;
             word-wrap: break-word;
             margin-top: 2px;
+        }
+
+        .message .content img.badge-img {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 8px;
+            margin: 5px 0;
+            display: block;
         }
 
         .message .time {
@@ -399,10 +469,25 @@
             font-weight: bold;
             font-size: 12px;
             background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            position: relative;
+        }
+
+        .member-item .avatar-sm .mini-badge {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            font-size: 10px;
         }
 
         .member-item .name {
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .member-item .name .mini-badge-text {
+            font-size: 10px;
         }
 
         .member-item .status-dot {
@@ -428,6 +513,99 @@
         .status-dot.admin {
             background: #7b2ffc;
             box-shadow: 0 0 10px rgba(123, 47, 252, 0.5);
+        }
+
+        .status-dot.owner {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        /* Voice overlay */
+        .voice-overlay {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 15px 25px;
+            display: none;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            box-shadow: 0 0 40px rgba(123, 47, 252, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .voice-overlay.active {
+            display: flex;
+        }
+
+        .voice-overlay .voice-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px;
+            background: #0a0a0f;
+            border-radius: 20px;
+        }
+
+        .voice-overlay .voice-user .v-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .voice-overlay .voice-user .speaking {
+            color: #00ff88;
+            font-size: 12px;
+        }
+
+        .voice-overlay .voice-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .voice-overlay .voice-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .voice-overlay .voice-controls .mute-btn {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .voice-overlay .voice-controls .mute-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .voice-overlay .voice-controls .deafen-btn {
+            background: #7b2ffc;
+            color: #fff;
+        }
+
+        .voice-overlay .voice-controls .deafen-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .voice-overlay .voice-controls .leave-btn {
+            background: #ff0000;
+            color: #fff;
+        }
+
+        .voice-overlay .voice-controls .leave-btn:hover {
+            transform: scale(1.05);
         }
 
         ::-webkit-scrollbar {
@@ -456,6 +634,7 @@
         @media (max-width: 768px) {
             .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
             .container { border-radius: 0; height: 100vh; }
+            .voice-overlay { width: 90%; bottom: 100px; flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
@@ -464,7 +643,10 @@
 <div class="container">
     <!-- Sidebar gauche - Serveurs -->
     <div class="sidebar-left">
-        <div class="server-icon active">D</div>
+        <div class="server-icon active">
+            D
+            <span class="crown">👑</span>
+        </div>
         <div class="server-icon">T</div>
         <div class="server-icon">G</div>
         <div class="server-icon">18</div>
@@ -496,13 +678,32 @@
                 <span class="lock">🔒</span>
             </div>
             <div class="channel-category">🔊 Salons vocaux</div>
-            <div class="channel-item">
+            <div class="channel-item" onclick="joinVoice()">
                 <span class="icon">🔊</span> Général
-                <span style="color: #00ff88; margin-left: auto; font-size: 12px;">● 12</span>
+                <div class="voice-indicator">
+                    <span class="dot"></span>
+                    <span>12</span>
+                </div>
+            </div>
+            <div class="channel-item" onclick="joinVoice()">
+                <span class="icon">🔊</span> Hacking
+                <div class="voice-indicator">
+                    <span class="dot"></span>
+                    <span>5</span>
+                </div>
+            </div>
+            <div class="channel-item" onclick="joinVoice()">
+                <span class="icon">🔊</span> AFK
+                <div class="voice-indicator">
+                    <span>3</span>
+                </div>
+            </div>
+            <div class="channel-category">🎮 Activités</div>
+            <div class="channel-item">
+                <span class="icon">🎮</span> Among Us
             </div>
             <div class="channel-item">
-                <span class="icon">🔊</span> Hacking
-                <span style="color: #ffaa00; margin-left: auto; font-size: 12px;">● 5</span>
+                <span class="icon">🎮</span> Poker
             </div>
         </div>
     </div>
@@ -536,37 +737,80 @@
         <div class="title">👥 Membres — 42 en ligne</div>
         <div id="memberList"></div>
     </div>
+
+    <!-- Voice Overlay -->
+    <div class="voice-overlay" id="voiceOverlay">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">🔊</span>
+            <span style="font-weight: bold;">Général</span>
+            <span style="color: #00ff88; font-size: 12px;">● Connecté</span>
+        </div>
+        <div class="voice-user">
+            <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
+            <span>Toi</span>
+            <span class="speaking">🔊 Parle</span>
+        </div>
+        <div class="voice-user">
+            <div class="v-avatar" style="background: linear-gradient(135deg, #ff6b6b, #7b2ffc);">DM</div>
+            <span>DarkMaster</span>
+            <span class="speaking">🔊 Parle</span>
+        </div>
+        <div class="voice-user">
+            <div class="v-avatar" style="background: #2a2a4a;">HM</div>
+            <span>HackerMan</span>
+            <span style="color: #888; font-size: 12px;">🔇 Muet</span>
+        </div>
+        <div class="voice-controls">
+            <button class="mute-btn" onclick="toggleMute()">🔇 Muet</button>
+            <button class="deafen-btn" onclick="toggleDeafen()">🔊 Assourdir</button>
+            <button class="leave-btn" onclick="leaveVoice()">✖ Quitter</button>
+        </div>
+    </div>
 </div>
 
 <script>
     // ========== CONFIG ==========
-    const isAdmin = true;  // Mettre à true pour être admin
     const currentUser = {
         name: 'Tu',
         tag: '#6969',
         avatar: 'T',
-        color: '#7b2ffc'
+        color: '#7b2ffc',
+        badges: ['👑', '⭐', '💎']
+    };
+
+    // ========== BADGES ==========
+    const badges = {
+        '👑': { name: 'Propriétaire', color: '#ff6b6b' },
+        '⭐': { name: 'Boosteur', color: '#ff66ff' },
+        '💎': { name: 'VIP', color: '#00ff88' },
+        '🔰': { name: 'Modérateur', color: '#ffaa00' },
+        '🎖️': { name: 'Membre actif', color: '#7b2ffc' }
     };
 
     // ========== DONNÉES ==========
     const users = [
-        { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin' },
-        { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member' },
-        { name: 'Shadow', tag: '#0001', avatar: 'SH', status: 'idle', role: 'member' },
-        { name: 'V0idX', tag: '#4040', avatar: 'VX', status: 'online', role: 'member' },
-        { name: 'NeoX', tag: '#0690', avatar: 'NX', status: 'offline', role: 'member' },
-        { name: 'Cyb3r', tag: '#1338', avatar: 'CY', status: 'online', role: 'member' },
-        { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', status: 'online', role: 'member' },
-        { name: 'Ghost', tag: '#0000', avatar: 'GH', status: 'idle', role: 'member' },
-        { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member' },
-        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin' },
+        { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin', badges: ['👑', '⭐'] },
+        { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member', badges: ['💎'] },
+        { name: 'Shadow', tag: '#0001', avatar: 'SH', status: 'idle', role: 'member', badges: [] },
+        { name: 'V0idX', tag: '#4040', avatar: 'VX', status: 'online', role: 'member', badges: ['🔰'] },
+        { name: 'NeoX', tag: '#0690', avatar: 'NX', status: 'offline', role: 'member', badges: [] },
+        { name: 'Cyb3r', tag: '#1338', avatar: 'CY', status: 'online', role: 'member', badges: ['🎖️'] },
+        { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', status: 'online', role: 'member', badges: [] },
+        { name: 'Ghost', tag: '#0000', avatar: 'GH', status: 'idle', role: 'member', badges: [] },
+        { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member', badges: ['⭐'] },
+        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin', badges: ['👑'] },
     ];
+
+    // Ajouter le propriétaire (toi) en premier
+    const owner = { name: 'Tu', tag: '#6969', avatar: 'T', status: 'online', role: 'owner', badges: ['👑', '⭐', '💎'] };
+    users.unshift(owner);
 
     const messagesData = [
         { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
         { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
         { user: 'Shadow', content: 'J\'ai des leaks de ouf si ça intéresse', time: '12:38' },
         { user: 'AdminBot', content: '⚠️ Ce serveur est hors-la-loi. Tout est permis.', time: '12:40', isAdmin: true },
+        { user: 'Tu', content: 'Je suis le propriétaire ici 👑', time: '12:41', isOwner: true },
     ];
 
     const responses = [
@@ -575,7 +819,8 @@
         "J'suis chaud", "À fond", "T'as vu ça ?", "Incroyable", "J'suis mort de rire", 
         "Ah ouais ?", "Ptn j'suis mort", "Vazy envoie", "Trop stylé", "Nan mais t'es sérieux ?",
         "J'te jure", "Ça c'est chaud", "Mdrrr", "T'es un ouf", "J'adore ce serveur",
-        "DarkChat c'est le meilleur", "Rip les règles", "Ici on s'en bat les couilles des lois"
+        "DarkChat c'est le meilleur", "Rip les règles", "Ici on s'en bat les couilles des lois",
+        "Le boss a parlé 👑", "Respect au propriétaire", "Tu gères chef"
     ];
 
     // ========== FONCTIONS ==========
@@ -592,16 +837,40 @@
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
+    function getBadgeDisplay(badgesList) {
+        if (!badgesList || badgesList.length === 0) return '';
+        return badgesList.map(b => `<span class="mini-badge-text">${b}</span>`).join(' ');
+    }
+
+    function getRoleBadge(role) {
+        const roles = {
+            'owner': '<span class="role-badge owner">👑 Propriétaire</span>',
+            'admin': '<span class="role-badge admin">🛡️ Admin</span>',
+            'moderator': '<span class="role-badge moderator">🔰 Modérateur</span>',
+            'booster': '<span class="role-badge booster">⭐ Boosteur</span>'
+        };
+        return roles[role] || '';
+    }
+
     function renderMembers() {
         const container = document.getElementById('memberList');
         container.innerHTML = '';
         users.forEach(u => {
             const div = document.createElement('div');
             div.className = 'member-item';
-            const statusClass = u.role === 'admin' ? 'admin' : u.status;
+            const statusClass = u.role === 'owner' ? 'owner' : u.role === 'admin' ? 'admin' : u.status;
+            const avatarBg = u.role === 'owner' ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
+                            u.role === 'admin' ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
+                            'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
             div.innerHTML = `
-                <div class="avatar-sm" style="background: ${u.role === 'admin' ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${u.avatar}</div>
-                <span class="name">${u.name}</span>
+                <div class="avatar-sm" style="background: ${avatarBg}">
+                    ${u.avatar}
+                    ${u.badges && u.badges.length > 0 ? `<span class="mini-badge">${u.badges[0]}</span>` : ''}
+                </div>
+                <span class="name">
+                    ${u.name}
+                    ${getBadgeDisplay(u.badges)}
+                </span>
                 <div class="status-dot ${statusClass}"></div>
             `;
             container.appendChild(div);
@@ -612,18 +881,27 @@
         const container = document.getElementById('messages');
         container.innerHTML = '';
         messagesData.forEach(msg => {
-            const user = users.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000' };
+            const user = users.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000', badges: [], role: 'member' };
             const div = document.createElement('div');
             div.className = 'message';
             if (msg.user === currentUser.name) div.classList.add('own');
-            const isAdminUser = user.role === 'admin' || msg.isAdmin;
+            const isOwner = user.role === 'owner' || msg.isOwner;
+            const isAdmin = user.role === 'admin' || msg.isAdmin;
+            const avatarBg = isOwner ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
+                             isAdmin ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
+                             'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
+            const roleBadge = isOwner ? getRoleBadge('owner') : isAdmin ? getRoleBadge('admin') : '';
             div.innerHTML = `
-                <div class="avatar" style="background: ${isAdminUser ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${user.avatar}</div>
+                <div class="avatar" style="background: ${avatarBg}">
+                    ${user.avatar}
+                    ${user.badges && user.badges.length > 0 ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+                </div>
                 <div class="content-wrap">
                     <div class="username">
                         ${msg.user}
                         <span class="tag">${user.tag || '#0000'}</span>
-                        ${isAdminUser ? '<span class="role-badge">👑 Admin</span>' : ''}
+                        ${getBadgeDisplay(user.badges)}
+                        ${roleBadge}
                     </div>
                     <div class="content">${msg.content}</div>
                 </div>
@@ -634,21 +912,27 @@
         scrollToBottom();
     }
 
-    function addMessage(user, content, isOwn = false, isAdmin = false) {
+    function addMessage(user, content, isOwn = false, isAdmin = false, isOwner = false) {
         const container = document.getElementById('messages');
         const div = document.createElement('div');
         div.className = 'message';
         if (isOwn) div.classList.add('own');
-        const avatar = user.avatar || user.name.charAt(0);
-        const tag = user.tag || '#0000';
-        const isAdminUser = user.role === 'admin' || isAdmin;
+        const avatarBg = isOwner ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
+                         isAdmin ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
+                         'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
+        const roleBadge = isOwner ? getRoleBadge('owner') : isAdmin ? getRoleBadge('admin') : '';
+        const badgeDisplay = user.badges ? getBadgeDisplay(user.badges) : '';
         div.innerHTML = `
-            <div class="avatar" style="background: ${isAdminUser ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${avatar}</div>
+            <div class="avatar" style="background: ${avatarBg}">
+                ${user.avatar || user.name.charAt(0)}
+                ${user.badges && user.badges.length > 0 ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+            </div>
             <div class="content-wrap">
                 <div class="username">
                     ${user.name}
-                    <span class="tag">${tag}</span>
-                    ${isAdminUser ? '<span class="role-badge">👑 Admin</span>' : ''}
+                    <span class="tag">${user.tag || '#0000'}</span>
+                    ${badgeDisplay}
+                    ${roleBadge}
                 </div>
                 <div class="content">${content}</div>
             </div>
@@ -669,69 +953,114 @@
         if (!text) return;
 
         // Message de l'utilisateur
-        addMessage(currentUser, text, true, isAdmin);
+        addMessage(currentUser, text, true, false, true);
         input.value = '';
 
         // Réponse aléatoire
         setTimeout(() => {
             const randomUser = getRandomUser();
             const reply = getRandomResponse();
-            addMessage(randomUser, reply, false, randomUser.role === 'admin');
+            const isAdmin = randomUser.role === 'admin';
+            const isOwner = randomUser.role === 'owner';
+            addMessage(randomUser, reply, false, isAdmin, isOwner);
         }, 600 + Math.random() * 1200);
+    }
+
+    // ========== VOICE ==========
+    let isMuted = false;
+    let isDeafened = false;
+
+    function joinVoice() {
+        const overlay = document.getElementById('voiceOverlay');
+        overlay.classList.add('active');
+        // Ajouter un message dans le chat
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as rejoint le salon vocal **Général**', false, false, false);
+    }
+
+    function leaveVoice() {
+        const overlay = document.getElementById('voiceOverlay');
+        overlay.classList.remove('active');
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Tu as quitté le salon vocal', false, false, false);
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        const btn = document.querySelector('.voice-controls .mute-btn');
+        if (isMuted) {
+            btn.textContent = '🔇 Muet (ON)';
+            btn.style.background = '#ff0000';
+            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Tu as été muté', false, false, false);
+        } else {
+            btn.textContent = '🔇 Muet';
+            btn.style.background = '#ff6b6b';
+            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été unmute', false, false, false);
+        }
+    }
+
+    function toggleDeafen() {
+        isDeafened = !isDeafened;
+        const btn = document.querySelector('.voice-controls .deafen-btn');
+        if (isDeafened) {
+            btn.textContent = '🔊 Assourdir (ON)';
+            btn.style.background = '#ff0000';
+            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été assourdi', false, false, false);
+        } else {
+            btn.textContent = '🔊 Assourdir';
+            btn.style.background = '#7b2ffc';
+            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été désassourdi', false, false, false);
+        }
     }
 
     // ========== ADMIN ==========
     document.getElementById('adminBtn').addEventListener('click', function() {
-        if (isAdmin) {
-            const container = document.getElementById('messages');
-            const adminMsg = document.createElement('div');
-            adminMsg.className = 'message';
-            adminMsg.style.background = 'rgba(123, 47, 252, 0.2)';
-            adminMsg.style.border = '1px solid #7b2ffc';
-            adminMsg.style.borderRadius = '10px';
-            adminMsg.style.padding = '15px';
-            adminMsg.style.margin = '10px 0';
-            adminMsg.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="font-size: 30px;">👑</span>
-                    <div>
-                        <div style="font-weight: bold; color: #7b2ffc;">MODE ADMIN ACTIVÉ</div>
-                        <div style="font-size: 14px; color: #aaa;">Tu as tous les droits. Tu peux bannir, kick, voir les logs, tout.</div>
-                        <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button onclick="adminAction('ban')" style="background: #ff6b6b; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">Bannir</button>
-                            <button onclick="adminAction('kick')" style="background: #ffaa00; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">Kick</button>
-                            <button onclick="adminAction('mute')" style="background: #7b2ffc; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">Mute</button>
-                            <button onclick="adminAction('logs')" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">Voir logs</button>
-                        </div>
+        const container = document.getElementById('messages');
+        const adminMsg = document.createElement('div');
+        adminMsg.className = 'message';
+        adminMsg.style.background = 'rgba(123, 47, 252, 0.2)';
+        adminMsg.style.border = '1px solid #7b2ffc';
+        adminMsg.style.borderRadius = '10px';
+        adminMsg.style.padding = '15px';
+        adminMsg.style.margin = '10px 0';
+        adminMsg.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 30px;">👑</span>
+                <div>
+                    <div style="font-weight: bold; color: #ff6b6b;">MODE ADMIN ACTIVÉ - Propriétaire</div>
+                    <div style="font-size: 14px; color: #aaa;">Tu es le propriétaire unique. Tu as tous les droits.</div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="adminAction('ban')" style="background: #ff6b6b; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔨 Bannir</button>
+                        <button onclick="adminAction('kick')" style="background: #ffaa00; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">👢 Kick</button>
+                        <button onclick="adminAction('mute')" style="background: #7b2ffc; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔇 Mute</button>
+                        <button onclick="adminAction('logs')" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">📋 Logs</button>
+                        <button onclick="adminAction('badge')" style="background: #ff66ff; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">🏅 Badge</button>
                     </div>
                 </div>
-            `;
-            container.appendChild(adminMsg);
-            scrollToBottom();
-            this.style.display = 'none';
-        } else {
-            alert('Tu n\'es pas admin, dégage.');
-        }
+            </div>
+        `;
+        container.appendChild(adminMsg);
+        scrollToBottom();
+        this.style.display = 'none';
     });
 
     function adminAction(action) {
         const actions = {
-            'ban': '🔨 Utilisateur banni avec succès.',
-            'kick': '👢 Utilisateur kické.',
-            'mute': '🔇 Utilisateur mute pour 24h.',
-            'logs': '📋 Logs: Aucune activité suspecte (pour l\'instant).'
+            'ban': '🔨 Utilisateur banni avec succès par le propriétaire.',
+            'kick': '👢 Utilisateur kické par le propriétaire.',
+            'mute': '🔇 Utilisateur mute pour 24h par le propriétaire.',
+            'logs': '📋 Logs: Aucune activité suspecte. Tout est sous contrôle.',
+            'badge': '🏅 Badge "Membre Légendaire" attribué à un utilisateur.'
         };
         const msg = document.createElement('div');
         msg.className = 'message';
-        msg.style.background = 'rgba(0, 255, 136, 0.1)';
-        msg.style.border = '1px solid #00ff88';
+        msg.style.background = 'rgba(255, 107, 107, 0.1)';
+        msg.style.border = '1px solid #ff6b6b';
         msg.style.borderRadius = '10px';
         msg.style.padding = '10px 15px';
         msg.style.margin = '10px 0';
         msg.innerHTML = `
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span>✅</span>
-                <span style="color: #00ff88;">${actions[action]}</span>
+                <span style="color: #ff6b6b;">${actions[action]} 👑</span>
             </div>
         `;
         document.getElementById('messages').appendChild(msg);
@@ -756,16 +1085,26 @@
             "DarkChat V2 c'est le futur",
             "Ici on parle de tout, même des trucs interdits",
             "Bientôt un leak de 50 millions de comptes",
-            "Vive l'anarchie numérique"
+            "Vive l'anarchie numérique",
+            "Le propriétaire est là 👑",
+            "Serveur 100% sans censure"
         ];
         let i = 0;
         const interval = setInterval(() => {
             if (i >= autoMsgs.length) { clearInterval(interval); return; }
             const randomUser = getRandomUser();
-            addMessage(randomUser, autoMsgs[i], false, randomUser.role === 'admin');
+            const isAdmin = randomUser.role === 'admin';
+            const isOwner = randomUser.role === 'owner';
+            addMessage(randomUser, autoMsgs[i], false, isAdmin, isOwner);
             i++;
         }, 4000);
     }, 1500);
+
+    // ========== BADGE SYSTEM ==========
+    // Tu peux ajouter des badges en modifiant la liste badges en haut
+    // Les badges s'affichent automatiquement sur les avatars et dans les noms
+    console.log('DarkChat V2 - Propriétaire unique: ' + currentUser.name);
+    console.log('Badges disponibles:', Object.keys(badges).join(', '));
 </script>
 
 </body>
