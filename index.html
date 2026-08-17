@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DarkChat - Système de Profil Discord</title>
+    <!-- PEERJS POUR LE VOCAL -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -214,6 +216,24 @@
 
         .channel-item .icon { font-size: 16px; }
         .channel-item .lock { margin-left: auto; font-size: 11px; color: #ff6b6b; }
+        .channel-item .voice-indicator {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        .channel-item .voice-indicator .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
 
         /* Chat principal */
         .main-chat {
@@ -256,6 +276,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         .chat-header .right .online {
@@ -298,6 +319,14 @@
         .chat-header .right .admin-badge:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
+        }
+
+        .chat-header .right .my-id {
+            font-size: 11px;
+            color: #666;
+            padding: 3px 10px;
+            background: #0a0a0f;
+            border-radius: 12px;
         }
 
         /* Messages */
@@ -772,7 +801,7 @@
 
         .file-input-hidden { display: none; }
 
-        /* Voice Overlay */
+        /* ===== VOICE OVERLAY ===== */
         .voice-overlay {
             position: absolute;
             bottom: 85px;
@@ -795,6 +824,58 @@
 
         .voice-overlay.active { display: flex; }
 
+        .voice-overlay .voice-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .voice-overlay .voice-info .channel-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .voice-overlay .voice-info .status-text {
+            color: #00ff88;
+            font-size: 12px;
+        }
+
+        .voice-overlay .voice-users-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .voice-overlay .voice-users-list .v-user {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px 3px 6px;
+            background: #0a0a0f;
+            border-radius: 16px;
+            font-size: 12px;
+        }
+
+        .voice-overlay .voice-users-list .v-user .v-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .voice-overlay .voice-users-list .v-user .speaking {
+            color: #00ff88;
+            font-size: 10px;
+            animation: pulse 1s infinite;
+        }
+
         .voice-overlay .voice-controls {
             display: flex;
             gap: 6px;
@@ -815,6 +896,7 @@
         .voice-overlay .voice-controls .mute-btn { background: #ff6b6b; color: #fff; }
         .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
         .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
+        .voice-overlay .voice-controls .join-btn { background: #00ff88; color: #000; }
 
         /* Responsive */
         @media (max-width: 1100px) { .sidebar-right { display: none; } }
@@ -857,6 +939,7 @@
             </div>
             <div class="right">
                 <span class="online" id="onlineCount">🟢 42 en ligne</span>
+                <span class="my-id" id="myIdDisplay">ID: ...</span>
                 <span class="profile-btn" onclick="openProfile('tu')">👤 Profil</span>
                 <span class="admin-badge" id="adminBtn">👑 Admin</span>
             </div>
@@ -877,12 +960,19 @@
         <div class="member-list" id="memberList"></div>
     </div>
 
-    <!-- Voice Overlay -->
+    <!-- ===== VOICE OVERLAY ===== -->
     <div class="voice-overlay" id="voiceOverlay">
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div class="voice-info">
             <span style="font-size:18px;">🔊</span>
-            <span style="font-weight:bold;" id="voiceChannelName">Général</span>
-            <span style="color:#00ff88;font-size:12px;">● Connecté</span>
+            <span class="channel-name" id="voiceChannelName">Général</span>
+            <span class="status-text">● Connecté</span>
+        </div>
+        <div class="voice-users-list" id="voiceUsersList">
+            <div class="v-user">
+                <div class="v-avatar" style="background:linear-gradient(135deg,#7b2ffc,#5a1fa8);">T</div>
+                <span>Toi</span>
+                <span class="speaking">🔊</span>
+            </div>
         </div>
         <div class="voice-controls">
             <button class="mute-btn" onclick="toggleMute()">🔇 Muet</button>
@@ -992,8 +1082,8 @@
                     { id: 'leaks', name: 'leaks-db', topic: '📂 Database & Leaks', icon: '#', locked: true }
                 ],
                 voice: [
-                    { id: 'general-vc', name: 'Général', icon: '🔊', users: 12 },
-                    { id: 'hacking-vc', name: 'Hacking', icon: '🔊', users: 5 }
+                    { id: 'general-vc', name: 'Général', icon: '🔊' },
+                    { id: 'hacking-vc', name: 'Hacking', icon: '🔊' }
                 ]
             }
         },
@@ -1007,7 +1097,7 @@
                     { id: 'dev', name: 'dev', topic: '👨‍💻 Code', icon: '#', locked: true }
                 ],
                 voice: [
-                    { id: 'tech-vc', name: 'Tech Voice', icon: '🔊', users: 4 }
+                    { id: 'tech-vc', name: 'Tech Voice', icon: '🔊' }
                 ]
             }
         },
@@ -1021,7 +1111,7 @@
                     { id: 'fortnite', name: 'fortnite', topic: '🔫 Fortnite', icon: '#', locked: true }
                 ],
                 voice: [
-                    { id: 'game-vc', name: 'Game Voice', icon: '🔊', users: 8 }
+                    { id: 'game-vc', name: 'Game Voice', icon: '🔊' }
                 ]
             }
         }
@@ -1075,13 +1165,230 @@
     ];
 
     // ============================================================
-    //  ÉTAT
+    //  PEERJS - VOCAL PUBLIC
     // ============================================================
-    let currentServer = 'darkchat';
-    let currentChannel = 'general';
+    let peer = null;
+    let localStream = null;
+    let remoteStreams = {};
+    let calls = {};
+    let inVoice = false;
     let currentVoiceChannel = null;
     let isMuted = false;
     let isDeafened = false;
+    let myId = '';
+    let voiceUsers = [];
+
+    function initPeer() {
+        peer = new Peer(undefined, {
+            debug: 0
+        });
+
+        peer.on('open', (id) => {
+            myId = id;
+            document.getElementById('myIdDisplay').textContent = 'ID: ' + id;
+            addMessage('Système', '✅ Connecté avec l\'ID: ' + id);
+            addMessage('Système', '📞 Partage ton ID pour les appels vocaux');
+        });
+
+        peer.on('error', (err) => {
+            console.error(err);
+            addMessage('Système', '❌ Erreur PeerJS: ' + err.message);
+        });
+
+        peer.on('call', (incomingCall) => {
+            if (inVoice) {
+                acceptCall(incomingCall);
+            } else {
+                incomingCall.close();
+            }
+        });
+
+        peer.on('close', () => {
+            addMessage('Système', '🔴 Déconnecté de PeerJS');
+            leaveVoice();
+        });
+    }
+
+    // ============================================================
+    //  VOICE - REJOINDRE UN SALON
+    // ============================================================
+    function joinVoice(channelId) {
+        if (!peer) {
+            initPeer();
+            setTimeout(() => joinVoice(channelId), 500);
+            return;
+        }
+
+        if (inVoice && currentVoiceChannel === channelId) {
+            addMessage('Système', '🔊 Déjà dans ce salon vocal');
+            return;
+        }
+
+        if (inVoice) {
+            leaveVoice();
+        }
+
+        currentVoiceChannel = channelId;
+        inVoice = true;
+
+        const server = SERVERS[currentServer];
+        let channelName = channelId;
+        if (server) {
+            const ch = server.channels.voice.find(c => c.id === channelId);
+            if (ch) channelName = ch.name;
+        }
+
+        const overlay = document.getElementById('voiceOverlay');
+        overlay.classList.add('active');
+        document.getElementById('voiceChannelName').textContent = channelName;
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            .then(stream => {
+                localStream = stream;
+                updateVoiceUsers();
+                addMessage('Système', `🔊 Rejoint le salon vocal **${channelName}**`);
+                
+                // Broadcast aux autres utilisateurs du salon
+                // On simule des utilisateurs pour l'exemple
+                const fakeIds = ['peer-abc123', 'peer-def456', 'peer-ghi789'];
+                fakeIds.forEach((id, index) => {
+                    setTimeout(() => {
+                        if (inVoice && !voiceUsers.includes(id) && id !== myId) {
+                            voiceUsers.push(id);
+                            updateVoiceUsers();
+                            addMessage('Système', `👤 ${id.substring(0,6)} a rejoint le vocal`);
+                            // Simuler un appel
+                            if (localStream && peer) {
+                                // En vrai on appellerait le peer
+                            }
+                        }
+                    }, 2000 + index * 3000);
+                });
+            })
+            .catch(err => {
+                addMessage('Système', '❌ Erreur micro: ' + err.message);
+                inVoice = false;
+                overlay.classList.remove('active');
+            });
+    }
+
+    function leaveVoice() {
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+        }
+        Object.keys(calls).forEach(key => {
+            if (calls[key]) {
+                calls[key].close();
+                delete calls[key];
+            }
+        });
+        remoteStreams = {};
+        voiceUsers = [];
+        inVoice = false;
+        currentVoiceChannel = null;
+        document.getElementById('voiceOverlay').classList.remove('active');
+        updateVoiceUsers();
+        addMessage('Système', '🔇 Quitté le salon vocal');
+    }
+
+    function acceptCall(incomingCall) {
+        if (!localStream) {
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(stream => {
+                    localStream = stream;
+                    incomingCall.answer(stream);
+                    setupCall(incomingCall);
+                })
+                .catch(e => {
+                    addMessage('Système', '❌ Erreur micro: ' + e.message);
+                });
+        } else {
+            incomingCall.answer(localStream);
+            setupCall(incomingCall);
+        }
+    }
+
+    function setupCall(callObj) {
+        const peerId = callObj.peer;
+        calls[peerId] = callObj;
+        if (!voiceUsers.includes(peerId)) voiceUsers.push(peerId);
+        updateVoiceUsers();
+
+        callObj.on('stream', (stream) => {
+            remoteStreams[peerId] = stream;
+            const audio = new Audio();
+            audio.srcObject = stream;
+            audio.play().catch(e => console.log(e));
+            addMessage('Système', `🔊 Connecté à **${peerId.substring(0,6)}**`);
+            updateVoiceUsers();
+        });
+
+        callObj.on('close', () => {
+            addMessage('Système', `🔇 Déconnecté de ${peerId.substring(0,6)}`);
+            delete calls[peerId];
+            delete remoteStreams[peerId];
+            voiceUsers = voiceUsers.filter(p => p !== peerId);
+            updateVoiceUsers();
+        });
+
+        callObj.on('error', (err) => {
+            console.error(err);
+            delete calls[peerId];
+            voiceUsers = voiceUsers.filter(p => p !== peerId);
+            updateVoiceUsers();
+        });
+    }
+
+    function updateVoiceUsers() {
+        const container = document.getElementById('voiceUsersList');
+        container.innerHTML = '';
+        
+        const self = document.createElement('div');
+        self.className = 'v-user';
+        const avatarStyle = currentUser.avatarFile ? `background-image: url('${currentUser.avatarFile}'); background-size: cover; background-position: center;` : 'background:linear-gradient(135deg,#7b2ffc,#5a1fa8);';
+        self.innerHTML = `
+            <div class="v-avatar" style="${avatarStyle}">${!currentUser.avatarFile ? 'T' : ''}</div>
+            <span>Toi</span>
+            <span class="speaking">🔊</span>
+        `;
+        container.appendChild(self);
+
+        voiceUsers.forEach(id => {
+            if (id === myId) return;
+            const div = document.createElement('div');
+            div.className = 'v-user';
+            const isSpeaking = remoteStreams[id] ? true : false;
+            div.innerHTML = `
+                <div class="v-avatar" style="background:linear-gradient(135deg,#ff6b6b,#7b2ffc);">${id.substring(0,2)}</div>
+                <span>${id.substring(0,6)}</span>
+                ${isSpeaking ? '<span class="speaking">🔊</span>' : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        const btn = document.querySelector('.voice-controls .mute-btn');
+        btn.textContent = isMuted ? '🔇 Muet (ON)' : '🔇 Muet';
+        btn.style.background = isMuted ? '#ff0000' : '#ff6b6b';
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.enabled = !isMuted);
+        }
+        addMessage('Système', isMuted ? '🔇 Micro coupé' : '🔊 Micro réactivé');
+    }
+
+    function toggleDeafen() {
+        isDeafened = !isDeafened;
+        const btn = document.querySelector('.voice-controls .deafen-btn');
+        btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
+        btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
+        Object.values(remoteStreams).forEach(stream => {
+            stream.getTracks().forEach(t => t.enabled = !isDeafened);
+        });
+        addMessage('Système', isDeafened ? '🔊 Assourdi' : '🔊 Désassourdi');
+    }
 
     // ============================================================
     //  UTILS
@@ -1186,10 +1493,14 @@
                 const div = document.createElement('div');
                 div.className = 'channel-item' + (ch.id === currentChannel && cat.key === 'text' ? ' active' : '');
                 if (cat.key === 'voice') {
+                    const isActive = inVoice && currentVoiceChannel === ch.id;
                     div.innerHTML = `
                         <span class="icon">${ch.icon}</span>
                         ${ch.name}
-                        <span style="margin-left:auto;font-size:12px;">${ch.users}</span>
+                        <span class="voice-indicator">
+                            ${isActive ? '<span class="dot"></span>' : ''}
+                            ${isActive ? '●' : ''}
+                        </span>
                     `;
                     div.onclick = () => joinVoice(ch.id);
                 } else {
@@ -1318,6 +1629,8 @@
         }
         renderServers();
         renderMembers();
+        // Quitter le vocal si on change de serveur
+        if (inVoice) leaveVoice();
     }
 
     function switchChannel(id) {
@@ -1359,45 +1672,11 @@
             owner: true,
             channels: {
                 text: [{ id: 'gen', name: 'général', topic: '📌 Nouveau serveur', icon: '#' }],
-                voice: [{ id: 'vc', name: 'Général', icon: '🔊', users: 0 }]
+                voice: [{ id: 'vc', name: 'Général', icon: '🔊' }]
             }
         };
         renderServers();
         switchServer(id);
-    }
-
-    // ============================================================
-    //  VOICE
-    // ============================================================
-    function joinVoice(id) {
-        const server = SERVERS[currentServer];
-        if (!server) return;
-        const ch = server.channels.voice.find(c => c.id === id);
-        if (!ch) return;
-        currentVoiceChannel = id;
-        document.getElementById('voiceOverlay').classList.add('active');
-        document.getElementById('voiceChannelName').textContent = ch.name;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `🔊 Rejoint **${ch.name}** (${ch.users} users)`, false, false, false);
-    }
-
-    function leaveVoice() {
-        document.getElementById('voiceOverlay').classList.remove('active');
-        currentVoiceChannel = null;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, '🔇 Quitté le vocal', false, false, false);
-    }
-
-    function toggleMute() {
-        isMuted = !isMuted;
-        const btn = document.querySelector('.voice-controls .mute-btn');
-        btn.textContent = isMuted ? '🔇 Muet (ON)' : '🔇 Muet';
-        btn.style.background = isMuted ? '#ff0000' : '#ff6b6b';
-    }
-
-    function toggleDeafen() {
-        isDeafened = !isDeafened;
-        const btn = document.querySelector('.voice-controls .deafen-btn');
-        btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
-        btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
     }
 
     // ============================================================
@@ -1420,7 +1699,6 @@
         const modal = document.getElementById('profileModal');
         modal.classList.add('active');
 
-        // Avatar
         const avatarEl = document.getElementById('profileAvatar');
         const avatarText = document.getElementById('profileAvatarText');
         if (user.avatarFile) {
@@ -1434,13 +1712,11 @@
             avatarText.textContent = user.avatar || user.name.charAt(0);
         }
 
-        // Infos
         document.getElementById('profileName').textContent = user.name;
         document.getElementById('profileTag').textContent = user.tag || '#0000';
         document.getElementById('profileStatus').textContent = getStatusText(user.status || 'online');
         document.getElementById('profileStatus').className = 'status-text ' + (user.status || 'online');
 
-        // Badges
         const badgesContainer = document.getElementById('profileBadges');
         badgesContainer.innerHTML = '';
         if (user.badges && user.badges.length) {
@@ -1453,13 +1729,11 @@
             });
         }
 
-        // Stats
         document.getElementById('profileRole').textContent = getRoleName(user.role || 'member');
         document.getElementById('profileSince').textContent = user.since || 'Aujourd\'hui';
         document.getElementById('profileMessages').textContent = user.messages || 0;
         document.getElementById('profileVoice').textContent = user.voiceTime || '0h 0m';
 
-        // Edition (seulement pour le proprio)
         const editSection = document.getElementById('editSection');
         if (user.name === currentUser.name) {
             editSection.style.display = 'block';
@@ -1483,14 +1757,12 @@
         currentUser.name = newName;
         if (newTag) currentUser.tag = newTag.startsWith('#') ? newTag : '#' + newTag;
         
-        // Mettre à jour dans USERS
         const userIndex = USERS.findIndex(u => u.name === oldName);
         if (userIndex !== -1) {
             USERS[userIndex].name = newName;
             USERS[userIndex].tag = currentUser.tag;
         }
         
-        // Mettre à jour dans MESSAGES
         MESSAGES.forEach(msg => {
             if (msg.user === oldName) msg.user = newName;
         });
@@ -1620,9 +1892,13 @@
         if (e.target === this) closeProfile();
     });
 
-    console.log('🔥 DarkChat — Profil style Discord');
+    // Initialiser PeerJS
+    initPeer();
+
+    console.log('🔥 DarkChat — Profil + Vocal Public');
     console.log('👑 Propriétaire: ' + currentUser.name);
     console.log('📸 Clique sur l\'avatar dans le profil pour changer ta PP');
+    console.log('🔊 Clique sur un salon vocal pour parler !');
 </script>
 
 </body>
