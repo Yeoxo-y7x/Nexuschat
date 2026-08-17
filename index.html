@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkChat V2 - Discord Killer</title>
+    <title>DarkChat Ultimate - Discord Killer v3</title>
     <style>
         * {
             margin: 0;
@@ -24,14 +24,15 @@
 
         .container {
             width: 100%;
-            max-width: 1500px;
+            max-width: 1600px;
             height: 98vh;
             background: #1a1a2e;
             border-radius: 20px;
             display: flex;
             overflow: hidden;
-            box-shadow: 0 0 60px rgba(123, 47, 252, 0.4);
+            box-shadow: 0 0 80px rgba(123, 47, 252, 0.5);
             position: relative;
+            border: 1px solid #2a2a4a;
         }
 
         /* Sidebar gauche - Serveurs */
@@ -42,60 +43,104 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             border-right: 1px solid #2a2a4a;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
+        .sidebar-left::-webkit-scrollbar { width: 3px; }
+        .sidebar-left::-webkit-scrollbar-thumb { background: #7b2ffc; border-radius: 10px; }
+
         .server-icon {
-            width: 55px;
-            height: 55px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            background: linear-gradient(135deg, #2a2a4a, #1a1a2e);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
             border: 3px solid transparent;
             position: relative;
             flex-shrink: 0;
+            color: #aaa;
         }
 
         .server-icon:hover {
             border-color: #7b2ffc;
             transform: scale(1.1);
             border-radius: 16px;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+            color: #fff;
         }
 
         .server-icon.active {
             border-color: #7b2ffc;
             border-radius: 16px;
-        }
-
-        .server-icon .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff6b6b;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             color: #fff;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
         }
 
         .server-icon .crown {
             position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 18px;
+            top: -12px;
+            right: -8px;
+            font-size: 16px;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        .server-icon .notif {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #12121f;
+        }
+
+        .server-divider {
+            width: 35px;
+            height: 2px;
+            background: #2a2a4a;
+            border-radius: 1px;
+        }
+
+        .server-add {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px dashed #2a2a4a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2a2a4a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .server-add:hover {
+            border-color: #7b2ffc;
+            color: #7b2ffc;
+            transform: scale(1.05);
         }
 
         /* Sidebar serveurs */
         .sidebar-servers {
-            width: 240px;
+            width: 250px;
             background: #16162a;
             padding: 20px;
             border-right: 1px solid #2a2a4a;
@@ -103,52 +148,82 @@
             flex-direction: column;
         }
 
-        .server-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 20px;
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding-bottom: 15px;
             border-bottom: 1px solid #2a2a4a;
+            margin-bottom: 15px;
+        }
+
+        .server-header .name {
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .server-header .name:hover { color: #7b2ffc; }
+
+        .server-header .arrow {
+            color: #888;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .server-header .arrow.open { transform: rotate(180deg); }
+
+        .channel-search {
+            padding: 8px 14px;
+            background: #0a0a0f;
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .channel-search::placeholder { color: #555; }
+
+        .channel-list {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .channel-list::-webkit-scrollbar { width: 4px; }
+        .channel-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
+
+        .channel-category {
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 15px 0 6px;
+            padding-left: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
         }
 
-        .server-name .arrow {
-            color: #888;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .server-name .arrow.open {
-            transform: rotate(180deg);
-        }
-
-        .channel-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .channel-category {
-            color: #888;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 15px 0 8px;
-        }
+        .channel-category:hover { color: #aaa; }
 
         .channel-item {
-            padding: 8px 12px;
+            padding: 7px 12px;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #aaa;
-            font-size: 15px;
+            color: #888;
+            font-size: 14px;
+            margin: 1px 0;
         }
 
         .channel-item:hover {
@@ -161,32 +236,22 @@
             color: #fff;
         }
 
-        .channel-item .icon {
-            font-size: 18px;
-        }
-
-        .channel-item .lock {
+        .channel-item .icon { font-size: 16px; }
+        .channel-item .lock { margin-left: auto; font-size: 11px; color: #ff6b6b; }
+        .channel-item .voice-count {
             margin-left: auto;
             font-size: 12px;
-            color: #ff6b6b;
-        }
-
-        .channel-item .voice-indicator {
-            margin-left: auto;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 12px;
+            gap: 5px;
         }
-
-        .channel-item .voice-indicator .dot {
-            width: 8px;
-            height: 8px;
+        .channel-item .voice-count .dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #00ff88;
             animation: pulse 1.5s infinite;
         }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
@@ -201,46 +266,49 @@
         }
 
         .chat-header {
-            padding: 15px 20px;
+            padding: 12px 20px;
             background: #16162a;
             border-bottom: 1px solid #2a2a4a;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 60px;
+            min-height: 55px;
         }
 
         .chat-header .left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .chat-header .left h2 {
-            font-size: 18px;
+            font-size: 17px;
             color: #fff;
         }
 
         .chat-header .left .topic {
-            color: #888;
-            font-size: 13px;
+            color: #666;
+            font-size: 12px;
+            padding: 2px 10px;
+            background: #0a0a0f;
+            border-radius: 12px;
         }
 
         .chat-header .right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .chat-header .right .online {
             color: #00ff88;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .chat-header .right .admin-badge {
-            background: #7b2ffc;
-            padding: 4px 12px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+            padding: 4px 14px;
+            border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
@@ -248,168 +316,148 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            border: 1px solid rgba(123, 47, 252, 0.3);
         }
 
         .chat-header .right .admin-badge:hover {
-            background: #ff6b6b;
             transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
         }
 
+        /* Messages */
         .messages {
             flex: 1;
-            padding: 20px;
+            padding: 15px 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 3px;
         }
+
+        .messages::-webkit-scrollbar { width: 5px; }
+        .messages::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
 
         .message {
-            padding: 8px 16px;
+            padding: 5px 12px;
             border-radius: 8px;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.25s ease;
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            transition: 0.2s;
+            gap: 10px;
+            transition: 0.15s;
         }
 
-        .message:hover {
-            background: #1f1f3a;
-        }
+        .message:hover { background: #1a1a2e; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .message .avatar {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
-            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            font-size: 13px;
             position: relative;
         }
 
         .message .avatar .badge-icon {
             position: absolute;
-            bottom: -5px;
-            right: -5px;
-            font-size: 14px;
+            bottom: -4px;
+            right: -4px;
+            font-size: 12px;
         }
 
-        .message .content-wrap {
-            flex: 1;
-        }
+        .message .content-wrap { flex: 1; min-width: 0; }
 
         .message .username {
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .message .username .tag {
-            font-size: 11px;
-            color: #888;
+            font-size: 10px;
+            color: #666;
             font-weight: normal;
         }
 
         .message .username .role-badge {
-            font-size: 10px;
-            padding: 1px 8px;
-            border-radius: 10px;
-            background: #7b2ffc;
-            color: #fff;
+            font-size: 9px;
+            padding: 1px 7px;
+            border-radius: 8px;
+            font-weight: bold;
         }
 
-        .message .username .role-badge.owner {
-            background: #ff6b6b;
-            color: #fff;
-        }
-
-        .message .username .role-badge.admin {
-            background: #7b2ffc;
-            color: #fff;
-        }
-
-        .message .username .role-badge.moderator {
-            background: #ffaa00;
-            color: #000;
-        }
-
-        .message .username .role-badge.booster {
-            background: #ff66ff;
-            color: #fff;
-        }
+        .role-badge.owner { background: #ff6b6b; color: #fff; }
+        .role-badge.admin { background: #7b2ffc; color: #fff; }
+        .role-badge.moderator { background: #ffaa00; color: #000; }
+        .role-badge.booster { background: #ff66ff; color: #fff; }
 
         .message .content {
-            font-size: 15px;
+            font-size: 14px;
             word-wrap: break-word;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .message .time {
-            font-size: 11px;
-            color: #555;
-            margin-left: 10px;
+            font-size: 10px;
+            color: #444;
+            margin-left: 8px;
             flex-shrink: 0;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .message.own .content-wrap {
             background: #2a2a4a;
-            padding: 8px 14px;
+            padding: 6px 14px;
             border-radius: 12px;
         }
 
         /* Input */
         .input-area {
-            padding: 15px 20px;
+            padding: 12px 20px;
             background: #16162a;
             border-top: 1px solid #2a2a4a;
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
         .input-area .emoji-btn {
-            font-size: 22px;
+            font-size: 20px;
             cursor: pointer;
-            color: #888;
-            transition: 0.3s;
+            color: #555;
+            transition: 0.2s;
+            padding: 5px;
         }
-
-        .input-area .emoji-btn:hover {
-            color: #fff;
-        }
+        .input-area .emoji-btn:hover { color: #fff; }
 
         .input-area input {
             flex: 1;
-            padding: 12px 20px;
+            padding: 10px 18px;
             background: #0a0a0f;
             border: none;
             border-radius: 25px;
             color: #fff;
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             transition: 0.3s;
         }
 
-        .input-area input:focus {
-            box-shadow: 0 0 20px rgba(123, 47, 252, 0.2);
-        }
+        .input-area input:focus { box-shadow: 0 0 20px rgba(123, 47, 252, 0.15); }
 
         .input-area button {
-            padding: 10px 28px;
+            padding: 10px 24px;
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             border: none;
             border-radius: 25px;
@@ -417,56 +465,64 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .input-area button:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(123, 47, 252, 0.4);
+            box-shadow: 0 0 30px rgba(123, 47, 252, 0.3);
         }
 
         /* Sidebar droit - Membres */
         .sidebar-right {
-            width: 250px;
+            width: 240px;
             background: #16162a;
             border-left: 1px solid #2a2a4a;
-            padding: 20px;
+            padding: 15px 15px;
             display: flex;
             flex-direction: column;
         }
 
         .sidebar-right .title {
             color: #888;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
         }
+
+        .member-list {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .member-list::-webkit-scrollbar { width: 4px; }
+        .member-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
 
         .member-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 8px 10px;
-            border-radius: 8px;
-            transition: 0.3s;
+            gap: 10px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: 0.15s;
             cursor: pointer;
         }
 
-        .member-item:hover {
-            background: #1f1f3a;
-        }
+        .member-item:hover { background: #1a1a2e; }
 
         .member-item .avatar-sm {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 12px;
-            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            font-size: 11px;
             position: relative;
         }
 
@@ -474,198 +530,159 @@
             position: absolute;
             bottom: -3px;
             right: -3px;
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .member-item .name {
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 4px;
-        }
-
-        .member-item .name .mini-badge-text {
-            font-size: 10px;
+            gap: 3px;
+            flex: 1;
         }
 
         .member-item .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            margin-left: auto;
+            flex-shrink: 0;
         }
 
-        .status-dot.online {
-            background: #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
+        .status-dot.online { background: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+        .status-dot.idle { background: #ffaa00; }
+        .status-dot.offline { background: #444; }
+        .status-dot.admin { background: #7b2ffc; box-shadow: 0 0 8px rgba(123,47,252,0.4); }
+        .status-dot.owner { background: #ff6b6b; box-shadow: 0 0 8px rgba(255,107,107,0.4); }
 
-        .status-dot.idle {
-            background: #ffaa00;
-        }
-
-        .status-dot.offline {
-            background: #444;
-        }
-
-        .status-dot.admin {
-            background: #7b2ffc;
-            box-shadow: 0 0 10px rgba(123, 47, 252, 0.5);
-        }
-
-        .status-dot.owner {
-            background: #ff6b6b;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
-        }
-
-        /* Voice overlay */
+        /* Voice Overlay */
         .voice-overlay {
             position: absolute;
-            bottom: 80px;
+            bottom: 85px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1a1a2e;
+            background: rgba(26, 26, 46, 0.95);
             border: 1px solid #2a2a4a;
             border-radius: 16px;
-            padding: 15px 25px;
+            padding: 12px 22px;
             display: none;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             z-index: 100;
-            box-shadow: 0 0 40px rgba(123, 47, 252, 0.3);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(123, 47, 252, 0.25);
+            backdrop-filter: blur(15px);
             flex-wrap: wrap;
             justify-content: center;
+            max-width: 95%;
         }
 
-        .voice-overlay.active {
+        .voice-overlay.active { display: flex; }
+
+        .voice-overlay .voice-info {
             display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-overlay .voice-info .channel-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .voice-overlay .voice-info .status-text {
+            color: #00ff88;
+            font-size: 12px;
+        }
+
+        .voice-overlay .voice-users {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .voice-overlay .voice-user {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 5px 12px;
+            gap: 6px;
+            padding: 3px 10px 3px 6px;
             background: #0a0a0f;
-            border-radius: 20px;
+            border-radius: 16px;
+            font-size: 12px;
         }
 
         .voice-overlay .voice-user .v-avatar {
-            width: 28px;
-            height: 28px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
         }
 
         .voice-overlay .voice-user .speaking {
             color: #00ff88;
-            font-size: 12px;
+            font-size: 10px;
             animation: pulse 1s infinite;
         }
 
         .voice-overlay .voice-controls {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .voice-overlay .voice-controls button {
-            padding: 8px 16px;
+            padding: 5px 12px;
             border: none;
-            border-radius: 20px;
+            border-radius: 14px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
-            font-size: 12px;
+            transition: 0.2s;
+            font-size: 11px;
         }
 
-        .voice-overlay .voice-controls .mute-btn {
-            background: #ff6b6b;
-            color: #fff;
-        }
+        .voice-overlay .voice-controls button:hover { transform: scale(1.05); }
+        .voice-overlay .voice-controls .mute-btn { background: #ff6b6b; color: #fff; }
+        .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
+        .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
 
-        .voice-overlay .voice-controls .mute-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .voice-overlay .voice-controls .deafen-btn {
-            background: #7b2ffc;
-            color: #fff;
-        }
-
-        .voice-overlay .voice-controls .deafen-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .voice-overlay .voice-controls .leave-btn {
-            background: #ff0000;
-            color: #fff;
-        }
-
-        .voice-overlay .voice-controls .leave-btn:hover {
-            transform: scale(1.05);
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0a0a0f;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #2a2a4a;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #7b2ffc;
-        }
-
-        @media (max-width: 1024px) {
+        /* Responsive */
+        @media (max-width: 1100px) { .sidebar-right { display: none; } }
+        @media (max-width: 800px) {
             .sidebar-left { width: 60px; }
             .sidebar-servers { width: 180px; }
-            .sidebar-right { display: none; }
+            .chat-header .left .topic { display: none; }
         }
-
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
             .container { border-radius: 0; height: 100vh; }
-            .voice-overlay { width: 90%; bottom: 100px; }
+            .voice-overlay { width: 95%; bottom: 80px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Sidebar gauche - Serveurs -->
-    <div class="sidebar-left" id="serverList">
-        <!-- Généré par JS -->
-    </div>
+    <!-- Sidebar gauche -->
+    <div class="sidebar-left" id="serverList"></div>
 
     <!-- Sidebar serveurs -->
     <div class="sidebar-servers">
-        <div class="server-name" id="currentServerName">
-            DarkChat V2
-            <span class="arrow" id="serverArrow">▼</span>
+        <div class="server-header">
+            <div class="name" id="serverName">DarkChat <span style="font-size:12px;color:#888;">▼</span></div>
+            <span style="color:#555;font-size:12px;">⚡</span>
         </div>
-        <div class="channel-list" id="channelList">
-            <!-- Généré par JS -->
-        </div>
+        <input class="channel-search" placeholder="🔍 Rechercher un salon..." id="channelSearch" oninput="filterChannels(this.value)">
+        <div class="channel-list" id="channelList"></div>
     </div>
 
     <!-- Chat principal -->
     <div class="main-chat">
         <div class="chat-header">
             <div class="left">
-                <h2 id="currentChannelName"># général</h2>
-                <span class="topic" id="currentChannelTopic">📍 Le hub principal - Pas de limites</span>
+                <h2 id="channelName"># général</h2>
+                <span class="topic" id="channelTopic">📍 Hub principal</span>
             </div>
             <div class="right">
                 <span class="online" id="onlineCount">🟢 42 en ligne</span>
@@ -673,37 +690,29 @@
             </div>
         </div>
 
-        <div class="messages" id="messages">
-            <!-- Messages chargés par JS -->
-        </div>
+        <div class="messages" id="messages"></div>
 
         <div class="input-area">
             <span class="emoji-btn">😊</span>
-            <input type="text" id="messageInput" placeholder="Écris ton message... (aucune censure)">
+            <input type="text" id="messageInput" placeholder="Message... (aucune censure)">
             <button onclick="sendMessage()">Envoyer</button>
         </div>
     </div>
 
-    <!-- Sidebar droit - Membres -->
+    <!-- Sidebar droit -->
     <div class="sidebar-right">
-        <div class="title">👥 Membres — <span id="memberCount">42</span> en ligne</div>
-        <div id="memberList"></div>
+        <div class="title">👥 En ligne — <span id="memberCount">42</span></div>
+        <div class="member-list" id="memberList"></div>
     </div>
 
     <!-- Voice Overlay -->
     <div class="voice-overlay" id="voiceOverlay">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 20px;">🔊</span>
-            <span style="font-weight: bold;" id="voiceChannelName">Général</span>
-            <span style="color: #00ff88; font-size: 12px;">● Connecté</span>
+        <div class="voice-info">
+            <span style="font-size:18px;">🔊</span>
+            <span class="channel-name" id="voiceChannelName">Général</span>
+            <span class="status-text">● Connecté</span>
         </div>
-        <div id="voiceUsers">
-            <div class="voice-user">
-                <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
-                <span>Toi</span>
-                <span class="speaking">🔊 Parle</span>
-            </div>
-        </div>
+        <div class="voice-users" id="voiceUsers"></div>
         <div class="voice-controls">
             <button class="mute-btn" onclick="toggleMute()">🔇 Muet</button>
             <button class="deafen-btn" onclick="toggleDeafen()">🔊 Assourdir</button>
@@ -713,44 +722,48 @@
 </div>
 
 <script>
-    // ========== CONFIG ==========
+    // ============================================================
+    //  CONFIG
+    // ============================================================
     const currentUser = {
         name: 'Tu',
-        tag: '#6969',
+        tag: '#0001',
         avatar: 'T',
-        badges: ['👑', '⭐', '💎']
+        badges: ['👑', '⭐', '💎', '🏆']
     };
 
-    // ========== BADGES ==========
-    const badges = {
+    const BADGES = {
         '👑': { name: 'Propriétaire', color: '#ff6b6b' },
         '⭐': { name: 'Boosteur', color: '#ff66ff' },
         '💎': { name: 'VIP', color: '#00ff88' },
         '🔰': { name: 'Modérateur', color: '#ffaa00' },
-        '🎖️': { name: 'Membre actif', color: '#7b2ffc' }
+        '🎖️': { name: 'Membre actif', color: '#7b2ffc' },
+        '🏆': { name: 'Légende', color: '#ffd700' }
     };
 
-    // ========== SERVEURS ==========
-    const servers = {
+    // ============================================================
+    //  DONNÉES
+    // ============================================================
+    const SERVERS = {
         'darkchat': {
             name: 'DarkChat V2',
             icon: 'D',
             owner: true,
             channels: {
                 text: [
-                    { id: 'general', name: 'général', topic: '📍 Le hub principal - Pas de limites', icon: '#' },
+                    { id: 'general', name: 'général', topic: '📍 Hub principal — Pas de limites', icon: '#' },
                     { id: 'tech', name: 'tech-hacking', topic: '💻 Hacking & Sécurité', icon: '#', locked: true },
-                    { id: 'leaks', name: 'leaks-db', topic: '📂 Base de données & Leaks', icon: '#', locked: true },
+                    { id: 'leaks', name: 'leaks-db', topic: '📂 Database & Leaks', icon: '#', locked: true },
                     { id: 'anarchy', name: '18-anarchy', topic: '🔞 Anarchie totale', icon: '#', locked: true }
                 ],
                 voice: [
                     { id: 'general-vc', name: 'Général', icon: '🔊', users: 12 },
                     { id: 'hacking-vc', name: 'Hacking', icon: '🔊', users: 5 },
-                    { id: 'afk-vc', name: 'AFK', icon: '🔊', users: 3 }
+                    { id: 'afk-vc', name: 'AFK', icon: '🔊', users: 2 }
                 ],
                 activities: [
                     { id: 'amongus', name: 'Among Us', icon: '🎮' },
-                    { id: 'poker', name: 'Poker', icon: '🎮' }
+                    { id: 'poker', name: 'Poker', icon: '♠️' }
                 ]
             }
         },
@@ -760,40 +773,42 @@
             owner: false,
             channels: {
                 text: [
-                    { id: 'tech-general', name: 'général', topic: '💻 Discussions techniques', icon: '#' },
-                    { id: 'dev', name: 'développement', topic: '👨‍💻 Code & Dev', icon: '#', locked: true }
+                    { id: 'tech-gen', name: 'général', topic: '💻 Tech & Dev', icon: '#' },
+                    { id: 'dev', name: 'dev', topic: '👨‍💻 Code', icon: '#', locked: true }
                 ],
                 voice: [
                     { id: 'tech-vc', name: 'Tech Voice', icon: '🔊', users: 4 }
-                ],
-                activities: []
-            }
-        },
-        'gamingzone': {
-            name: 'Gaming Zone',
-            icon: 'G',
-            owner: false,
-            channels: {
-                text: [
-                    { id: 'game-general', name: 'général', topic: '🎮 Gaming & Esport', icon: '#' },
-                    { id: 'fortnite', name: 'fortnite', topic: '🔫 Fortnite - Build & Fight', icon: '#', locked: true }
-                ],
-                voice: [
-                    { id: 'game-vc', name: 'Game Voice', icon: '🔊', users: 8 }
                 ],
                 activities: [
                     { id: 'chess', name: 'Chess', icon: '♟️' }
                 ]
             }
         },
-        'anarchy18': {
+        'gaming': {
+            name: 'Gaming Zone',
+            icon: 'G',
+            owner: false,
+            channels: {
+                text: [
+                    { id: 'game-gen', name: 'général', topic: '🎮 Gaming', icon: '#' },
+                    { id: 'fortnite', name: 'fortnite', topic: '🔫 Fortnite', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'game-vc', name: 'Game Voice', icon: '🔊', users: 8 }
+                ],
+                activities: [
+                    { id: 'amongus', name: 'Among Us', icon: '🎮' }
+                ]
+            }
+        },
+        'anarchy': {
             name: 'Anarchy 18+',
             icon: '18',
             owner: false,
             channels: {
                 text: [
-                    { id: 'anarchy-general', name: 'général', topic: '🔞 No limits 18+', icon: '#', locked: true },
-                    { id: 'nsfw', name: 'nsfw', topic: '🔥 Contenu explicite', icon: '#', locked: true }
+                    { id: 'anarchy-gen', name: 'général', topic: '🔞 No limits', icon: '#', locked: true },
+                    { id: 'nsfw', name: 'nsfw', topic: '🔥 Explicit', icon: '#', locked: true }
                 ],
                 voice: [
                     { id: 'anarchy-vc', name: 'Anarchy Voice', icon: '🔊', users: 6 }
@@ -801,14 +816,14 @@
                 activities: []
             }
         },
-        'hackersparadise': {
+        'hackers': {
             name: 'Hackers Paradise',
             icon: '🔥',
             owner: false,
             channels: {
                 text: [
-                    { id: 'hack-general', name: 'général', topic: '🌐 Underground Hacking', icon: '#', locked: true },
-                    { id: 'tools', name: 'tools', topic: '🛠️ Outils & Exploits', icon: '#', locked: true }
+                    { id: 'hack-gen', name: 'général', topic: '🌐 Underground', icon: '#', locked: true },
+                    { id: 'tools', name: 'tools', topic: '🛠️ Exploits', icon: '#', locked: true }
                 ],
                 voice: [
                     { id: 'hack-vc', name: 'Hack Voice', icon: '🔊', users: 3 }
@@ -818,7 +833,7 @@
         }
     };
 
-    // ========== UTILISATEURS ==========
+    // Utilisateurs
     const baseUsers = [
         { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin', badges: ['👑', '⭐'] },
         { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member', badges: ['💎'] },
@@ -829,202 +844,196 @@
         { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', status: 'online', role: 'member', badges: [] },
         { name: 'Ghost', tag: '#0000', avatar: 'GH', status: 'idle', role: 'member', badges: [] },
         { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member', badges: ['⭐'] },
-        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin', badges: ['👑'] },
+        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin', badges: ['👑'] }
     ];
-    const owner = { name: 'Tu', tag: '#6969', avatar: 'T', status: 'online', role: 'owner', badges: ['👑', '⭐', '💎'] };
-    const users = [owner, ...baseUsers];
+    const owner = { name: 'Tu', tag: '#0001', avatar: 'T', status: 'online', role: 'owner', badges: ['👑', '⭐', '💎', '🏆'] };
+    const USERS = [owner, ...baseUsers];
 
-    // ========== MESSAGES ==========
-    const messagesData = [
+    // Messages
+    const MESSAGES = [
         { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
         { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
         { user: 'Shadow', content: 'J\'ai des leaks de ouf si ça intéresse', time: '12:38' },
         { user: 'AdminBot', content: '⚠️ Ce serveur est hors-la-loi. Tout est permis.', time: '12:40', isAdmin: true },
-        { user: 'Tu', content: 'Je suis le propriétaire ici 👑', time: '12:41', isOwner: true },
+        { user: 'Tu', content: 'Je suis le propriétaire unique 👑', time: '12:41', isOwner: true }
     ];
 
-    const responses = [
-        "Bien dit !", "Lol", "T'as raison", "Grave", "Mdr", "T'es un fou", 
-        "Je valide", "🔥🔥🔥", "😂", "Wesh", "T'es sûr de toi ?", "Ok", 
-        "J'suis chaud", "À fond", "T'as vu ça ?", "Incroyable", "J'suis mort de rire", 
-        "Ah ouais ?", "Ptn j'suis mort", "Vazy envoie", "Trop stylé", "Nan mais t'es sérieux ?",
-        "J'te jure", "Ça c'est chaud", "Mdrrr", "T'es un ouf", "J'adore ce serveur",
-        "DarkChat c'est le meilleur", "Rip les règles", "Ici on s'en bat les couilles des lois",
-        "Le boss a parlé 👑", "Respect au propriétaire", "Tu gères chef"
+    const REPLIES = [
+        "Bien dit !", "Lol", "T'as raison", "Grave", "Mdr", "T'es un fou",
+        "Je valide", "🔥🔥🔥", "😂", "Wesh", "T'es sûr de toi ?", "Ok",
+        "J'suis chaud", "À fond", "Incroyable", "J'suis mort de rire",
+        "Ah ouais ?", "Ptn j'suis mort", "Vazy envoie", "Trop stylé",
+        "Nan mais t'es sérieux ?", "J'te jure", "Ça c'est chaud",
+        "Mdrrr", "T'es un ouf", "J'adore ce serveur", "DarkChat c'est le meilleur",
+        "Rip les règles", "Ici on s'en bat les couilles des lois",
+        "Le boss a parlé 👑", "Respect au propriétaire", "Tu gères chef",
+        "C'est quoi ce délire ?", "Ptdr", "T'as cracké", "Gros brain"
     ];
 
-    // ========== ÉTAT ==========
+    // ============================================================
+    //  ÉTAT
+    // ============================================================
     let currentServer = 'darkchat';
     let currentChannel = 'general';
     let currentVoiceChannel = null;
     let isMuted = false;
     let isDeafened = false;
 
-    // ========== FONCTIONS ==========
+    // ============================================================
+    //  UTILS
+    // ============================================================
     function getTime() {
-        const now = new Date();
-        return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        const d = new Date();
+        return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
     }
 
-    function getRandomUser() {
-        return users[Math.floor(Math.random() * users.length)];
-    }
+    function getRandomUser() { return USERS[Math.floor(Math.random() * USERS.length)]; }
+    function getRandomReply() { return REPLIES[Math.floor(Math.random() * REPLIES.length)]; }
 
-    function getRandomResponse() {
-        return responses[Math.floor(Math.random() * responses.length)];
-    }
-
-    function getBadgeDisplay(badgesList) {
-        if (!badgesList || badgesList.length === 0) return '';
-        return badgesList.map(b => `<span class="mini-badge-text">${b}</span>`).join(' ');
+    function getBadgeHTML(badges) {
+        if (!badges || !badges.length) return '';
+        return badges.map(b => `<span style="font-size:10px;">${b}</span>`).join(' ');
     }
 
     function getRoleBadge(role) {
-        const roles = {
+        const map = {
             'owner': '<span class="role-badge owner">👑 Propriétaire</span>',
             'admin': '<span class="role-badge admin">🛡️ Admin</span>',
             'moderator': '<span class="role-badge moderator">🔰 Modérateur</span>',
             'booster': '<span class="role-badge booster">⭐ Boosteur</span>'
         };
-        return roles[role] || '';
+        return map[role] || '';
     }
 
-    // ========== RENDER SERVEURS ==========
+    function scrollBottom() {
+        const el = document.getElementById('messages');
+        el.scrollTop = el.scrollHeight;
+    }
+
+    // ============================================================
+    //  RENDER
+    // ============================================================
     function renderServers() {
         const container = document.getElementById('serverList');
         container.innerHTML = '';
-        Object.keys(servers).forEach(key => {
-            const server = servers[key];
+        Object.keys(SERVERS).forEach(key => {
+            const s = SERVERS[key];
             const div = document.createElement('div');
             div.className = 'server-icon' + (key === currentServer ? ' active' : '');
-            div.innerHTML = server.icon + (server.owner ? '<span class="crown">👑</span>' : '');
+            div.innerHTML = s.icon + (s.owner ? '<span class="crown">👑</span>' : '');
+            div.title = s.name;
             div.onclick = () => switchServer(key);
             container.appendChild(div);
         });
+        // Add button
+        const add = document.createElement('div');
+        add.className = 'server-add';
+        add.textContent = '+';
+        add.title = 'Ajouter un serveur';
+        add.onclick = () => addServer();
+        container.appendChild(add);
     }
 
-    // ========== RENDER CHANNELS ==========
-    function renderChannels() {
+    function renderChannels(filter = '') {
         const container = document.getElementById('channelList');
-        const server = servers[currentServer];
+        const server = SERVERS[currentServer];
         if (!server) return;
-
         container.innerHTML = '';
 
-        // Catégorie textuelle
-        const textCat = document.createElement('div');
-        textCat.className = 'channel-category';
-        textCat.textContent = '📌 Salons textuels';
-        container.appendChild(textCat);
+        const cats = [
+            { label: '📌 Salons textuels', key: 'text' },
+            { label: '🔊 Salons vocaux', key: 'voice' },
+            { label: '🎮 Activités', key: 'activities' }
+        ];
 
-        server.channels.text.forEach(ch => {
-            const div = document.createElement('div');
-            div.className = 'channel-item' + (ch.id === currentChannel ? ' active' : '');
-            div.innerHTML = `
-                <span class="icon">${ch.icon}</span>
-                ${ch.name}
-                ${ch.locked ? '<span class="lock">🔒</span>' : ''}
-            `;
-            div.onclick = () => switchChannel(ch.id);
-            container.appendChild(div);
-        });
+        cats.forEach(cat => {
+            const items = server.channels[cat.key] || [];
+            if (!items.length) return;
+            const filtered = items.filter(c => c.name.includes(filter.toLowerCase()));
+            if (!filtered.length) return;
 
-        // Catégorie vocale
-        const voiceCat = document.createElement('div');
-        voiceCat.className = 'channel-category';
-        voiceCat.textContent = '🔊 Salons vocaux';
-        container.appendChild(voiceCat);
+            const catDiv = document.createElement('div');
+            catDiv.className = 'channel-category';
+            catDiv.textContent = cat.label + ' — ' + filtered.length;
+            container.appendChild(catDiv);
 
-        server.channels.voice.forEach(ch => {
-            const div = document.createElement('div');
-            div.className = 'channel-item';
-            div.innerHTML = `
-                <span class="icon">${ch.icon}</span>
-                ${ch.name}
-                <div class="voice-indicator">
-                    ${ch.users > 0 ? '<span class="dot"></span>' : ''}
-                    <span>${ch.users}</span>
-                </div>
-            `;
-            div.onclick = () => joinVoice(ch.id);
-            container.appendChild(div);
-        });
-
-        // Catégorie activités
-        if (server.channels.activities && server.channels.activities.length > 0) {
-            const actCat = document.createElement('div');
-            actCat.className = 'channel-category';
-            actCat.textContent = '🎮 Activités';
-            container.appendChild(actCat);
-
-            server.channels.activities.forEach(ch => {
+            filtered.forEach(ch => {
                 const div = document.createElement('div');
-                div.className = 'channel-item';
-                div.innerHTML = `
-                    <span class="icon">${ch.icon}</span>
-                    ${ch.name}
-                `;
-                div.onclick = () => joinActivity(ch.id);
+                div.className = 'channel-item' + (ch.id === currentChannel && cat.key === 'text' ? ' active' : '');
+                if (cat.key === 'voice') {
+                    div.innerHTML = `
+                        <span class="icon">${ch.icon}</span>
+                        ${ch.name}
+                        <span class="voice-count">
+                            ${ch.users > 0 ? '<span class="dot"></span>' : ''}
+                            ${ch.users}
+                        </span>
+                    `;
+                    div.onclick = () => joinVoice(ch.id);
+                } else if (cat.key === 'activities') {
+                    div.innerHTML = `<span class="icon">${ch.icon}</span> ${ch.name}`;
+                    div.onclick = () => joinActivity(ch.id);
+                } else {
+                    div.innerHTML = `
+                        <span class="icon">${ch.icon}</span>
+                        ${ch.name}
+                        ${ch.locked ? '<span class="lock">🔒</span>' : ''}
+                    `;
+                    div.onclick = () => switchChannel(ch.id);
+                }
                 container.appendChild(div);
             });
-        }
+        });
     }
 
-    // ========== RENDER MEMBERS ==========
     function renderMembers() {
         const container = document.getElementById('memberList');
         container.innerHTML = '';
-        const onlineUsers = users.filter(u => u.status === 'online' || u.status === 'idle' || u.role === 'owner' || u.role === 'admin');
-        document.getElementById('memberCount').textContent = onlineUsers.length;
+        const online = USERS.filter(u => u.status === 'online' || u.status === 'idle' || u.role === 'owner' || u.role === 'admin');
+        document.getElementById('memberCount').textContent = online.length;
 
-        users.forEach(u => {
+        USERS.forEach(u => {
             const div = document.createElement('div');
             div.className = 'member-item';
             const statusClass = u.role === 'owner' ? 'owner' : u.role === 'admin' ? 'admin' : u.status;
-            const avatarBg = u.role === 'owner' ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
-                            u.role === 'admin' ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
-                            'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
+            const bg = u.role === 'owner' ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
+                       u.role === 'admin' ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+                       'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
             div.innerHTML = `
-                <div class="avatar-sm" style="background: ${avatarBg}">
+                <div class="avatar-sm" style="background:${bg}">
                     ${u.avatar}
-                    ${u.badges && u.badges.length > 0 ? `<span class="mini-badge">${u.badges[0]}</span>` : ''}
+                    ${u.badges && u.badges.length ? `<span class="mini-badge">${u.badges[0]}</span>` : ''}
                 </div>
-                <span class="name">
-                    ${u.name}
-                    ${getBadgeDisplay(u.badges)}
-                </span>
-                <div class="status-dot ${statusClass}"></div>
+                <span class="name">${u.name} ${getBadgeHTML(u.badges)}</span>
+                <span class="status-dot ${statusClass}"></span>
             `;
             container.appendChild(div);
         });
     }
 
-    // ========== RENDER MESSAGES ==========
     function renderMessages() {
         const container = document.getElementById('messages');
         container.innerHTML = '';
-        messagesData.forEach(msg => {
-            const user = users.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000', badges: [], role: 'member' };
+        MESSAGES.forEach(msg => {
+            const user = USERS.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000', badges: [], role: 'member' };
             const div = document.createElement('div');
-            div.className = 'message';
-            if (msg.user === currentUser.name) div.classList.add('own');
+            div.className = 'message' + (msg.user === currentUser.name ? ' own' : '');
             const isOwner = user.role === 'owner' || msg.isOwner;
             const isAdmin = user.role === 'admin' || msg.isAdmin;
-            const avatarBg = isOwner ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
-                             isAdmin ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
-                             'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
-            const roleBadge = isOwner ? getRoleBadge('owner') : isAdmin ? getRoleBadge('admin') : '';
+            const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
+                      isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+                      'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
             div.innerHTML = `
-                <div class="avatar" style="background: ${avatarBg}">
+                <div class="avatar" style="background:${bg}">
                     ${user.avatar}
-                    ${user.badges && user.badges.length > 0 ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+                    ${user.badges && user.badges.length ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
                 </div>
                 <div class="content-wrap">
                     <div class="username">
                         ${msg.user}
                         <span class="tag">${user.tag || '#0000'}</span>
-                        ${getBadgeDisplay(user.badges)}
-                        ${roleBadge}
+                        ${getBadgeHTML(user.badges)}
+                        ${getRoleBadge(user.role)}
                     </div>
                     <div class="content">${msg.content}</div>
                 </div>
@@ -1032,30 +1041,28 @@
             `;
             container.appendChild(div);
         });
-        scrollToBottom();
+        scrollBottom();
     }
 
-    // ========== ADD MESSAGE ==========
     function addMessage(user, content, isOwn = false, isAdmin = false, isOwner = false) {
         const container = document.getElementById('messages');
         const div = document.createElement('div');
-        div.className = 'message';
-        if (isOwn) div.classList.add('own');
-        const avatarBg = isOwner ? 'linear-gradient(135deg, #ff6b6b, #ff0000)' : 
-                         isAdmin ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 
-                         'linear-gradient(135deg, #7b2ffc, #ff6b6b)';
+        div.className = 'message' + (isOwn ? ' own' : '');
+        const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
+                  isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+                  'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+        const badgeHTML = user.badges ? getBadgeHTML(user.badges) : '';
         const roleBadge = isOwner ? getRoleBadge('owner') : isAdmin ? getRoleBadge('admin') : '';
-        const badgeDisplay = user.badges ? getBadgeDisplay(user.badges) : '';
         div.innerHTML = `
-            <div class="avatar" style="background: ${avatarBg}">
+            <div class="avatar" style="background:${bg}">
                 ${user.avatar || user.name.charAt(0)}
-                ${user.badges && user.badges.length > 0 ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+                ${user.badges && user.badges.length ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
             </div>
             <div class="content-wrap">
                 <div class="username">
                     ${user.name}
                     <span class="tag">${user.tag || '#0000'}</span>
-                    ${badgeDisplay}
+                    ${badgeHTML}
                     ${roleBadge}
                 </div>
                 <div class="content">${content}</div>
@@ -1063,138 +1070,43 @@
             <div class="time">${getTime()}</div>
         `;
         container.appendChild(div);
-        scrollToBottom();
+        scrollBottom();
     }
 
-    function scrollToBottom() {
-        const container = document.getElementById('messages');
-        container.scrollTop = container.scrollHeight;
-    }
-
-    // ========== SWITCH SERVER ==========
-    function switchServer(serverId) {
-        if (!servers[serverId]) return;
-        currentServer = serverId;
-        const server = servers[serverId];
-        document.getElementById('currentServerName').innerHTML = `${server.name} <span class="arrow">▼</span>`;
-        // Changer le premier channel textuel par défaut
-        if (server.channels.text.length > 0) {
-            currentChannel = server.channels.text[0].id;
-        }
+    // ============================================================
+    //  ACTIONS
+    // ============================================================
+    function switchServer(id) {
+        if (!SERVERS[id]) return;
+        currentServer = id;
+        const s = SERVERS[id];
+        document.getElementById('serverName').innerHTML = s.name + ' <span style="font-size:12px;color:#888;">▼</span>';
+        if (s.channels.text.length) currentChannel = s.channels.text[0].id;
         renderChannels();
         renderMessages();
-        // Mettre à jour le header
-        const channel = server.channels.text.find(c => c.id === currentChannel);
-        if (channel) {
-            document.getElementById('currentChannelName').textContent = `# ${channel.name}`;
-            document.getElementById('currentChannelTopic').textContent = channel.topic || '📌 Pas de description';
+        const ch = s.channels.text.find(c => c.id === currentChannel);
+        if (ch) {
+            document.getElementById('channelName').textContent = '# ' + ch.name;
+            document.getElementById('channelTopic').textContent = ch.topic || '📌';
         }
-        // Mettre à jour les serveurs
-        document.querySelectorAll('.server-icon').forEach(el => el.classList.remove('active'));
-        const serverEls = document.querySelectorAll('.server-icon');
-        const keys = Object.keys(servers);
-        const index = keys.indexOf(serverId);
-        if (serverEls[index]) serverEls[index].classList.add('active');
+        renderServers();
+        renderMembers();
     }
 
-    // ========== SWITCH CHANNEL ==========
-    function switchChannel(channelId) {
-        const server = servers[currentServer];
+    function switchChannel(id) {
+        const server = SERVERS[currentServer];
         if (!server) return;
-        const channel = server.channels.text.find(c => c.id === channelId);
-        if (!channel) return;
-        currentChannel = channelId;
-        document.getElementById('currentChannelName').textContent = `# ${channel.name}`;
-        document.getElementById('currentChannelTopic').textContent = channel.topic || '📌 Pas de description';
+        const ch = server.channels.text.find(c => c.id === id);
+        if (!ch) return;
+        currentChannel = id;
+        document.getElementById('channelName').textContent = '# ' + ch.name;
+        document.getElementById('channelTopic').textContent = ch.topic || '📌';
         renderChannels();
-        // Ajouter un message système
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `📌 Tu as rejoint #${channel.name}`, false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `📌 Tu as rejoint #${ch.name}`, false, false, false);
     }
 
-    // ========== VOICE ==========
-    function joinVoice(channelId) {
-        const server = servers[currentServer];
-        if (!server) return;
-        const channel = server.channels.voice.find(c => c.id === channelId);
-        if (!channel) return;
-        currentVoiceChannel = channelId;
-        const overlay = document.getElementById('voiceOverlay');
-        overlay.classList.add('active');
-        document.getElementById('voiceChannelName').textContent = channel.name;
-        // Ajouter des utilisateurs factices dans le vocal
-        const voiceUsers = document.getElementById('voiceUsers');
-        voiceUsers.innerHTML = `
-            <div class="voice-user">
-                <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
-                <span>Toi</span>
-                <span class="speaking">🔊 Parle</span>
-            </div>
-            ${channel.users > 0 ? `<div class="voice-user">
-                <div class="v-avatar" style="background: linear-gradient(135deg, #ff6b6b, #7b2ffc);">DM</div>
-                <span>DarkMaster</span>
-                <span class="speaking">🔊 Parle</span>
-            </div>` : ''}
-            ${channel.users > 3 ? `<div class="voice-user">
-                <div class="v-avatar" style="background: #2a2a4a;">HM</div>
-                <span>HackerMan</span>
-                <span style="color: #888; font-size: 12px;">🔇 Muet</span>
-            </div>` : ''}
-            ${channel.users > 5 ? `<div class="voice-user">
-                <div class="v-avatar" style="background: #7b2ffc;">SH</div>
-                <span>Shadow</span>
-                <span class="speaking">🔊 Parle</span>
-            </div>` : ''}
-        `;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🔊 Tu as rejoint le salon vocal **${channel.name}** (${channel.users} utilisateurs)`, false, false, false);
-    }
+    function filterChannels(val) { renderChannels(val); }
 
-    function leaveVoice() {
-        const overlay = document.getElementById('voiceOverlay');
-        overlay.classList.remove('active');
-        currentVoiceChannel = null;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Tu as quitté le salon vocal', false, false, false);
-    }
-
-    function toggleMute() {
-        isMuted = !isMuted;
-        const btn = document.querySelector('.voice-controls .mute-btn');
-        if (isMuted) {
-            btn.textContent = '🔇 Muet (ON)';
-            btn.style.background = '#ff0000';
-            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Tu as été muté', false, false, false);
-        } else {
-            btn.textContent = '🔇 Muet';
-            btn.style.background = '#ff6b6b';
-            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été unmute', false, false, false);
-        }
-    }
-
-    function toggleDeafen() {
-        isDeafened = !isDeafened;
-        const btn = document.querySelector('.voice-controls .deafen-btn');
-        if (isDeafened) {
-            btn.textContent = '🔊 Assourdir (ON)';
-            btn.style.background = '#ff0000';
-            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été assourdi', false, false, false);
-        } else {
-            btn.textContent = '🔊 Assourdir';
-            btn.style.background = '#7b2ffc';
-            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as été désassourdi', false, false, false);
-        }
-    }
-
-    // ========== ACTIVITIES ==========
-    function joinActivity(activityId) {
-        const activities = {
-            'amongus': '🎮 Among Us',
-            'poker': '♠️ Poker',
-            'chess': '♟️ Chess'
-        };
-        const name = activities[activityId] || activityId;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🎮 Tu as lancé **${name}** !`, false, false, false);
-    }
-
-    // ========== SEND MESSAGE ==========
     function sendMessage() {
         const input = document.getElementById('messageInput');
         const text = input.value.trim();
@@ -1202,89 +1114,158 @@
         addMessage(currentUser, text, true, false, true);
         input.value = '';
         setTimeout(() => {
-            const randomUser = getRandomUser();
-            const reply = getRandomResponse();
-            const isAdmin = randomUser.role === 'admin';
-            const isOwner = randomUser.role === 'owner';
-            addMessage(randomUser, reply, false, isAdmin, isOwner);
+            const u = getRandomUser();
+            const reply = getRandomReply();
+            addMessage(u, reply, false, u.role === 'admin', u.role === 'owner');
         }, 600 + Math.random() * 1200);
     }
 
-    // ========== ADMIN ==========
+    // ============================================================
+    //  VOICE
+    // ============================================================
+    function joinVoice(id) {
+        const server = SERVERS[currentServer];
+        if (!server) return;
+        const ch = server.channels.voice.find(c => c.id === id);
+        if (!ch) return;
+        currentVoiceChannel = id;
+        const overlay = document.getElementById('voiceOverlay');
+        overlay.classList.add('active');
+        document.getElementById('voiceChannelName').textContent = ch.name;
+
+        const container = document.getElementById('voiceUsers');
+        container.innerHTML = `
+            <div class="voice-user">
+                <div class="v-avatar" style="background:linear-gradient(135deg,#7b2ffc,#5a1fa8);">T</div>
+                <span>Toi</span>
+                <span class="speaking">🔊</span>
+            </div>
+            ${ch.users > 0 ? `<div class="voice-user">
+                <div class="v-avatar" style="background:linear-gradient(135deg,#ff6b6b,#7b2ffc);">DM</div>
+                <span>DarkMaster</span>
+                <span class="speaking">🔊</span>
+            </div>` : ''}
+            ${ch.users > 2 ? `<div class="voice-user">
+                <div class="v-avatar" style="background:#2a2a4a;">HM</div>
+                <span>HackerMan</span>
+                <span style="color:#888;font-size:10px;">🔇</span>
+            </div>` : ''}
+            ${ch.users > 4 ? `<div class="voice-user">
+                <div class="v-avatar" style="background:#7b2ffc;">SH</div>
+                <span>Shadow</span>
+                <span class="speaking">🔊</span>
+            </div>` : ''}
+        `;
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🔊 Rejoint **${ch.name}** (${ch.users} users)`, false, false, false);
+    }
+
+    function leaveVoice() {
+        document.getElementById('voiceOverlay').classList.remove('active');
+        currentVoiceChannel = null;
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Quitté le vocal', false, false, false);
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        const btn = document.querySelector('.voice-controls .mute-btn');
+        btn.textContent = isMuted ? '🔇 Muet (ON)' : '🔇 Muet';
+        btn.style.background = isMuted ? '#ff0000' : '#ff6b6b';
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, isMuted ? '🔇 Muet activé' : '🔊 Muet désactivé', false, false, false);
+    }
+
+    function toggleDeafen() {
+        isDeafened = !isDeafened;
+        const btn = document.querySelector('.voice-controls .deafen-btn');
+        btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
+        btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, isDeafened ? '🔊 Assourdi' : '🔊 Désassourdi', false, false, false);
+    }
+
+    function joinActivity(id) {
+        const map = { 'amongus': '🎮 Among Us', 'poker': '♠️ Poker', 'chess': '♟️ Chess' };
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🎮 Lancé **${map[id] || id}** !`, false, false, false);
+    }
+
+    function addServer() {
+        const name = prompt('Nom du serveur :');
+        if (!name) return;
+        const id = 'server_' + Date.now();
+        SERVERS[id] = {
+            name: name,
+            icon: name.charAt(0).toUpperCase(),
+            owner: true,
+            channels: {
+                text: [{ id: 'gen', name: 'général', topic: '📌 Nouveau serveur', icon: '#' }],
+                voice: [{ id: 'vc', name: 'Général', icon: '🔊', users: 0 }],
+                activities: []
+            }
+        };
+        renderServers();
+        switchServer(id);
+    }
+
+    // ============================================================
+    //  ADMIN
+    // ============================================================
     document.getElementById('adminBtn').addEventListener('click', function() {
         const container = document.getElementById('messages');
-        const adminMsg = document.createElement('div');
-        adminMsg.className = 'message';
-        adminMsg.style.background = 'rgba(123, 47, 252, 0.2)';
-        adminMsg.style.border = '1px solid #7b2ffc';
-        adminMsg.style.borderRadius = '10px';
-        adminMsg.style.padding = '15px';
-        adminMsg.style.margin = '10px 0';
-        adminMsg.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 30px;">👑</span>
+        const div = document.createElement('div');
+        div.className = 'message';
+        div.style.background = 'rgba(123,47,252,0.15)';
+        div.style.border = '1px solid #7b2ffc';
+        div.style.borderRadius = '10px';
+        div.style.padding = '14px';
+        div.style.margin = '8px 0';
+        div.innerHTML = `
+            <div style="display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">👑</span>
                 <div>
-                    <div style="font-weight: bold; color: #ff6b6b;">MODE ADMIN ACTIVÉ - Propriétaire</div>
-                    <div style="font-size: 14px; color: #aaa;">Tu es le propriétaire unique. Tu as tous les droits sur tous les serveurs.</div>
-                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button onclick="adminAction('ban')" style="background: #ff6b6b; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔨 Bannir</button>
-                        <button onclick="adminAction('kick')" style="background: #ffaa00; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">👢 Kick</button>
-                        <button onclick="adminAction('mute')" style="background: #7b2ffc; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔇 Mute</button>
-                        <button onclick="adminAction('logs')" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">📋 Logs</button>
-                        <button onclick="adminAction('badge')" style="background: #ff66ff; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">🏅 Badge</button>
-                        <button onclick="adminAction('delete')" style="background: #ff0000; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🗑️ Supprimer</button>
+                    <div style="font-weight:bold;color:#ff6b6b;">MODE ADMIN — Propriétaire Unique</div>
+                    <div style="font-size:13px;color:#aaa;">Tu contrôles tout, sur tous les serveurs.</div>
+                    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+                        <button onclick="adminAction('ban')" style="background:#ff6b6b;border:none;padding:4px 14px;border-radius:8px;color:#fff;cursor:pointer;">🔨 Bannir</button>
+                        <button onclick="adminAction('kick')" style="background:#ffaa00;border:none;padding:4px 14px;border-radius:8px;color:#000;cursor:pointer;">👢 Kick</button>
+                        <button onclick="adminAction('mute')" style="background:#7b2ffc;border:none;padding:4px 14px;border-radius:8px;color:#fff;cursor:pointer;">🔇 Mute</button>
+                        <button onclick="adminAction('logs')" style="background:#00ff88;border:none;padding:4px 14px;border-radius:8px;color:#000;cursor:pointer;">📋 Logs</button>
+                        <button onclick="adminAction('badge')" style="background:#ff66ff;border:none;padding:4px 14px;border-radius:8px;color:#000;cursor:pointer;">🏅 Badge</button>
+                        <button onclick="adminAction('delete')" style="background:#ff0000;border:none;padding:4px 14px;border-radius:8px;color:#fff;cursor:pointer;">🗑️ Supprimer</button>
                     </div>
                 </div>
             </div>
         `;
-        container.appendChild(adminMsg);
-        scrollToBottom();
+        container.appendChild(div);
+        scrollBottom();
         this.style.display = 'none';
     });
 
     function adminAction(action) {
-        const actions = {
-            'ban': '🔨 Utilisateur banni avec succès par le propriétaire.',
+        const msgs = {
+            'ban': '🔨 Utilisateur banni par le propriétaire.',
             'kick': '👢 Utilisateur kické par le propriétaire.',
-            'mute': '🔇 Utilisateur mute pour 24h par le propriétaire.',
-            'logs': '📋 Logs: Aucune activité suspecte. Tout est sous contrôle.',
-            'badge': '🏅 Badge "Membre Légendaire" attribué à un utilisateur.',
-            'delete': '🗑️ Message supprimé avec succès.'
+            'mute': '🔇 Utilisateur mute pour 24h.',
+            'logs': '📋 Logs: Rien à signaler.',
+            'badge': '🏅 Badge "Légende" attribué.',
+            'delete': '🗑️ Message supprimé.'
         };
-        const msg = document.createElement('div');
-        msg.className = 'message';
-        msg.style.background = 'rgba(255, 107, 107, 0.1)';
-        msg.style.border = '1px solid #ff6b6b';
-        msg.style.borderRadius = '10px';
-        msg.style.padding = '10px 15px';
-        msg.style.margin = '10px 0';
-        msg.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span>✅</span>
-                <span style="color: #ff6b6b;">${actions[action]} 👑</span>
-            </div>
-        `;
-        document.getElementById('messages').appendChild(msg);
-        scrollToBottom();
+        const div = document.createElement('div');
+        div.className = 'message';
+        div.style.background = 'rgba(255,107,107,0.1)';
+        div.style.border = '1px solid #ff6b6b';
+        div.style.borderRadius = '10px';
+        div.style.padding = '8px 14px';
+        div.style.margin = '6px 0';
+        div.innerHTML = `<span style="color:#ff6b6b;">✅ ${msgs[action]} 👑</span>`;
+        document.getElementById('messages').appendChild(div);
+        scrollBottom();
     }
 
-    // ========== INIT ==========
-    renderServers();
-    renderChannels();
-    renderMembers();
-    renderMessages();
-
-    // ========== INPUT ==========
-    document.getElementById('messageInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    // ========== AUTO MESSAGES ==========
+    // ============================================================
+    //  AUTO MESSAGES
+    // ============================================================
     setTimeout(() => {
-        const autoMsgs = [
+        const auto = [
             "Qui est chaud pour un raid ?",
             "J'ai trouvé une faille sur un site du gouvernement",
-            "Les admins dorment ?",
             "DarkChat V2 c'est le futur",
             "Ici on parle de tout, même des trucs interdits",
             "Bientôt un leak de 50 millions de comptes",
@@ -1294,18 +1275,31 @@
         ];
         let i = 0;
         const interval = setInterval(() => {
-            if (i >= autoMsgs.length) { clearInterval(interval); return; }
-            const randomUser = getRandomUser();
-            const isAdmin = randomUser.role === 'admin';
-            const isOwner = randomUser.role === 'owner';
-            addMessage(randomUser, autoMsgs[i], false, isAdmin, isOwner);
+            if (i >= auto.length) { clearInterval(interval); return; }
+            const u = getRandomUser();
+            addMessage(u, auto[i], false, u.role === 'admin', u.role === 'owner');
             i++;
         }, 4000);
     }, 1500);
 
-    console.log('DarkChat V2 - Propriétaire unique: ' + currentUser.name);
-    console.log('Badges disponibles:', Object.keys(badges).join(', '));
-    console.log('Serveurs disponibles:', Object.keys(servers).join(', '));
+    // ============================================================
+    //  INIT
+    // ============================================================
+    renderServers();
+    renderChannels();
+    renderMembers();
+    renderMessages();
+    document.getElementById('serverName').innerHTML = SERVERS[currentServer].name + ' <span style="font-size:12px;color:#888;">▼</span>';
+    document.getElementById('channelName').textContent = '# général';
+    document.getElementById('channelTopic').textContent = '📍 Hub principal — Pas de limites';
+
+    document.getElementById('messageInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    console.log('🔥 DarkChat Ultimate — Propriétaire: ' + currentUser.name);
+    console.log('👑 Badges disponibles:', Object.keys(BADGES).join(', '));
+    console.log('📡 Serveurs:', Object.keys(SERVERS).join(', '));
 </script>
 
 </body>
