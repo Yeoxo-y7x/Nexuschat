@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkChat - Communication ultime</title>
+    <title>DarkChat V2 - Discord Killer</title>
     <style>
         * {
             margin: 0;
@@ -11,7 +11,7 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background: #0a0a0f;
             color: #fff;
@@ -19,172 +19,329 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
-        
+
         .container {
             width: 100%;
-            max-width: 1400px;
-            height: 95vh;
+            max-width: 1500px;
+            height: 98vh;
             background: #1a1a2e;
             border-radius: 20px;
             display: flex;
             overflow: hidden;
-            box-shadow: 0 0 50px rgba(100, 50, 255, 0.3);
+            box-shadow: 0 0 60px rgba(123, 47, 252, 0.4);
+            position: relative;
         }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
+
+        /* Sidebar gauche */
+        .sidebar-left {
+            width: 80px;
+            background: #12121f;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            border-right: 1px solid #2a2a4a;
+        }
+
+        .server-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .server-icon:hover {
+            border-color: #7b2ffc;
+            transform: scale(1.1);
+            border-radius: 16px;
+        }
+
+        .server-icon.active {
+            border-color: #7b2ffc;
+            border-radius: 16px;
+        }
+
+        .server-icon .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Sidebar serveurs */
+        .sidebar-servers {
+            width: 240px;
             background: #16162a;
             padding: 20px;
             border-right: 1px solid #2a2a4a;
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(45deg, #7b2ffc, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .server-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
-        
-        .server-item {
-            padding: 12px 16px;
-            background: #1f1f3a;
-            border-radius: 10px;
+
+        .server-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a2a4a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .server-name .arrow {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .channel-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .channel-category {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 15px 0 8px;
+        }
+
+        .channel-item {
+            padding: 8px 12px;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
-            border-left: 3px solid #7b2ffc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #aaa;
+            font-size: 15px;
         }
-        
-        .server-item:hover {
+
+        .channel-item:hover {
             background: #2a2a4a;
-            transform: translateX(5px);
+            color: #fff;
         }
-        
-        .server-item.active {
+
+        .channel-item.active {
             background: #2a2a4a;
-            border-left: 3px solid #ff6b6b;
+            color: #fff;
         }
-        
-        /* Main chat */
+
+        .channel-item .icon {
+            font-size: 18px;
+        }
+
+        .channel-item .lock {
+            margin-left: auto;
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        /* Chat principal */
         .main-chat {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #12121f;
         }
-        
+
         .chat-header {
-            padding: 20px;
+            padding: 15px 20px;
             background: #16162a;
             border-bottom: 1px solid #2a2a4a;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            min-height: 60px;
         }
-        
-        .chat-header h2 {
-            font-size: 22px;
+
+        .chat-header .left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header .left h2 {
+            font-size: 18px;
             color: #fff;
         }
-        
-        .chat-header span {
-            color: #7b2ffc;
+
+        .chat-header .left .topic {
+            color: #888;
+            font-size: 13px;
         }
-        
-        .online-count {
-            background: #2a2a4a;
-            padding: 5px 15px;
-            border-radius: 20px;
+
+        .chat-header .right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header .right .online {
+            color: #00ff88;
             font-size: 14px;
-            color: #7b2ffc;
         }
-        
+
+        .chat-header .right .admin-badge {
+            background: #7b2ffc;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .chat-header .right .admin-badge:hover {
+            background: #ff6b6b;
+            transform: scale(1.05);
+        }
+
         .messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 5px;
         }
-        
+
         .message {
-            max-width: 70%;
-            padding: 12px 18px;
-            border-radius: 15px;
+            padding: 8px 16px;
+            border-radius: 8px;
             animation: fadeIn 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: 0.2s;
         }
-        
+
+        .message:hover {
+            background: #1f1f3a;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .message.own {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+
+        .message .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
         }
-        
-        .message.other {
-            align-self: flex-start;
-            background: #1f1f3a;
+
+        .message .content-wrap {
+            flex: 1;
         }
-        
+
         .message .username {
             font-weight: bold;
             font-size: 14px;
-            margin-bottom: 5px;
-            color: #7b2ffc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .message .time {
+
+        .message .username .tag {
             font-size: 11px;
             color: #888;
-            margin-top: 5px;
+            font-weight: normal;
         }
-        
+
+        .message .username .role-badge {
+            font-size: 10px;
+            padding: 1px 8px;
+            border-radius: 10px;
+            background: #7b2ffc;
+            color: #fff;
+        }
+
         .message .content {
-            font-size: 16px;
+            font-size: 15px;
             word-wrap: break-word;
+            margin-top: 2px;
         }
-        
+
+        .message .time {
+            font-size: 11px;
+            color: #555;
+            margin-left: 10px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .message.own .content-wrap {
+            background: #2a2a4a;
+            padding: 8px 14px;
+            border-radius: 12px;
+        }
+
+        /* Input */
         .input-area {
-            padding: 20px;
+            padding: 15px 20px;
             background: #16162a;
             border-top: 1px solid #2a2a4a;
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            align-items: center;
         }
-        
+
+        .input-area .emoji-btn {
+            font-size: 22px;
+            cursor: pointer;
+            color: #888;
+            transition: 0.3s;
+        }
+
+        .input-area .emoji-btn:hover {
+            color: #fff;
+        }
+
         .input-area input {
             flex: 1;
             padding: 12px 20px;
             background: #0a0a0f;
-            border: 1px solid #2a2a4a;
+            border: none;
             border-radius: 25px;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             transition: 0.3s;
         }
-        
+
         .input-area input:focus {
-            border-color: #7b2ffc;
             box-shadow: 0 0 20px rgba(123, 47, 252, 0.2);
         }
-        
+
         .input-area button {
-            padding: 12px 30px;
+            padding: 10px 28px;
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             border: none;
             border-radius: 25px;
@@ -192,281 +349,424 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 14px;
         }
-        
+
         .input-area button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(123, 47, 252, 0.4);
         }
-        
-        /* User list */
-        .user-list {
+
+        /* Sidebar droit - Membres */
+        .sidebar-right {
             width: 250px;
             background: #16162a;
             border-left: 1px solid #2a2a4a;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        
-        .user-list h3 {
+
+        .sidebar-right .title {
             color: #888;
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        
-        .user-item {
+
+        .member-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 5px;
+            padding: 8px 10px;
+            border-radius: 8px;
             transition: 0.3s;
+            cursor: pointer;
         }
-        
-        .user-item:hover {
+
+        .member-item:hover {
             background: #1f1f3a;
         }
-        
-        .user-item .avatar {
-            width: 35px;
-            height: 35px;
+
+        .member-item .avatar-sm {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 12px;
+            background: linear-gradient(135deg, #7b2ffc, #ff6b6b);
+        }
+
+        .member-item .name {
             font-size: 14px;
         }
-        
-        .user-item .status {
-            width: 10px;
-            height: 10px;
+
+        .member-item .status-dot {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             margin-left: auto;
         }
-        
-        .status.online {
+
+        .status-dot.online {
             background: #00ff88;
             box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
-        
-        .status.idle {
+
+        .status-dot.idle {
             background: #ffaa00;
         }
-        
-        .status.offline {
+
+        .status-dot.offline {
             background: #444;
         }
-        
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        .status-dot.admin {
+            background: #7b2ffc;
+            box-shadow: 0 0 10px rgba(123, 47, 252, 0.5);
         }
-        
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
         ::-webkit-scrollbar-track {
             background: #0a0a0f;
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: #2a2a4a;
             border-radius: 10px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: #7b2ffc;
         }
-        
+
+        @media (max-width: 1024px) {
+            .sidebar-left { width: 60px; }
+            .sidebar-servers { width: 180px; }
+            .sidebar-right { display: none; }
+        }
+
         @media (max-width: 768px) {
-            .sidebar, .user-list {
-                display: none;
-            }
-            .container {
-                border-radius: 0;
-                height: 100vh;
-            }
+            .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
+            .container { border-radius: 0; height: 100vh; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">⚡ DarkChat</div>
-            <div class="server-list">
-                <div class="server-item active">🏠 Général</div>
-                <div class="server-item">💻 Tech</div>
-                <div class="server-item">🎮 Gaming</div>
-                <div class="server-item">🔞 18+</div>
-                <div class="server-item">🔥 Anarchy</div>
-            </div>
+
+<div class="container">
+    <!-- Sidebar gauche - Serveurs -->
+    <div class="sidebar-left">
+        <div class="server-icon active">D</div>
+        <div class="server-icon">T</div>
+        <div class="server-icon">G</div>
+        <div class="server-icon">18</div>
+        <div class="server-icon">🔥</div>
+        <div class="server-icon" style="background: #2a2a4a; border: 2px dashed #555; color: #555; font-size: 30px;">+</div>
+    </div>
+
+    <!-- Sidebar serveurs -->
+    <div class="sidebar-servers">
+        <div class="server-name">
+            DarkChat V2
+            <span class="arrow">▼</span>
         </div>
-        
-        <!-- Main chat -->
-        <div class="main-chat">
-            <div class="chat-header">
-                <h2># <span>général</span></h2>
-                <div class="online-count">🟢 42 en ligne</div>
+        <div class="channel-list">
+            <div class="channel-category">📌 Salons textuels</div>
+            <div class="channel-item active">
+                <span class="icon">#</span> général
             </div>
-            
-            <div class="messages" id="messages">
-                <div class="message other">
-                    <div class="username">DarkMaster</div>
-                    <div class="content">Bienvenue sur DarkChat, le chat sans limites.</div>
-                    <div class="time">12:34</div>
-                </div>
-                <div class="message own">
-                    <div class="username">Tu</div>
-                    <div class="content">Yo les gars !</div>
-                    <div class="time">12:35</div>
-                </div>
-                <div class="message other">
-                    <div class="username">HackerMan</div>
-                    <div class="content">Ici on parle de tout, même des trucs illégaux 😈</div>
-                    <div class="time">12:36</div>
-                </div>
-                <div class="message other">
-                    <div class="username">Shadow</div>
-                    <div class="content">J'ai des leaks de ouf si ça intéresse</div>
-                    <div class="time">12:38</div>
-                </div>
+            <div class="channel-item">
+                <span class="icon">#</span> tech-hacking
+                <span class="lock">🔒</span>
             </div>
-            
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="Écris ton message... (pas de limites ici)">
-                <button onclick="sendMessage()">Envoyer 🚀</button>
+            <div class="channel-item">
+                <span class="icon">#</span> leaks-db
+                <span class="lock">🔒</span>
             </div>
-        </div>
-        
-        <!-- User list -->
-        <div class="user-list">
-            <h3>👥 En ligne</h3>
-            <div class="user-item">
-                <div class="avatar">DM</div>
-                DarkMaster
-                <div class="status online"></div>
+            <div class="channel-item">
+                <span class="icon">#</span> 18-anarchy
+                <span class="lock">🔒</span>
             </div>
-            <div class="user-item">
-                <div class="avatar">HM</div>
-                HackerMan
-                <div class="status online"></div>
+            <div class="channel-category">🔊 Salons vocaux</div>
+            <div class="channel-item">
+                <span class="icon">🔊</span> Général
+                <span style="color: #00ff88; margin-left: auto; font-size: 12px;">● 12</span>
             </div>
-            <div class="user-item">
-                <div class="avatar">SH</div>
-                Shadow
-                <div class="status idle"></div>
-            </div>
-            <div class="user-item">
-                <div class="avatar">VX</div>
-                V0idX
-                <div class="status online"></div>
-            </div>
-            <div class="user-item">
-                <div class="avatar">NX</div>
-                NeoX
-                <div class="status offline"></div>
-            </div>
-            <div class="user-item">
-                <div class="avatar">CY</div>
-                Cyb3r
-                <div class="status online"></div>
-            </div>
-            <div class="user-item">
-                <div class="avatar">XX</div>
-                Xx_H4x0r_xX
-                <div class="status online"></div>
+            <div class="channel-item">
+                <span class="icon">🔊</span> Hacking
+                <span style="color: #ffaa00; margin-left: auto; font-size: 12px;">● 5</span>
             </div>
         </div>
     </div>
-    
-    <script>
-        const messages = document.getElementById('messages');
-        const input = document.getElementById('messageInput');
-        
-        // Usernames aléatoires pour les messages autres
-        const users = ['DarkMaster', 'HackerMan', 'Shadow', 'V0idX', 'NeoX', 'Cyb3r', 'Xx_H4x0r_xX', 'Anonyme', 'Ghost', 'Phantom'];
-        
-        function getRandomUser() {
-            return users[Math.floor(Math.random() * users.length)];
-        }
-        
-        function getTime() {
-            const now = new Date();
-            return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-        }
-        
-        function sendMessage() {
-            const text = input.value.trim();
-            if (!text) return;
-            
-            // Message de l'utilisateur
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message own';
-            msgDiv.innerHTML = `
-                <div class="username">Tu</div>
-                <div class="content">${text}</div>
-                <div class="time">${getTime()}</div>
+
+    <!-- Chat principal -->
+    <div class="main-chat">
+        <div class="chat-header">
+            <div class="left">
+                <h2># général</h2>
+                <span class="topic">📍 Le hub principal - Pas de limites</span>
+            </div>
+            <div class="right">
+                <span class="online">🟢 42 en ligne</span>
+                <span class="admin-badge" id="adminBtn">👑 Admin</span>
+            </div>
+        </div>
+
+        <div class="messages" id="messages">
+            <!-- Messages chargés par JS -->
+        </div>
+
+        <div class="input-area">
+            <span class="emoji-btn">😊</span>
+            <input type="text" id="messageInput" placeholder="Écris ton message... (aucune censure)">
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <!-- Sidebar droit - Membres -->
+    <div class="sidebar-right">
+        <div class="title">👥 Membres — 42 en ligne</div>
+        <div id="memberList"></div>
+    </div>
+</div>
+
+<script>
+    // ========== CONFIG ==========
+    const isAdmin = true;  // Mettre à true pour être admin
+    const currentUser = {
+        name: 'Tu',
+        tag: '#6969',
+        avatar: 'T',
+        color: '#7b2ffc'
+    };
+
+    // ========== DONNÉES ==========
+    const users = [
+        { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin' },
+        { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member' },
+        { name: 'Shadow', tag: '#0001', avatar: 'SH', status: 'idle', role: 'member' },
+        { name: 'V0idX', tag: '#4040', avatar: 'VX', status: 'online', role: 'member' },
+        { name: 'NeoX', tag: '#0690', avatar: 'NX', status: 'offline', role: 'member' },
+        { name: 'Cyb3r', tag: '#1338', avatar: 'CY', status: 'online', role: 'member' },
+        { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', status: 'online', role: 'member' },
+        { name: 'Ghost', tag: '#0000', avatar: 'GH', status: 'idle', role: 'member' },
+        { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member' },
+        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin' },
+    ];
+
+    const messagesData = [
+        { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
+        { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
+        { user: 'Shadow', content: 'J\'ai des leaks de ouf si ça intéresse', time: '12:38' },
+        { user: 'AdminBot', content: '⚠️ Ce serveur est hors-la-loi. Tout est permis.', time: '12:40', isAdmin: true },
+    ];
+
+    const responses = [
+        "Bien dit !", "Lol", "T'as raison", "Grave", "Mdr", "T'es un fou", 
+        "Je valide", "🔥🔥🔥", "😂", "Wesh", "T'es sûr de toi ?", "Ok", 
+        "J'suis chaud", "À fond", "T'as vu ça ?", "Incroyable", "J'suis mort de rire", 
+        "Ah ouais ?", "Ptn j'suis mort", "Vazy envoie", "Trop stylé", "Nan mais t'es sérieux ?",
+        "J'te jure", "Ça c'est chaud", "Mdrrr", "T'es un ouf", "J'adore ce serveur",
+        "DarkChat c'est le meilleur", "Rip les règles", "Ici on s'en bat les couilles des lois"
+    ];
+
+    // ========== FONCTIONS ==========
+    function getTime() {
+        const now = new Date();
+        return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    }
+
+    function getRandomUser() {
+        return users[Math.floor(Math.random() * users.length)];
+    }
+
+    function getRandomResponse() {
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    function renderMembers() {
+        const container = document.getElementById('memberList');
+        container.innerHTML = '';
+        users.forEach(u => {
+            const div = document.createElement('div');
+            div.className = 'member-item';
+            const statusClass = u.role === 'admin' ? 'admin' : u.status;
+            div.innerHTML = `
+                <div class="avatar-sm" style="background: ${u.role === 'admin' ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${u.avatar}</div>
+                <span class="name">${u.name}</span>
+                <div class="status-dot ${statusClass}"></div>
             `;
-            messages.appendChild(msgDiv);
-            input.value = '';
-            scrollToBottom();
-            
-            // Réponse aléatoire d'un autre utilisateur
-            setTimeout(() => {
-                const responses = [
-                    "Bien dit !", "Lol", "T'as raison", "Grave", "Mdr", 
-                    "T'es un fou", "Je valide", "🔥🔥🔥", "😂", "Wesh",
-                    "T'es sûr de toi ?", "Ok", "J'suis chaud", "À fond",
-                    "T'as vu ça ?", "Incroyable", "J'suis mort de rire", "Ah ouais ?"
-                ];
-                
-                const reply = responses[Math.floor(Math.random() * responses.length)];
-                const randomUser = getRandomUser();
-                
-                const replyDiv = document.createElement('div');
-                replyDiv.className = 'message other';
-                replyDiv.innerHTML = `
-                    <div class="username">${randomUser}</div>
-                    <div class="content">${reply}</div>
-                    <div class="time">${getTime()}</div>
-                `;
-                messages.appendChild(replyDiv);
-                scrollToBottom();
-            }, 500 + Math.random() * 1500);
-        }
-        
-        function scrollToBottom() {
-            messages.scrollTop = messages.scrollHeight;
-        }
-        
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
+            container.appendChild(div);
         });
-        
-        // Messages automatiques au démarrage
+    }
+
+    function renderMessages() {
+        const container = document.getElementById('messages');
+        container.innerHTML = '';
+        messagesData.forEach(msg => {
+            const user = users.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000' };
+            const div = document.createElement('div');
+            div.className = 'message';
+            if (msg.user === currentUser.name) div.classList.add('own');
+            const isAdminUser = user.role === 'admin' || msg.isAdmin;
+            div.innerHTML = `
+                <div class="avatar" style="background: ${isAdminUser ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${user.avatar}</div>
+                <div class="content-wrap">
+                    <div class="username">
+                        ${msg.user}
+                        <span class="tag">${user.tag || '#0000'}</span>
+                        ${isAdminUser ? '<span class="role-badge">👑 Admin</span>' : ''}
+                    </div>
+                    <div class="content">${msg.content}</div>
+                </div>
+                <div class="time">${msg.time}</div>
+            `;
+            container.appendChild(div);
+        });
+        scrollToBottom();
+    }
+
+    function addMessage(user, content, isOwn = false, isAdmin = false) {
+        const container = document.getElementById('messages');
+        const div = document.createElement('div');
+        div.className = 'message';
+        if (isOwn) div.classList.add('own');
+        const avatar = user.avatar || user.name.charAt(0);
+        const tag = user.tag || '#0000';
+        const isAdminUser = user.role === 'admin' || isAdmin;
+        div.innerHTML = `
+            <div class="avatar" style="background: ${isAdminUser ? 'linear-gradient(135deg, #ff6b6b, #7b2ffc)' : 'linear-gradient(135deg, #7b2ffc, #ff6b6b)'}">${avatar}</div>
+            <div class="content-wrap">
+                <div class="username">
+                    ${user.name}
+                    <span class="tag">${tag}</span>
+                    ${isAdminUser ? '<span class="role-badge">👑 Admin</span>' : ''}
+                </div>
+                <div class="content">${content}</div>
+            </div>
+            <div class="time">${getTime()}</div>
+        `;
+        container.appendChild(div);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById('messages');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Message de l'utilisateur
+        addMessage(currentUser, text, true, isAdmin);
+        input.value = '';
+
+        // Réponse aléatoire
         setTimeout(() => {
-            const msgs = [
-                "Qui est chaud pour un raid ?",
-                "J'ai trouvé une faille sur un site du gouvernement",
-                "Les admins dorment ?",
-                "DarkChat c'est le futur"
-            ];
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i >= msgs.length) { clearInterval(interval); return; }
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'message other';
-                msgDiv.innerHTML = `
-                    <div class="username">${getRandomUser()}</div>
-                    <div class="content">${msgs[i]}</div>
-                    <div class="time">${getTime()}</div>
-                `;
-                messages.appendChild(msgDiv);
-                scrollToBottom();
-                i++;
-            }, 3000);
-        }, 2000);
-    </script>
+            const randomUser = getRandomUser();
+            const reply = getRandomResponse();
+            addMessage(randomUser, reply, false, randomUser.role === 'admin');
+        }, 600 + Math.random() * 1200);
+    }
+
+    // ========== ADMIN ==========
+    document.getElementById('adminBtn').addEventListener('click', function() {
+        if (isAdmin) {
+            const container = document.getElementById('messages');
+            const adminMsg = document.createElement('div');
+            adminMsg.className = 'message';
+            adminMsg.style.background = 'rgba(123, 47, 252, 0.2)';
+            adminMsg.style.border = '1px solid #7b2ffc';
+            adminMsg.style.borderRadius = '10px';
+            adminMsg.style.padding = '15px';
+            adminMsg.style.margin = '10px 0';
+            adminMsg.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 30px;">👑</span>
+                    <div>
+                        <div style="font-weight: bold; color: #7b2ffc;">MODE ADMIN ACTIVÉ</div>
+                        <div style="font-size: 14px; color: #aaa;">Tu as tous les droits. Tu peux bannir, kick, voir les logs, tout.</div>
+                        <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button onclick="adminAction('ban')" style="background: #ff6b6b; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">Bannir</button>
+                            <button onclick="adminAction('kick')" style="background: #ffaa00; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">Kick</button>
+                            <button onclick="adminAction('mute')" style="background: #7b2ffc; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">Mute</button>
+                            <button onclick="adminAction('logs')" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">Voir logs</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(adminMsg);
+            scrollToBottom();
+            this.style.display = 'none';
+        } else {
+            alert('Tu n\'es pas admin, dégage.');
+        }
+    });
+
+    function adminAction(action) {
+        const actions = {
+            'ban': '🔨 Utilisateur banni avec succès.',
+            'kick': '👢 Utilisateur kické.',
+            'mute': '🔇 Utilisateur mute pour 24h.',
+            'logs': '📋 Logs: Aucune activité suspecte (pour l\'instant).'
+        };
+        const msg = document.createElement('div');
+        msg.className = 'message';
+        msg.style.background = 'rgba(0, 255, 136, 0.1)';
+        msg.style.border = '1px solid #00ff88';
+        msg.style.borderRadius = '10px';
+        msg.style.padding = '10px 15px';
+        msg.style.margin = '10px 0';
+        msg.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span>✅</span>
+                <span style="color: #00ff88;">${actions[action]}</span>
+            </div>
+        `;
+        document.getElementById('messages').appendChild(msg);
+        scrollToBottom();
+    }
+
+    // ========== INIT ==========
+    renderMembers();
+    renderMessages();
+
+    // ========== INPUT ==========
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // ========== AUTO MESSAGES ==========
+    setTimeout(() => {
+        const autoMsgs = [
+            "Qui est chaud pour un raid ?",
+            "J'ai trouvé une faille sur un site du gouvernement",
+            "Les admins dorment ?",
+            "DarkChat V2 c'est le futur",
+            "Ici on parle de tout, même des trucs interdits",
+            "Bientôt un leak de 50 millions de comptes",
+            "Vive l'anarchie numérique"
+        ];
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i >= autoMsgs.length) { clearInterval(interval); return; }
+            const randomUser = getRandomUser();
+            addMessage(randomUser, autoMsgs[i], false, randomUser.role === 'admin');
+            i++;
+        }, 4000);
+    }, 1500);
+</script>
+
 </body>
 </html>
