@@ -113,11 +113,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
         }
 
         .server-name .arrow {
             color: #888;
             font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .server-name .arrow.open {
+            transform: rotate(180deg);
         }
 
         .channel-list {
@@ -351,14 +357,6 @@
             margin-top: 2px;
         }
 
-        .message .content img.badge-img {
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 8px;
-            margin: 5px 0;
-            display: block;
-        }
-
         .message .time {
             font-size: 11px;
             color: #555;
@@ -536,6 +534,8 @@
             z-index: 100;
             box-shadow: 0 0 40px rgba(123, 47, 252, 0.3);
             backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .voice-overlay.active {
@@ -565,11 +565,13 @@
         .voice-overlay .voice-user .speaking {
             color: #00ff88;
             font-size: 12px;
+            animation: pulse 1s infinite;
         }
 
         .voice-overlay .voice-controls {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .voice-overlay .voice-controls button {
@@ -579,6 +581,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            font-size: 12px;
         }
 
         .voice-overlay .voice-controls .mute-btn {
@@ -634,7 +637,7 @@
         @media (max-width: 768px) {
             .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
             .container { border-radius: 0; height: 100vh; }
-            .voice-overlay { width: 90%; bottom: 100px; flex-wrap: wrap; justify-content: center; }
+            .voice-overlay { width: 90%; bottom: 100px; }
         }
     </style>
 </head>
@@ -642,69 +645,18 @@
 
 <div class="container">
     <!-- Sidebar gauche - Serveurs -->
-    <div class="sidebar-left">
-        <div class="server-icon active">
-            D
-            <span class="crown">👑</span>
-        </div>
-        <div class="server-icon">T</div>
-        <div class="server-icon">G</div>
-        <div class="server-icon">18</div>
-        <div class="server-icon">🔥</div>
-        <div class="server-icon" style="background: #2a2a4a; border: 2px dashed #555; color: #555; font-size: 30px;">+</div>
+    <div class="sidebar-left" id="serverList">
+        <!-- Généré par JS -->
     </div>
 
     <!-- Sidebar serveurs -->
     <div class="sidebar-servers">
-        <div class="server-name">
+        <div class="server-name" id="currentServerName">
             DarkChat V2
-            <span class="arrow">▼</span>
+            <span class="arrow" id="serverArrow">▼</span>
         </div>
-        <div class="channel-list">
-            <div class="channel-category">📌 Salons textuels</div>
-            <div class="channel-item active">
-                <span class="icon">#</span> général
-            </div>
-            <div class="channel-item">
-                <span class="icon">#</span> tech-hacking
-                <span class="lock">🔒</span>
-            </div>
-            <div class="channel-item">
-                <span class="icon">#</span> leaks-db
-                <span class="lock">🔒</span>
-            </div>
-            <div class="channel-item">
-                <span class="icon">#</span> 18-anarchy
-                <span class="lock">🔒</span>
-            </div>
-            <div class="channel-category">🔊 Salons vocaux</div>
-            <div class="channel-item" onclick="joinVoice()">
-                <span class="icon">🔊</span> Général
-                <div class="voice-indicator">
-                    <span class="dot"></span>
-                    <span>12</span>
-                </div>
-            </div>
-            <div class="channel-item" onclick="joinVoice()">
-                <span class="icon">🔊</span> Hacking
-                <div class="voice-indicator">
-                    <span class="dot"></span>
-                    <span>5</span>
-                </div>
-            </div>
-            <div class="channel-item" onclick="joinVoice()">
-                <span class="icon">🔊</span> AFK
-                <div class="voice-indicator">
-                    <span>3</span>
-                </div>
-            </div>
-            <div class="channel-category">🎮 Activités</div>
-            <div class="channel-item">
-                <span class="icon">🎮</span> Among Us
-            </div>
-            <div class="channel-item">
-                <span class="icon">🎮</span> Poker
-            </div>
+        <div class="channel-list" id="channelList">
+            <!-- Généré par JS -->
         </div>
     </div>
 
@@ -712,11 +664,11 @@
     <div class="main-chat">
         <div class="chat-header">
             <div class="left">
-                <h2># général</h2>
-                <span class="topic">📍 Le hub principal - Pas de limites</span>
+                <h2 id="currentChannelName"># général</h2>
+                <span class="topic" id="currentChannelTopic">📍 Le hub principal - Pas de limites</span>
             </div>
             <div class="right">
-                <span class="online">🟢 42 en ligne</span>
+                <span class="online" id="onlineCount">🟢 42 en ligne</span>
                 <span class="admin-badge" id="adminBtn">👑 Admin</span>
             </div>
         </div>
@@ -734,7 +686,7 @@
 
     <!-- Sidebar droit - Membres -->
     <div class="sidebar-right">
-        <div class="title">👥 Membres — 42 en ligne</div>
+        <div class="title">👥 Membres — <span id="memberCount">42</span> en ligne</div>
         <div id="memberList"></div>
     </div>
 
@@ -742,23 +694,15 @@
     <div class="voice-overlay" id="voiceOverlay">
         <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 20px;">🔊</span>
-            <span style="font-weight: bold;">Général</span>
+            <span style="font-weight: bold;" id="voiceChannelName">Général</span>
             <span style="color: #00ff88; font-size: 12px;">● Connecté</span>
         </div>
-        <div class="voice-user">
-            <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
-            <span>Toi</span>
-            <span class="speaking">🔊 Parle</span>
-        </div>
-        <div class="voice-user">
-            <div class="v-avatar" style="background: linear-gradient(135deg, #ff6b6b, #7b2ffc);">DM</div>
-            <span>DarkMaster</span>
-            <span class="speaking">🔊 Parle</span>
-        </div>
-        <div class="voice-user">
-            <div class="v-avatar" style="background: #2a2a4a;">HM</div>
-            <span>HackerMan</span>
-            <span style="color: #888; font-size: 12px;">🔇 Muet</span>
+        <div id="voiceUsers">
+            <div class="voice-user">
+                <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
+                <span>Toi</span>
+                <span class="speaking">🔊 Parle</span>
+            </div>
         </div>
         <div class="voice-controls">
             <button class="mute-btn" onclick="toggleMute()">🔇 Muet</button>
@@ -774,7 +718,6 @@
         name: 'Tu',
         tag: '#6969',
         avatar: 'T',
-        color: '#7b2ffc',
         badges: ['👑', '⭐', '💎']
     };
 
@@ -787,8 +730,96 @@
         '🎖️': { name: 'Membre actif', color: '#7b2ffc' }
     };
 
-    // ========== DONNÉES ==========
-    const users = [
+    // ========== SERVEURS ==========
+    const servers = {
+        'darkchat': {
+            name: 'DarkChat V2',
+            icon: 'D',
+            owner: true,
+            channels: {
+                text: [
+                    { id: 'general', name: 'général', topic: '📍 Le hub principal - Pas de limites', icon: '#' },
+                    { id: 'tech', name: 'tech-hacking', topic: '💻 Hacking & Sécurité', icon: '#', locked: true },
+                    { id: 'leaks', name: 'leaks-db', topic: '📂 Base de données & Leaks', icon: '#', locked: true },
+                    { id: 'anarchy', name: '18-anarchy', topic: '🔞 Anarchie totale', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'general-vc', name: 'Général', icon: '🔊', users: 12 },
+                    { id: 'hacking-vc', name: 'Hacking', icon: '🔊', users: 5 },
+                    { id: 'afk-vc', name: 'AFK', icon: '🔊', users: 3 }
+                ],
+                activities: [
+                    { id: 'amongus', name: 'Among Us', icon: '🎮' },
+                    { id: 'poker', name: 'Poker', icon: '🎮' }
+                ]
+            }
+        },
+        'techhub': {
+            name: 'Tech Hub',
+            icon: 'T',
+            owner: false,
+            channels: {
+                text: [
+                    { id: 'tech-general', name: 'général', topic: '💻 Discussions techniques', icon: '#' },
+                    { id: 'dev', name: 'développement', topic: '👨‍💻 Code & Dev', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'tech-vc', name: 'Tech Voice', icon: '🔊', users: 4 }
+                ],
+                activities: []
+            }
+        },
+        'gamingzone': {
+            name: 'Gaming Zone',
+            icon: 'G',
+            owner: false,
+            channels: {
+                text: [
+                    { id: 'game-general', name: 'général', topic: '🎮 Gaming & Esport', icon: '#' },
+                    { id: 'fortnite', name: 'fortnite', topic: '🔫 Fortnite - Build & Fight', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'game-vc', name: 'Game Voice', icon: '🔊', users: 8 }
+                ],
+                activities: [
+                    { id: 'chess', name: 'Chess', icon: '♟️' }
+                ]
+            }
+        },
+        'anarchy18': {
+            name: 'Anarchy 18+',
+            icon: '18',
+            owner: false,
+            channels: {
+                text: [
+                    { id: 'anarchy-general', name: 'général', topic: '🔞 No limits 18+', icon: '#', locked: true },
+                    { id: 'nsfw', name: 'nsfw', topic: '🔥 Contenu explicite', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'anarchy-vc', name: 'Anarchy Voice', icon: '🔊', users: 6 }
+                ],
+                activities: []
+            }
+        },
+        'hackersparadise': {
+            name: 'Hackers Paradise',
+            icon: '🔥',
+            owner: false,
+            channels: {
+                text: [
+                    { id: 'hack-general', name: 'général', topic: '🌐 Underground Hacking', icon: '#', locked: true },
+                    { id: 'tools', name: 'tools', topic: '🛠️ Outils & Exploits', icon: '#', locked: true }
+                ],
+                voice: [
+                    { id: 'hack-vc', name: 'Hack Voice', icon: '🔊', users: 3 }
+                ],
+                activities: []
+            }
+        }
+    };
+
+    // ========== UTILISATEURS ==========
+    const baseUsers = [
         { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin', badges: ['👑', '⭐'] },
         { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member', badges: ['💎'] },
         { name: 'Shadow', tag: '#0001', avatar: 'SH', status: 'idle', role: 'member', badges: [] },
@@ -800,11 +831,10 @@
         { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member', badges: ['⭐'] },
         { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin', badges: ['👑'] },
     ];
-
-    // Ajouter le propriétaire (toi) en premier
     const owner = { name: 'Tu', tag: '#6969', avatar: 'T', status: 'online', role: 'owner', badges: ['👑', '⭐', '💎'] };
-    users.unshift(owner);
+    const users = [owner, ...baseUsers];
 
+    // ========== MESSAGES ==========
     const messagesData = [
         { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
         { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
@@ -822,6 +852,13 @@
         "DarkChat c'est le meilleur", "Rip les règles", "Ici on s'en bat les couilles des lois",
         "Le boss a parlé 👑", "Respect au propriétaire", "Tu gères chef"
     ];
+
+    // ========== ÉTAT ==========
+    let currentServer = 'darkchat';
+    let currentChannel = 'general';
+    let currentVoiceChannel = null;
+    let isMuted = false;
+    let isDeafened = false;
 
     // ========== FONCTIONS ==========
     function getTime() {
@@ -852,9 +889,94 @@
         return roles[role] || '';
     }
 
+    // ========== RENDER SERVEURS ==========
+    function renderServers() {
+        const container = document.getElementById('serverList');
+        container.innerHTML = '';
+        Object.keys(servers).forEach(key => {
+            const server = servers[key];
+            const div = document.createElement('div');
+            div.className = 'server-icon' + (key === currentServer ? ' active' : '');
+            div.innerHTML = server.icon + (server.owner ? '<span class="crown">👑</span>' : '');
+            div.onclick = () => switchServer(key);
+            container.appendChild(div);
+        });
+    }
+
+    // ========== RENDER CHANNELS ==========
+    function renderChannels() {
+        const container = document.getElementById('channelList');
+        const server = servers[currentServer];
+        if (!server) return;
+
+        container.innerHTML = '';
+
+        // Catégorie textuelle
+        const textCat = document.createElement('div');
+        textCat.className = 'channel-category';
+        textCat.textContent = '📌 Salons textuels';
+        container.appendChild(textCat);
+
+        server.channels.text.forEach(ch => {
+            const div = document.createElement('div');
+            div.className = 'channel-item' + (ch.id === currentChannel ? ' active' : '');
+            div.innerHTML = `
+                <span class="icon">${ch.icon}</span>
+                ${ch.name}
+                ${ch.locked ? '<span class="lock">🔒</span>' : ''}
+            `;
+            div.onclick = () => switchChannel(ch.id);
+            container.appendChild(div);
+        });
+
+        // Catégorie vocale
+        const voiceCat = document.createElement('div');
+        voiceCat.className = 'channel-category';
+        voiceCat.textContent = '🔊 Salons vocaux';
+        container.appendChild(voiceCat);
+
+        server.channels.voice.forEach(ch => {
+            const div = document.createElement('div');
+            div.className = 'channel-item';
+            div.innerHTML = `
+                <span class="icon">${ch.icon}</span>
+                ${ch.name}
+                <div class="voice-indicator">
+                    ${ch.users > 0 ? '<span class="dot"></span>' : ''}
+                    <span>${ch.users}</span>
+                </div>
+            `;
+            div.onclick = () => joinVoice(ch.id);
+            container.appendChild(div);
+        });
+
+        // Catégorie activités
+        if (server.channels.activities && server.channels.activities.length > 0) {
+            const actCat = document.createElement('div');
+            actCat.className = 'channel-category';
+            actCat.textContent = '🎮 Activités';
+            container.appendChild(actCat);
+
+            server.channels.activities.forEach(ch => {
+                const div = document.createElement('div');
+                div.className = 'channel-item';
+                div.innerHTML = `
+                    <span class="icon">${ch.icon}</span>
+                    ${ch.name}
+                `;
+                div.onclick = () => joinActivity(ch.id);
+                container.appendChild(div);
+            });
+        }
+    }
+
+    // ========== RENDER MEMBERS ==========
     function renderMembers() {
         const container = document.getElementById('memberList');
         container.innerHTML = '';
+        const onlineUsers = users.filter(u => u.status === 'online' || u.status === 'idle' || u.role === 'owner' || u.role === 'admin');
+        document.getElementById('memberCount').textContent = onlineUsers.length;
+
         users.forEach(u => {
             const div = document.createElement('div');
             div.className = 'member-item';
@@ -877,6 +999,7 @@
         });
     }
 
+    // ========== RENDER MESSAGES ==========
     function renderMessages() {
         const container = document.getElementById('messages');
         container.innerHTML = '';
@@ -912,6 +1035,7 @@
         scrollToBottom();
     }
 
+    // ========== ADD MESSAGE ==========
     function addMessage(user, content, isOwn = false, isAdmin = false, isOwner = false) {
         const container = document.getElementById('messages');
         const div = document.createElement('div');
@@ -947,39 +1071,87 @@
         container.scrollTop = container.scrollHeight;
     }
 
-    function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (!text) return;
+    // ========== SWITCH SERVER ==========
+    function switchServer(serverId) {
+        if (!servers[serverId]) return;
+        currentServer = serverId;
+        const server = servers[serverId];
+        document.getElementById('currentServerName').innerHTML = `${server.name} <span class="arrow">▼</span>`;
+        // Changer le premier channel textuel par défaut
+        if (server.channels.text.length > 0) {
+            currentChannel = server.channels.text[0].id;
+        }
+        renderChannels();
+        renderMessages();
+        // Mettre à jour le header
+        const channel = server.channels.text.find(c => c.id === currentChannel);
+        if (channel) {
+            document.getElementById('currentChannelName').textContent = `# ${channel.name}`;
+            document.getElementById('currentChannelTopic').textContent = channel.topic || '📌 Pas de description';
+        }
+        // Mettre à jour les serveurs
+        document.querySelectorAll('.server-icon').forEach(el => el.classList.remove('active'));
+        const serverEls = document.querySelectorAll('.server-icon');
+        const keys = Object.keys(servers);
+        const index = keys.indexOf(serverId);
+        if (serverEls[index]) serverEls[index].classList.add('active');
+    }
 
-        // Message de l'utilisateur
-        addMessage(currentUser, text, true, false, true);
-        input.value = '';
-
-        // Réponse aléatoire
-        setTimeout(() => {
-            const randomUser = getRandomUser();
-            const reply = getRandomResponse();
-            const isAdmin = randomUser.role === 'admin';
-            const isOwner = randomUser.role === 'owner';
-            addMessage(randomUser, reply, false, isAdmin, isOwner);
-        }, 600 + Math.random() * 1200);
+    // ========== SWITCH CHANNEL ==========
+    function switchChannel(channelId) {
+        const server = servers[currentServer];
+        if (!server) return;
+        const channel = server.channels.text.find(c => c.id === channelId);
+        if (!channel) return;
+        currentChannel = channelId;
+        document.getElementById('currentChannelName').textContent = `# ${channel.name}`;
+        document.getElementById('currentChannelTopic').textContent = channel.topic || '📌 Pas de description';
+        renderChannels();
+        // Ajouter un message système
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `📌 Tu as rejoint #${channel.name}`, false, false, false);
     }
 
     // ========== VOICE ==========
-    let isMuted = false;
-    let isDeafened = false;
-
-    function joinVoice() {
+    function joinVoice(channelId) {
+        const server = servers[currentServer];
+        if (!server) return;
+        const channel = server.channels.voice.find(c => c.id === channelId);
+        if (!channel) return;
+        currentVoiceChannel = channelId;
         const overlay = document.getElementById('voiceOverlay');
         overlay.classList.add('active');
-        // Ajouter un message dans le chat
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔊 Tu as rejoint le salon vocal **Général**', false, false, false);
+        document.getElementById('voiceChannelName').textContent = channel.name;
+        // Ajouter des utilisateurs factices dans le vocal
+        const voiceUsers = document.getElementById('voiceUsers');
+        voiceUsers.innerHTML = `
+            <div class="voice-user">
+                <div class="v-avatar" style="background: linear-gradient(135deg, #7b2ffc, #ff6b6b);">T</div>
+                <span>Toi</span>
+                <span class="speaking">🔊 Parle</span>
+            </div>
+            ${channel.users > 0 ? `<div class="voice-user">
+                <div class="v-avatar" style="background: linear-gradient(135deg, #ff6b6b, #7b2ffc);">DM</div>
+                <span>DarkMaster</span>
+                <span class="speaking">🔊 Parle</span>
+            </div>` : ''}
+            ${channel.users > 3 ? `<div class="voice-user">
+                <div class="v-avatar" style="background: #2a2a4a;">HM</div>
+                <span>HackerMan</span>
+                <span style="color: #888; font-size: 12px;">🔇 Muet</span>
+            </div>` : ''}
+            ${channel.users > 5 ? `<div class="voice-user">
+                <div class="v-avatar" style="background: #7b2ffc;">SH</div>
+                <span>Shadow</span>
+                <span class="speaking">🔊 Parle</span>
+            </div>` : ''}
+        `;
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🔊 Tu as rejoint le salon vocal **${channel.name}** (${channel.users} utilisateurs)`, false, false, false);
     }
 
     function leaveVoice() {
         const overlay = document.getElementById('voiceOverlay');
         overlay.classList.remove('active');
+        currentVoiceChannel = null;
         addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Tu as quitté le salon vocal', false, false, false);
     }
 
@@ -1011,6 +1183,33 @@
         }
     }
 
+    // ========== ACTIVITIES ==========
+    function joinActivity(activityId) {
+        const activities = {
+            'amongus': '🎮 Among Us',
+            'poker': '♠️ Poker',
+            'chess': '♟️ Chess'
+        };
+        const name = activities[activityId] || activityId;
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🎮 Tu as lancé **${name}** !`, false, false, false);
+    }
+
+    // ========== SEND MESSAGE ==========
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+        addMessage(currentUser, text, true, false, true);
+        input.value = '';
+        setTimeout(() => {
+            const randomUser = getRandomUser();
+            const reply = getRandomResponse();
+            const isAdmin = randomUser.role === 'admin';
+            const isOwner = randomUser.role === 'owner';
+            addMessage(randomUser, reply, false, isAdmin, isOwner);
+        }, 600 + Math.random() * 1200);
+    }
+
     // ========== ADMIN ==========
     document.getElementById('adminBtn').addEventListener('click', function() {
         const container = document.getElementById('messages');
@@ -1026,13 +1225,14 @@
                 <span style="font-size: 30px;">👑</span>
                 <div>
                     <div style="font-weight: bold; color: #ff6b6b;">MODE ADMIN ACTIVÉ - Propriétaire</div>
-                    <div style="font-size: 14px; color: #aaa;">Tu es le propriétaire unique. Tu as tous les droits.</div>
+                    <div style="font-size: 14px; color: #aaa;">Tu es le propriétaire unique. Tu as tous les droits sur tous les serveurs.</div>
                     <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <button onclick="adminAction('ban')" style="background: #ff6b6b; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔨 Bannir</button>
                         <button onclick="adminAction('kick')" style="background: #ffaa00; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">👢 Kick</button>
                         <button onclick="adminAction('mute')" style="background: #7b2ffc; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🔇 Mute</button>
                         <button onclick="adminAction('logs')" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">📋 Logs</button>
                         <button onclick="adminAction('badge')" style="background: #ff66ff; border: none; padding: 5px 15px; border-radius: 8px; color: #000; cursor: pointer;">🏅 Badge</button>
+                        <button onclick="adminAction('delete')" style="background: #ff0000; border: none; padding: 5px 15px; border-radius: 8px; color: #fff; cursor: pointer;">🗑️ Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -1048,7 +1248,8 @@
             'kick': '👢 Utilisateur kické par le propriétaire.',
             'mute': '🔇 Utilisateur mute pour 24h par le propriétaire.',
             'logs': '📋 Logs: Aucune activité suspecte. Tout est sous contrôle.',
-            'badge': '🏅 Badge "Membre Légendaire" attribué à un utilisateur.'
+            'badge': '🏅 Badge "Membre Légendaire" attribué à un utilisateur.',
+            'delete': '🗑️ Message supprimé avec succès.'
         };
         const msg = document.createElement('div');
         msg.className = 'message';
@@ -1068,6 +1269,8 @@
     }
 
     // ========== INIT ==========
+    renderServers();
+    renderChannels();
     renderMembers();
     renderMessages();
 
@@ -1100,11 +1303,9 @@
         }, 4000);
     }, 1500);
 
-    // ========== BADGE SYSTEM ==========
-    // Tu peux ajouter des badges en modifiant la liste badges en haut
-    // Les badges s'affichent automatiquement sur les avatars et dans les noms
     console.log('DarkChat V2 - Propriétaire unique: ' + currentUser.name);
     console.log('Badges disponibles:', Object.keys(badges).join(', '));
+    console.log('Serveurs disponibles:', Object.keys(servers).join(', '));
 </script>
 
 </body>
