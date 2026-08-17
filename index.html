@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkChat Ultimate - Discord Killer v3</title>
+    <title>DarkChat Ultimate - Profil & PP</title>
     <style>
         * {
             margin: 0;
@@ -324,6 +324,24 @@
             box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
         }
 
+        .chat-header .right .profile-btn {
+            background: #2a2a4a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+
+        .chat-header .right .profile-btn:hover {
+            border-color: #7b2ffc;
+            transform: scale(1.05);
+        }
+
         /* Messages */
         .messages {
             flex: 1;
@@ -345,6 +363,7 @@
             align-items: flex-start;
             gap: 10px;
             transition: 0.15s;
+            cursor: pointer;
         }
 
         .message:hover { background: #1a1a2e; }
@@ -365,6 +384,9 @@
             font-weight: bold;
             font-size: 13px;
             position: relative;
+            background-size: cover;
+            background-position: center;
+            background-color: #2a2a4a;
         }
 
         .message .avatar .badge-icon {
@@ -373,6 +395,20 @@
             right: -4px;
             font-size: 12px;
         }
+
+        .message .avatar .online-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid #12121f;
+        }
+
+        .online-dot.online { background: #00ff88; }
+        .online-dot.idle { background: #ffaa00; }
+        .online-dot.offline { background: #444; }
 
         .message .content-wrap { flex: 1; min-width: 0; }
 
@@ -524,6 +560,9 @@
             font-weight: bold;
             font-size: 11px;
             position: relative;
+            background-size: cover;
+            background-position: center;
+            background-color: #2a2a4a;
         }
 
         .member-item .avatar-sm .mini-badge {
@@ -618,6 +657,9 @@
             justify-content: center;
             font-size: 10px;
             font-weight: bold;
+            background-size: cover;
+            background-position: center;
+            background-color: #2a2a4a;
         }
 
         .voice-overlay .voice-user .speaking {
@@ -647,6 +689,159 @@
         .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
         .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
 
+        /* ===== PROFIL MODAL ===== */
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .profile-modal.active { display: flex; }
+
+        .profile-modal .modal-content {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 0 60px rgba(123, 47, 252, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .profile-modal .modal-content .close-btn {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .profile-modal .modal-content .close-btn:hover { color: #fff; }
+
+        .profile-modal .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background-size: cover;
+            background-position: center;
+            background-color: #2a2a4a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            border: 4px solid #7b2ffc;
+            position: relative;
+        }
+
+        .profile-modal .profile-avatar .edit-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #7b2ffc;
+            border-radius: 50%;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            border: 2px solid #1a1a2e;
+            transition: 0.3s;
+        }
+
+        .profile-modal .profile-avatar .edit-avatar:hover { transform: scale(1.1); }
+
+        .profile-modal .profile-name {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-modal .profile-tag {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .profile-modal .profile-badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .profile-modal .profile-badges .badge-item {
+            background: #2a2a4a;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .profile-modal .profile-info {
+            margin: 15px 0;
+            padding: 15px;
+            background: #0a0a0f;
+            border-radius: 12px;
+        }
+
+        .profile-modal .profile-info .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a2e;
+            font-size: 14px;
+        }
+
+        .profile-modal .profile-info .info-row:last-child { border-bottom: none; }
+
+        .profile-modal .profile-info .info-row .label { color: #888; }
+        .profile-modal .profile-info .info-row .value { color: #fff; }
+
+        .profile-modal .edit-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a2a4a;
+        }
+
+        .profile-modal .edit-section .edit-input {
+            width: 100%;
+            padding: 10px 16px;
+            background: #0a0a0f;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        .profile-modal .edit-section .edit-input:focus { border-color: #7b2ffc; }
+
+        .profile-modal .edit-section .edit-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-modal .edit-section .edit-btn:hover { transform: scale(1.05); }
+
+        .profile-modal .file-input-hidden { display: none; }
+
         /* Responsive */
         @media (max-width: 1100px) { .sidebar-right { display: none; } }
         @media (max-width: 800px) {
@@ -658,6 +853,7 @@
             .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
             .container { border-radius: 0; height: 100vh; }
             .voice-overlay { width: 95%; bottom: 80px; }
+            .profile-modal .modal-content { padding: 20px; }
         }
     </style>
 </head>
@@ -686,6 +882,7 @@
             </div>
             <div class="right">
                 <span class="online" id="onlineCount">🟢 42 en ligne</span>
+                <span class="profile-btn" onclick="openProfile('tu')">👤 Profil</span>
                 <span class="admin-badge" id="adminBtn">👑 Admin</span>
             </div>
         </div>
@@ -721,6 +918,32 @@
     </div>
 </div>
 
+<!-- ===== PROFIL MODAL ===== -->
+<div class="profile-modal" id="profileModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeProfile()">&times;</span>
+        <div class="profile-avatar" id="profileAvatar" style="background-image: url('');">
+            <span id="profileAvatarText">T</span>
+            <div class="edit-avatar" onclick="document.getElementById('avatarInput').click();">📷</div>
+        </div>
+        <input type="file" id="avatarInput" class="file-input-hidden" accept="image/*" onchange="uploadAvatar(event)">
+        <div class="profile-name" id="profileName">Tu</div>
+        <div class="profile-tag" id="profileTag">#0001</div>
+        <div class="profile-badges" id="profileBadges"></div>
+        <div class="profile-info" id="profileInfo">
+            <div class="info-row"><span class="label">👑 Rôle</span><span class="value" id="profileRole">Propriétaire</span></div>
+            <div class="info-row"><span class="label">📅 Membre depuis</span><span class="value" id="profileSince">Aujourd'hui</span></div>
+            <div class="info-row"><span class="label">📊 Messages</span><span class="value" id="profileMessages">42</span></div>
+            <div class="info-row"><span class="label">🔊 Vocal</span><span class="value" id="profileVoice">0h 0m</span></div>
+        </div>
+        <div class="edit-section" id="editSection">
+            <h4 style="margin-bottom:10px;color:#888;">✏️ Modifier le profil</h4>
+            <input class="edit-input" id="editNameInput" placeholder="Nouveau pseudo" value="Tu">
+            <button class="edit-btn" onclick="updateProfile()">Mettre à jour</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ============================================================
     //  CONFIG
@@ -729,7 +952,12 @@
         name: 'Tu',
         tag: '#0001',
         avatar: 'T',
-        badges: ['👑', '⭐', '💎', '🏆']
+        avatarFile: null,
+        badges: ['👑', '⭐', '💎', '🏆'],
+        role: 'owner',
+        since: 'Aujourd\'hui',
+        messages: 42,
+        voiceTime: '0h 0m'
     };
 
     const BADGES = {
@@ -835,18 +1063,31 @@
 
     // Utilisateurs
     const baseUsers = [
-        { name: 'DarkMaster', tag: '#1337', avatar: 'DM', status: 'online', role: 'admin', badges: ['👑', '⭐'] },
-        { name: 'HackerMan', tag: '#6969', avatar: 'HM', status: 'online', role: 'member', badges: ['💎'] },
-        { name: 'Shadow', tag: '#0001', avatar: 'SH', status: 'idle', role: 'member', badges: [] },
-        { name: 'V0idX', tag: '#4040', avatar: 'VX', status: 'online', role: 'member', badges: ['🔰'] },
-        { name: 'NeoX', tag: '#0690', avatar: 'NX', status: 'offline', role: 'member', badges: [] },
-        { name: 'Cyb3r', tag: '#1338', avatar: 'CY', status: 'online', role: 'member', badges: ['🎖️'] },
-        { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', status: 'online', role: 'member', badges: [] },
-        { name: 'Ghost', tag: '#0000', avatar: 'GH', status: 'idle', role: 'member', badges: [] },
-        { name: 'Phantom', tag: '#1234', avatar: 'PH', status: 'online', role: 'member', badges: ['⭐'] },
-        { name: 'AdminBot', tag: '#0001', avatar: 'AB', status: 'online', role: 'admin', badges: ['👑'] }
+        { name: 'DarkMaster', tag: '#1337', avatar: 'DM', avatarFile: null, status: 'online', role: 'admin', badges: ['👑', '⭐'], since: '2024-01-15', messages: 156, voiceTime: '12h 34m' },
+        { name: 'HackerMan', tag: '#6969', avatar: 'HM', avatarFile: null, status: 'online', role: 'member', badges: ['💎'], since: '2024-02-20', messages: 89, voiceTime: '5h 20m' },
+        { name: 'Shadow', tag: '#0001', avatar: 'SH', avatarFile: null, status: 'idle', role: 'member', badges: [], since: '2024-03-01', messages: 34, voiceTime: '1h 15m' },
+        { name: 'V0idX', tag: '#4040', avatar: 'VX', avatarFile: null, status: 'online', role: 'member', badges: ['🔰'], since: '2024-01-28', messages: 203, voiceTime: '8h 40m' },
+        { name: 'NeoX', tag: '#0690', avatar: 'NX', avatarFile: null, status: 'offline', role: 'member', badges: [], since: '2024-04-10', messages: 12, voiceTime: '0h 0m' },
+        { name: 'Cyb3r', tag: '#1338', avatar: 'CY', avatarFile: null, status: 'online', role: 'member', badges: ['🎖️'], since: '2024-02-05', messages: 67, voiceTime: '3h 12m' },
+        { name: 'Xx_H4x0r_xX', tag: '#6666', avatar: 'XH', avatarFile: null, status: 'online', role: 'member', badges: [], since: '2024-05-12', messages: 45, voiceTime: '2h 8m' },
+        { name: 'Ghost', tag: '#0000', avatar: 'GH', avatarFile: null, status: 'idle', role: 'member', badges: [], since: '2024-03-20', messages: 28, voiceTime: '0h 45m' },
+        { name: 'Phantom', tag: '#1234', avatar: 'PH', avatarFile: null, status: 'online', role: 'member', badges: ['⭐'], since: '2024-02-14', messages: 92, voiceTime: '6h 30m' },
+        { name: 'AdminBot', tag: '#0001', avatar: 'AB', avatarFile: null, status: 'online', role: 'admin', badges: ['👑'], since: '2024-01-01', messages: 999, voiceTime: '100h 0m' }
     ];
-    const owner = { name: 'Tu', tag: '#0001', avatar: 'T', status: 'online', role: 'owner', badges: ['👑', '⭐', '💎', '🏆'] };
+
+    const owner = { 
+        name: 'Tu', 
+        tag: '#0001', 
+        avatar: 'T', 
+        avatarFile: null,
+        status: 'online', 
+        role: 'owner', 
+        badges: ['👑', '⭐', '💎', '🏆'],
+        since: '2024-01-01',
+        messages: 420,
+        voiceTime: '24h 0m'
+    };
+    
     const USERS = [owner, ...baseUsers];
 
     // Messages
@@ -870,6 +1111,9 @@
         "C'est quoi ce délire ?", "Ptdr", "T'as cracké", "Gros brain"
     ];
 
+    // Stockage des PP (simulé)
+    let avatarStorage = {};
+
     // ============================================================
     //  ÉTAT
     // ============================================================
@@ -878,6 +1122,7 @@
     let currentVoiceChannel = null;
     let isMuted = false;
     let isDeafened = false;
+    let currentProfileUser = 'tu';
 
     // ============================================================
     //  UTILS
@@ -905,9 +1150,31 @@
         return map[role] || '';
     }
 
+    function getRoleName(role) {
+        const map = {
+            'owner': '👑 Propriétaire',
+            'admin': '🛡️ Administrateur',
+            'moderator': '🔰 Modérateur',
+            'booster': '⭐ Boosteur',
+            'member': '👤 Membre'
+        };
+        return map[role] || '👤 Membre';
+    }
+
+    function getAvatarStyle(user) {
+        if (user.avatarFile) {
+            return `background-image: url('${user.avatarFile}'); background-size: cover; background-position: center;`;
+        }
+        return '';
+    }
+
     function scrollBottom() {
         const el = document.getElementById('messages');
         el.scrollTop = el.scrollHeight;
+    }
+
+    function getUserByName(name) {
+        return USERS.find(u => u.name === name) || null;
     }
 
     // ============================================================
@@ -925,7 +1192,6 @@
             div.onclick = () => switchServer(key);
             container.appendChild(div);
         });
-        // Add button
         const add = document.createElement('div');
         add.className = 'server-add';
         add.textContent = '+';
@@ -999,14 +1265,16 @@
             const bg = u.role === 'owner' ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
                        u.role === 'admin' ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
                        'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+            const avatarStyle = u.avatarFile ? `background-image: url('${u.avatarFile}'); background-size: cover; background-position: center;` : '';
             div.innerHTML = `
-                <div class="avatar-sm" style="background:${bg}">
-                    ${u.avatar}
+                <div class="avatar-sm" style="${avatarStyle || `background:${bg}`}">
+                    ${!u.avatarFile ? u.avatar : ''}
                     ${u.badges && u.badges.length ? `<span class="mini-badge">${u.badges[0]}</span>` : ''}
                 </div>
                 <span class="name">${u.name} ${getBadgeHTML(u.badges)}</span>
                 <span class="status-dot ${statusClass}"></span>
             `;
+            div.onclick = () => openProfile(u.name);
             container.appendChild(div);
         });
     }
@@ -1015,7 +1283,7 @@
         const container = document.getElementById('messages');
         container.innerHTML = '';
         MESSAGES.forEach(msg => {
-            const user = USERS.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000', badges: [], role: 'member' };
+            const user = USERS.find(u => u.name === msg.user) || { name: msg.user, avatar: '?', tag: '#0000', badges: [], role: 'member', avatarFile: null };
             const div = document.createElement('div');
             div.className = 'message' + (msg.user === currentUser.name ? ' own' : '');
             const isOwner = user.role === 'owner' || msg.isOwner;
@@ -1023,10 +1291,13 @@
             const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
                       isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
                       'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+            const avatarStyle = user.avatarFile ? `background-image: url('${user.avatarFile}'); background-size: cover; background-position: center;` : '';
+            const statusDot = user.status === 'online' ? 'online' : user.status === 'idle' ? 'idle' : 'offline';
             div.innerHTML = `
-                <div class="avatar" style="background:${bg}">
-                    ${user.avatar}
+                <div class="avatar" style="${avatarStyle || `background:${bg}`}" onclick="openProfile('${msg.user}')">
+                    ${!user.avatarFile ? user.avatar : ''}
                     ${user.badges && user.badges.length ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+                    <span class="online-dot ${statusDot}"></span>
                 </div>
                 <div class="content-wrap">
                     <div class="username">
@@ -1051,12 +1322,15 @@
         const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
                   isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
                   'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+        const avatarStyle = user.avatarFile ? `background-image: url('${user.avatarFile}'); background-size: cover; background-position: center;` : '';
+        const statusDot = user.status === 'online' ? 'online' : user.status === 'idle' ? 'idle' : 'offline';
         const badgeHTML = user.badges ? getBadgeHTML(user.badges) : '';
         const roleBadge = isOwner ? getRoleBadge('owner') : isAdmin ? getRoleBadge('admin') : '';
         div.innerHTML = `
-            <div class="avatar" style="background:${bg}">
-                ${user.avatar || user.name.charAt(0)}
+            <div class="avatar" style="${avatarStyle || `background:${bg}`}" onclick="openProfile('${user.name}')">
+                ${!user.avatarFile ? (user.avatar || user.name.charAt(0)) : ''}
                 ${user.badges && user.badges.length ? `<span class="badge-icon">${user.badges[0]}</span>` : ''}
+                <span class="online-dot ${statusDot}"></span>
             </div>
             <div class="content-wrap">
                 <div class="username">
@@ -1102,7 +1376,7 @@
         document.getElementById('channelName').textContent = '# ' + ch.name;
         document.getElementById('channelTopic').textContent = ch.topic || '📌';
         renderChannels();
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `📌 Tu as rejoint #${ch.name}`, false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `📌 Rejoint #${ch.name}`, false, false, false);
     }
 
     function filterChannels(val) { renderChannels(val); }
@@ -1111,11 +1385,13 @@
         const input = document.getElementById('messageInput');
         const text = input.value.trim();
         if (!text) return;
+        currentUser.messages++;
         addMessage(currentUser, text, true, false, true);
         input.value = '';
         setTimeout(() => {
             const u = getRandomUser();
             const reply = getRandomReply();
+            u.messages = (u.messages || 0) + 1;
             addMessage(u, reply, false, u.role === 'admin', u.role === 'owner');
         }, 600 + Math.random() * 1200);
     }
@@ -1136,7 +1412,9 @@
         const container = document.getElementById('voiceUsers');
         container.innerHTML = `
             <div class="voice-user">
-                <div class="v-avatar" style="background:linear-gradient(135deg,#7b2ffc,#5a1fa8);">T</div>
+                <div class="v-avatar" style="${currentUser.avatarFile ? `background-image: url('${currentUser.avatarFile}'); background-size: cover; background-position: center;` : 'background:linear-gradient(135deg,#7b2ffc,#5a1fa8);'}">
+                    ${!currentUser.avatarFile ? 'T' : ''}
+                </div>
                 <span>Toi</span>
                 <span class="speaking">🔊</span>
             </div>
@@ -1156,13 +1434,13 @@
                 <span class="speaking">🔊</span>
             </div>` : ''}
         `;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🔊 Rejoint **${ch.name}** (${ch.users} users)`, false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `🔊 Rejoint **${ch.name}** (${ch.users} users)`, false, false, false);
     }
 
     function leaveVoice() {
         document.getElementById('voiceOverlay').classList.remove('active');
         currentVoiceChannel = null;
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, '🔇 Quitté le vocal', false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, '🔇 Quitté le vocal', false, false, false);
     }
 
     function toggleMute() {
@@ -1170,7 +1448,7 @@
         const btn = document.querySelector('.voice-controls .mute-btn');
         btn.textContent = isMuted ? '🔇 Muet (ON)' : '🔇 Muet';
         btn.style.background = isMuted ? '#ff0000' : '#ff6b6b';
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, isMuted ? '🔇 Muet activé' : '🔊 Muet désactivé', false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, isMuted ? '🔇 Muet activé' : '🔊 Muet désactivé', false, false, false);
     }
 
     function toggleDeafen() {
@@ -1178,12 +1456,12 @@
         const btn = document.querySelector('.voice-controls .deafen-btn');
         btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
         btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, isDeafened ? '🔊 Assourdi' : '🔊 Désassourdi', false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, isDeafened ? '🔊 Assourdi' : '🔊 Désassourdi', false, false, false);
     }
 
     function joinActivity(id) {
         const map = { 'amongus': '🎮 Among Us', 'poker': '♠️ Poker', 'chess': '♟️ Chess' };
-        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [] }, `🎮 Lancé **${map[id] || id}** !`, false, false, false);
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `🎮 Lancé **${map[id] || id}** !`, false, false, false);
     }
 
     function addServer() {
@@ -1202,6 +1480,129 @@
         };
         renderServers();
         switchServer(id);
+    }
+
+    // ============================================================
+    //  PROFIL
+    // ============================================================
+    function openProfile(username) {
+        const user = getUserByName(username);
+        if (!user && username !== 'tu') {
+            // Si c'est "tu", utiliser currentUser
+            if (username === 'tu') {
+                showProfileModal(currentUser);
+                return;
+            }
+            return;
+        }
+        const target = user || currentUser;
+        showProfileModal(target);
+    }
+
+    function showProfileModal(user) {
+        const modal = document.getElementById('profileModal');
+        modal.classList.add('active');
+        currentProfileUser = user.name;
+
+        const avatarEl = document.getElementById('profileAvatar');
+        const avatarText = document.getElementById('profileAvatarText');
+        if (user.avatarFile) {
+            avatarEl.style.backgroundImage = `url('${user.avatarFile}')`;
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.style.backgroundPosition = 'center';
+            avatarText.style.display = 'none';
+        } else {
+            avatarEl.style.backgroundImage = '';
+            avatarText.style.display = 'flex';
+            avatarText.textContent = user.avatar || user.name.charAt(0);
+        }
+
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileTag').textContent = user.tag || '#0000';
+
+        const badgesContainer = document.getElementById('profileBadges');
+        badgesContainer.innerHTML = '';
+        if (user.badges && user.badges.length) {
+            user.badges.forEach(b => {
+                const span = document.createElement('span');
+                span.className = 'badge-item';
+                span.textContent = b + ' ' + (BADGES[b]?.name || '');
+                span.style.background = BADGES[b]?.color || '#2a2a4a';
+                badgesContainer.appendChild(span);
+            });
+        }
+
+        document.getElementById('profileRole').textContent = getRoleName(user.role || 'member');
+        document.getElementById('profileSince').textContent = user.since || 'Aujourd\'hui';
+        document.getElementById('profileMessages').textContent = user.messages || 0;
+        document.getElementById('profileVoice').textContent = user.voiceTime || '0h 0m';
+
+        // Section édition (seulement pour le proprio)
+        const editSection = document.getElementById('editSection');
+        if (user.name === currentUser.name) {
+            editSection.style.display = 'block';
+            document.getElementById('editNameInput').value = user.name;
+        } else {
+            editSection.style.display = 'none';
+        }
+    }
+
+    function closeProfile() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function updateProfile() {
+        const newName = document.getElementById('editNameInput').value.trim();
+        if (!newName) return;
+        
+        // Mettre à jour currentUser
+        const oldName = currentUser.name;
+        currentUser.name = newName;
+        currentUser.tag = '#' + Math.floor(Math.random() * 9000 + 1000);
+        
+        // Mettre à jour dans USERS
+        const userIndex = USERS.findIndex(u => u.name === oldName);
+        if (userIndex !== -1) {
+            USERS[userIndex].name = newName;
+            USERS[userIndex].tag = currentUser.tag;
+        }
+        
+        // Mettre à jour dans MESSAGES
+        MESSAGES.forEach(msg => {
+            if (msg.user === oldName) msg.user = newName;
+        });
+        
+        // Mettre à jour l'UI
+        renderMembers();
+        renderMessages();
+        showProfileModal(currentUser);
+        
+        addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `✏️ **${oldName}** a changé son pseudo en **${newName}**`, false, false, false);
+    }
+
+    function uploadAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            currentUser.avatarFile = dataUrl;
+            
+            // Mettre à jour dans USERS
+            const userIndex = USERS.findIndex(u => u.name === currentUser.name);
+            if (userIndex !== -1) {
+                USERS[userIndex].avatarFile = dataUrl;
+            }
+            
+            // Mettre à jour l'UI
+            renderMembers();
+            renderMessages();
+            showProfileModal(currentUser);
+            
+            addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `📷 **${currentUser.name}** a changé sa photo de profil !`, false, false, false);
+        };
+        reader.readAsDataURL(file);
     }
 
     // ============================================================
@@ -1297,9 +1698,15 @@
         if (e.key === 'Enter') sendMessage();
     });
 
+    // Fermer le profil en cliquant en dehors
+    document.getElementById('profileModal').addEventListener('click', function(e) {
+        if (e.target === this) closeProfile();
+    });
+
     console.log('🔥 DarkChat Ultimate — Propriétaire: ' + currentUser.name);
     console.log('👑 Badges disponibles:', Object.keys(BADGES).join(', '));
     console.log('📡 Serveurs:', Object.keys(SERVERS).join(', '));
+    console.log('📸 Upload d\'avatar disponible : clique sur l\'avatar dans le profil');
 </script>
 
 </body>
