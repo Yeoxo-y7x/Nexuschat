@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkChat - Système de Profil Discord</title>
-    <!-- PEERJS POUR LE VOCAL -->
+    <title>DarkChat - Profil + Vocal Public</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         * {
@@ -37,7 +36,6 @@
             border: 1px solid #2a2a4a;
         }
 
-        /* Sidebar gauche - Serveurs */
         .sidebar-left {
             width: 80px;
             background: #12121f;
@@ -48,9 +46,7 @@
             gap: 12px;
             border-right: 1px solid #2a2a4a;
             overflow-y: auto;
-            overflow-x: hidden;
         }
-
         .sidebar-left::-webkit-scrollbar { width: 3px; }
         .sidebar-left::-webkit-scrollbar-thumb { background: #7b2ffc; border-radius: 10px; }
 
@@ -71,7 +67,6 @@
             flex-shrink: 0;
             color: #aaa;
         }
-
         .server-icon:hover {
             border-color: #7b2ffc;
             transform: scale(1.1);
@@ -79,7 +74,6 @@
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             color: #fff;
         }
-
         .server-icon.active {
             border-color: #7b2ffc;
             border-radius: 16px;
@@ -87,22 +81,12 @@
             color: #fff;
             box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
         }
-
         .server-icon .crown {
             position: absolute;
             top: -12px;
             right: -8px;
             font-size: 16px;
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
         }
-
-        .server-divider {
-            width: 35px;
-            height: 2px;
-            background: #2a2a4a;
-            border-radius: 1px;
-        }
-
         .server-add {
             width: 52px;
             height: 52px;
@@ -117,14 +101,12 @@
             cursor: pointer;
             transition: 0.3s;
         }
-
         .server-add:hover {
             border-color: #7b2ffc;
             color: #7b2ffc;
             transform: scale(1.05);
         }
 
-        /* Sidebar serveurs */
         .sidebar-servers {
             width: 250px;
             background: #16162a;
@@ -133,7 +115,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .server-header {
             display: flex;
             justify-content: space-between;
@@ -142,7 +123,6 @@
             border-bottom: 1px solid #2a2a4a;
             margin-bottom: 15px;
         }
-
         .server-header .name {
             font-size: 18px;
             font-weight: bold;
@@ -151,7 +131,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .server-header .name:hover { color: #7b2ffc; }
 
         .channel-search {
@@ -164,15 +143,12 @@
             outline: none;
             margin-bottom: 15px;
         }
-
         .channel-search::placeholder { color: #555; }
 
         .channel-list {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
         }
-
         .channel-list::-webkit-scrollbar { width: 4px; }
         .channel-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
 
@@ -183,14 +159,7 @@
             letter-spacing: 1.5px;
             margin: 15px 0 6px;
             padding-left: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
         }
-
-        .channel-category:hover { color: #aaa; }
-
         .channel-item {
             padding: 7px 12px;
             border-radius: 8px;
@@ -203,17 +172,14 @@
             font-size: 14px;
             margin: 1px 0;
         }
-
         .channel-item:hover {
             background: #2a2a4a;
             color: #fff;
         }
-
         .channel-item.active {
             background: #2a2a4a;
             color: #fff;
         }
-
         .channel-item .icon { font-size: 16px; }
         .channel-item .lock { margin-left: auto; font-size: 11px; color: #ff6b6b; }
         .channel-item .voice-indicator {
@@ -235,14 +201,12 @@
             50% { opacity: 0.3; }
         }
 
-        /* Chat principal */
         .main-chat {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #12121f;
         }
-
         .chat-header {
             padding: 12px 20px;
             background: #16162a;
@@ -252,18 +216,15 @@
             align-items: center;
             min-height: 55px;
         }
-
         .chat-header .left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .chat-header .left h2 {
             font-size: 17px;
             color: #fff;
         }
-
         .chat-header .left .topic {
             color: #666;
             font-size: 12px;
@@ -271,19 +232,16 @@
             background: #0a0a0f;
             border-radius: 12px;
         }
-
         .chat-header .right {
             display: flex;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
-
         .chat-header .right .online {
             color: #00ff88;
             font-size: 13px;
         }
-
         .chat-header .right .profile-btn {
             background: #2a2a4a;
             padding: 4px 14px;
@@ -296,12 +254,10 @@
             gap: 6px;
             border: 1px solid transparent;
         }
-
         .chat-header .right .profile-btn:hover {
             border-color: #7b2ffc;
             transform: scale(1.05);
         }
-
         .chat-header .right .admin-badge {
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             padding: 4px 14px;
@@ -315,12 +271,10 @@
             gap: 5px;
             border: 1px solid rgba(123, 47, 252, 0.3);
         }
-
         .chat-header .right .admin-badge:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
         }
-
         .chat-header .right .my-id {
             font-size: 11px;
             color: #666;
@@ -329,7 +283,6 @@
             border-radius: 12px;
         }
 
-        /* Messages */
         .messages {
             flex: 1;
             padding: 15px 20px;
@@ -338,7 +291,6 @@
             flex-direction: column;
             gap: 3px;
         }
-
         .messages::-webkit-scrollbar { width: 5px; }
         .messages::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
 
@@ -352,14 +304,11 @@
             transition: 0.15s;
             cursor: pointer;
         }
-
         .message:hover { background: #1a1a2e; }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .message .avatar {
             width: 34px;
             height: 34px;
@@ -375,14 +324,12 @@
             background-position: center;
             background-color: #2a2a4a;
         }
-
         .message .avatar .badge-icon {
             position: absolute;
             bottom: -4px;
             right: -4px;
             font-size: 12px;
         }
-
         .message .avatar .online-dot {
             position: absolute;
             bottom: -2px;
@@ -392,13 +339,10 @@
             border-radius: 50%;
             border: 2px solid #12121f;
         }
-
         .online-dot.online { background: #00ff88; }
         .online-dot.idle { background: #ffaa00; }
         .online-dot.offline { background: #444; }
-
         .message .content-wrap { flex: 1; min-width: 0; }
-
         .message .username {
             font-weight: bold;
             font-size: 13px;
@@ -407,31 +351,26 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-
         .message .username .tag {
             font-size: 10px;
             color: #666;
             font-weight: normal;
         }
-
         .message .username .role-badge {
             font-size: 9px;
             padding: 1px 7px;
             border-radius: 8px;
             font-weight: bold;
         }
-
         .role-badge.owner { background: #ff6b6b; color: #fff; }
         .role-badge.admin { background: #7b2ffc; color: #fff; }
         .role-badge.moderator { background: #ffaa00; color: #000; }
         .role-badge.booster { background: #ff66ff; color: #fff; }
-
         .message .content {
             font-size: 14px;
             word-wrap: break-word;
             margin-top: 1px;
         }
-
         .message .time {
             font-size: 10px;
             color: #444;
@@ -439,14 +378,12 @@
             flex-shrink: 0;
             margin-top: 3px;
         }
-
         .message.own .content-wrap {
             background: #2a2a4a;
             padding: 6px 14px;
             border-radius: 12px;
         }
 
-        /* Input */
         .input-area {
             padding: 12px 20px;
             background: #16162a;
@@ -455,7 +392,6 @@
             gap: 10px;
             align-items: center;
         }
-
         .input-area .emoji-btn {
             font-size: 20px;
             cursor: pointer;
@@ -464,7 +400,6 @@
             padding: 5px;
         }
         .input-area .emoji-btn:hover { color: #fff; }
-
         .input-area input {
             flex: 1;
             padding: 10px 18px;
@@ -476,9 +411,7 @@
             outline: none;
             transition: 0.3s;
         }
-
         .input-area input:focus { box-shadow: 0 0 20px rgba(123, 47, 252, 0.15); }
-
         .input-area button {
             padding: 10px 24px;
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
@@ -490,13 +423,11 @@
             transition: 0.3s;
             font-size: 13px;
         }
-
         .input-area button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(123, 47, 252, 0.3);
         }
 
-        /* Sidebar droit - Membres */
         .sidebar-right {
             width: 240px;
             background: #16162a;
@@ -505,7 +436,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .sidebar-right .title {
             color: #888;
             font-size: 11px;
@@ -515,16 +445,12 @@
             display: flex;
             justify-content: space-between;
         }
-
         .member-list {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
         }
-
         .member-list::-webkit-scrollbar { width: 4px; }
         .member-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 10px; }
-
         .member-item {
             display: flex;
             align-items: center;
@@ -534,9 +460,7 @@
             transition: 0.15s;
             cursor: pointer;
         }
-
         .member-item:hover { background: #1a1a2e; }
-
         .member-item .avatar-sm {
             width: 28px;
             height: 28px;
@@ -551,14 +475,12 @@
             background-position: center;
             background-color: #2a2a4a;
         }
-
         .member-item .avatar-sm .mini-badge {
             position: absolute;
             bottom: -3px;
             right: -3px;
             font-size: 9px;
         }
-
         .member-item .name {
             font-size: 13px;
             display: flex;
@@ -566,14 +488,12 @@
             gap: 3px;
             flex: 1;
         }
-
         .member-item .status-dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
             flex-shrink: 0;
         }
-
         .status-dot.online { background: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
         .status-dot.idle { background: #ffaa00; }
         .status-dot.offline { background: #444; }
@@ -594,9 +514,7 @@
             align-items: center;
             z-index: 1000;
         }
-
         .profile-modal.active { display: flex; }
-
         .profile-modal .modal-content {
             background: #1a1a2e;
             border-radius: 20px;
@@ -609,7 +527,6 @@
             overflow-y: auto;
             position: relative;
         }
-
         .profile-modal .modal-content .close-btn {
             position: absolute;
             top: 15px;
@@ -620,10 +537,7 @@
             transition: 0.3s;
             z-index: 10;
         }
-
         .profile-modal .modal-content .close-btn:hover { color: #fff; }
-
-        /* Banner */
         .profile-banner {
             width: 100%;
             height: 120px;
@@ -631,7 +545,6 @@
             border-radius: 20px 20px 0 0;
             position: relative;
         }
-
         .profile-banner .banner-edit {
             position: absolute;
             bottom: 10px;
@@ -643,10 +556,7 @@
             cursor: pointer;
             transition: 0.3s;
         }
-
         .profile-banner .banner-edit:hover { background: rgba(0,0,0,0.8); }
-
-        /* Avatar dans le profil */
         .profile-avatar-container {
             position: relative;
             margin-top: -60px;
@@ -655,7 +565,6 @@
             align-items: flex-end;
             gap: 15px;
         }
-
         .profile-avatar-container .profile-avatar {
             width: 100px;
             height: 100px;
@@ -672,7 +581,6 @@
             position: relative;
             flex-shrink: 0;
         }
-
         .profile-avatar-container .profile-avatar .edit-avatar {
             position: absolute;
             bottom: 2px;
@@ -685,41 +593,32 @@
             border: 2px solid #1a1a2e;
             transition: 0.3s;
         }
-
         .profile-avatar-container .profile-avatar .edit-avatar:hover { transform: scale(1.1); }
-
         .profile-avatar-container .profile-name-section {
             flex: 1;
             padding-bottom: 10px;
         }
-
         .profile-avatar-container .profile-name-section .name {
             font-size: 22px;
             font-weight: bold;
         }
-
         .profile-avatar-container .profile-name-section .tag {
             color: #888;
             font-size: 14px;
         }
-
         .profile-avatar-container .profile-name-section .status-text {
             font-size: 13px;
             margin-top: 4px;
         }
-
         .status-text.online { color: #00ff88; }
         .status-text.idle { color: #ffaa00; }
         .status-text.offline { color: #444; }
-
-        /* Badges dans le profil */
         .profile-badges-section {
             padding: 10px 20px;
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
         }
-
         .profile-badges-section .badge-item {
             background: #2a2a4a;
             padding: 4px 12px;
@@ -729,49 +628,40 @@
             align-items: center;
             gap: 4px;
         }
-
-        /* Infos du profil */
         .profile-info-section {
             padding: 10px 20px 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
-
         .profile-info-section .info-card {
             background: #0a0a0f;
             padding: 12px;
             border-radius: 12px;
             text-align: center;
         }
-
         .profile-info-section .info-card .label {
             color: #888;
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .profile-info-section .info-card .value {
             font-size: 16px;
             font-weight: bold;
             margin-top: 4px;
         }
-
-        /* Edit section */
         .profile-edit-section {
             padding: 15px 20px 20px;
             border-top: 1px solid #2a2a4a;
             background: #12121f;
             border-radius: 0 0 20px 20px;
         }
-
         .profile-edit-section .edit-row {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
-
         .profile-edit-section .edit-row .edit-input {
             flex: 1;
             padding: 10px 16px;
@@ -782,9 +672,7 @@
             font-size: 14px;
             outline: none;
         }
-
         .profile-edit-section .edit-row .edit-input:focus { border-color: #7b2ffc; }
-
         .profile-edit-section .edit-btn {
             padding: 10px 24px;
             background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
@@ -796,9 +684,7 @@
             transition: 0.3s;
             width: 100%;
         }
-
         .profile-edit-section .edit-btn:hover { transform: scale(1.02); }
-
         .file-input-hidden { display: none; }
 
         /* ===== VOICE OVERLAY ===== */
@@ -821,31 +707,25 @@
             justify-content: center;
             max-width: 95%;
         }
-
         .voice-overlay.active { display: flex; }
-
         .voice-overlay .voice-info {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .voice-overlay .voice-info .channel-name {
             font-weight: bold;
             font-size: 14px;
         }
-
         .voice-overlay .voice-info .status-text {
             color: #00ff88;
             font-size: 12px;
         }
-
         .voice-overlay .voice-users-list {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .voice-overlay .voice-users-list .v-user {
             display: flex;
             align-items: center;
@@ -855,7 +735,6 @@
             border-radius: 16px;
             font-size: 12px;
         }
-
         .voice-overlay .voice-users-list .v-user .v-avatar {
             width: 22px;
             height: 22px;
@@ -865,23 +744,20 @@
             justify-content: center;
             font-size: 10px;
             font-weight: bold;
-            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
             background-size: cover;
             background-position: center;
+            background-color: #2a2a4a;
         }
-
         .voice-overlay .voice-users-list .v-user .speaking {
             color: #00ff88;
             font-size: 10px;
             animation: pulse 1s infinite;
         }
-
         .voice-overlay .voice-controls {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
-
         .voice-overlay .voice-controls button {
             padding: 5px 12px;
             border: none;
@@ -891,14 +767,11 @@
             transition: 0.2s;
             font-size: 11px;
         }
-
         .voice-overlay .voice-controls button:hover { transform: scale(1.05); }
         .voice-overlay .voice-controls .mute-btn { background: #ff6b6b; color: #fff; }
         .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
         .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
-        .voice-overlay .voice-controls .join-btn { background: #00ff88; color: #000; }
 
-        /* Responsive */
         @media (max-width: 1100px) { .sidebar-right { display: none; } }
         @media (max-width: 800px) {
             .sidebar-left { width: 60px; }
@@ -917,20 +790,17 @@
 <body>
 
 <div class="container">
-    <!-- Sidebar gauche -->
     <div class="sidebar-left" id="serverList"></div>
 
-    <!-- Sidebar serveurs -->
     <div class="sidebar-servers">
         <div class="server-header">
             <div class="name" id="serverName">DarkChat <span style="font-size:12px;color:#888;">▼</span></div>
             <span style="color:#555;font-size:12px;">⚡</span>
         </div>
-        <input class="channel-search" placeholder="🔍 Rechercher un salon..." id="channelSearch" oninput="filterChannels(this.value)">
+        <input class="channel-search" placeholder="🔍 Rechercher..." id="channelSearch" oninput="filterChannels(this.value)">
         <div class="channel-list" id="channelList"></div>
     </div>
 
-    <!-- Chat principal -->
     <div class="main-chat">
         <div class="chat-header">
             <div class="left">
@@ -949,18 +819,17 @@
 
         <div class="input-area">
             <span class="emoji-btn">😊</span>
-            <input type="text" id="messageInput" placeholder="Message... (aucune censure)">
+            <input type="text" id="messageInput" placeholder="Message...">
             <button onclick="sendMessage()">Envoyer</button>
         </div>
     </div>
 
-    <!-- Sidebar droit -->
     <div class="sidebar-right">
         <div class="title">👥 En ligne — <span id="memberCount">42</span></div>
         <div class="member-list" id="memberList"></div>
     </div>
 
-    <!-- ===== VOICE OVERLAY ===== -->
+    <!-- VOICE OVERLAY -->
     <div class="voice-overlay" id="voiceOverlay">
         <div class="voice-info">
             <span style="font-size:18px;">🔊</span>
@@ -982,19 +851,15 @@
     </div>
 </div>
 
-<!-- ===== PROFIL MODAL ===== -->
+<!-- PROFIL MODAL -->
 <div class="profile-modal" id="profileModal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeProfile()">&times;</span>
-
-        <!-- Banner -->
-        <div class="profile-banner" id="profileBanner">
+        <div class="profile-banner">
             <div class="banner-edit" onclick="alert('Bannière modifiable !')">🖼️ Changer</div>
         </div>
-
-        <!-- Avatar + Nom -->
         <div class="profile-avatar-container">
-            <div class="profile-avatar" id="profileAvatar" style="background-image: url('');">
+            <div class="profile-avatar" id="profileAvatar">
                 <span id="profileAvatarText">T</span>
                 <div class="edit-avatar" onclick="document.getElementById('avatarInput').click();">📷</div>
             </div>
@@ -1005,51 +870,32 @@
                 <div class="status-text online" id="profileStatus">🟢 En ligne</div>
             </div>
         </div>
-
-        <!-- Badges -->
         <div class="profile-badges-section" id="profileBadges"></div>
-
-        <!-- Infos -->
         <div class="profile-info-section">
-            <div class="info-card">
-                <div class="label">👑 Rôle</div>
-                <div class="value" id="profileRole">Propriétaire</div>
-            </div>
-            <div class="info-card">
-                <div class="label">📅 Membre depuis</div>
-                <div class="value" id="profileSince">Aujourd'hui</div>
-            </div>
-            <div class="info-card">
-                <div class="label">📊 Messages</div>
-                <div class="value" id="profileMessages">42</div>
-            </div>
-            <div class="info-card">
-                <div class="label">🔊 Vocal</div>
-                <div class="value" id="profileVoice">0h 0m</div>
-            </div>
+            <div class="info-card"><div class="label">👑 Rôle</div><div class="value" id="profileRole">Propriétaire</div></div>
+            <div class="info-card"><div class="label">📅 Membre depuis</div><div class="value" id="profileSince">Aujourd'hui</div></div>
+            <div class="info-card"><div class="label">📊 Messages</div><div class="value" id="profileMessages">42</div></div>
+            <div class="info-card"><div class="label">🔊 Vocal</div><div class="value" id="profileVoice">0h 0m</div></div>
         </div>
-
-        <!-- Edition -->
         <div class="profile-edit-section" id="editSection">
             <div class="edit-row">
                 <input class="edit-input" id="editNameInput" placeholder="Nouveau pseudo" value="Tu">
-                <input class="edit-input" id="editTagInput" placeholder="Tag (ex: #0001)" value="#0001">
+                <input class="edit-input" id="editTagInput" placeholder="Tag" value="#0001">
             </div>
-            <button class="edit-btn" onclick="updateProfile()">💾 Mettre à jour le profil</button>
+            <button class="edit-btn" onclick="updateProfile()">💾 Mettre à jour</button>
         </div>
     </div>
 </div>
 
 <script>
     // ============================================================
-    //  CONFIG
+    // CONFIG
     // ============================================================
     const currentUser = {
         name: 'Tu',
         tag: '#0001',
         avatar: 'T',
         avatarFile: null,
-        banner: null,
         badges: ['👑', '⭐', '💎', '🏆'],
         role: 'owner',
         status: 'online',
@@ -1068,7 +914,7 @@
     };
 
     // ============================================================
-    //  DONNÉES
+    // SERVEURS
     // ============================================================
     const SERVERS = {
         'darkchat': {
@@ -1077,9 +923,9 @@
             owner: true,
             channels: {
                 text: [
-                    { id: 'general', name: 'général', topic: '📍 Hub principal — Pas de limites', icon: '#' },
-                    { id: 'tech', name: 'tech-hacking', topic: '💻 Hacking & Sécurité', icon: '#', locked: true },
-                    { id: 'leaks', name: 'leaks-db', topic: '📂 Database & Leaks', icon: '#', locked: true }
+                    { id: 'general', name: 'général', topic: '📍 Hub principal', icon: '#' },
+                    { id: 'tech', name: 'tech-hacking', topic: '💻 Hacking', icon: '#', locked: true },
+                    { id: 'leaks', name: 'leaks-db', topic: '📂 Leaks', icon: '#', locked: true }
                 ],
                 voice: [
                     { id: 'general-vc', name: 'Général', icon: '🔊' },
@@ -1093,7 +939,7 @@
             owner: false,
             channels: {
                 text: [
-                    { id: 'tech-gen', name: 'général', topic: '💻 Tech & Dev', icon: '#' },
+                    { id: 'tech-gen', name: 'général', topic: '💻 Tech', icon: '#' },
                     { id: 'dev', name: 'dev', topic: '👨‍💻 Code', icon: '#', locked: true }
                 ],
                 voice: [
@@ -1117,7 +963,9 @@
         }
     };
 
-    // Utilisateurs
+    // ============================================================
+    // UTILISATEURS
+    // ============================================================
     const baseUsers = [
         { name: 'DarkMaster', tag: '#1337', avatar: 'DM', avatarFile: null, status: 'online', role: 'admin', badges: ['👑', '⭐'], since: '2024-01-15', messages: 156, voiceTime: '12h 34m' },
         { name: 'HackerMan', tag: '#6969', avatar: 'HM', avatarFile: null, status: 'online', role: 'member', badges: ['💎'], since: '2024-02-20', messages: 89, voiceTime: '5h 20m' },
@@ -1144,7 +992,9 @@
     
     const USERS = [owner, ...baseUsers];
 
-    // Messages
+    // ============================================================
+    // MESSAGES
+    // ============================================================
     const MESSAGES = [
         { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
         { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
@@ -1159,13 +1009,11 @@
         "J'suis chaud", "À fond", "Incroyable", "J'suis mort de rire",
         "Ah ouais ?", "Ptn j'suis mort", "Vazy envoie", "Trop stylé",
         "Nan mais t'es sérieux ?", "J'te jure", "Ça c'est chaud",
-        "Mdrrr", "T'es un ouf", "J'adore ce serveur", "DarkChat c'est le meilleur",
-        "Rip les règles", "Ici on s'en bat les couilles des lois",
-        "Le boss a parlé 👑", "Respect au propriétaire", "Tu gères chef"
+        "Mdrrr", "T'es un ouf", "J'adore ce serveur", "DarkChat c'est le meilleur"
     ];
 
     // ============================================================
-    //  PEERJS - VOCAL PUBLIC
+    // PEERJS - VOCAL
     // ============================================================
     let peer = null;
     let localStream = null;
@@ -1177,21 +1025,25 @@
     let isDeafened = false;
     let myId = '';
     let voiceUsers = [];
+    let isPeerReady = false;
 
     function initPeer() {
-        peer = new Peer(undefined, {
-            debug: 0
-        });
+        peer = new Peer(undefined, { debug: 0 });
 
         peer.on('open', (id) => {
             myId = id;
+            isPeerReady = true;
             document.getElementById('myIdDisplay').textContent = 'ID: ' + id;
             addMessage('Système', '✅ Connecté avec l\'ID: ' + id);
-            addMessage('Système', '📞 Partage ton ID pour les appels vocaux');
+            addMessage('Système', '📞 Clique sur un salon vocal pour parler !');
+            // Rejoindre automatiquement le vocal général
+            setTimeout(() => {
+                joinVoice('general-vc');
+            }, 1000);
         });
 
         peer.on('error', (err) => {
-            console.error(err);
+            console.error('PeerJS Error:', err);
             addMessage('Système', '❌ Erreur PeerJS: ' + err.message);
         });
 
@@ -1204,18 +1056,18 @@
         });
 
         peer.on('close', () => {
+            isPeerReady = false;
             addMessage('Système', '🔴 Déconnecté de PeerJS');
             leaveVoice();
         });
     }
 
     // ============================================================
-    //  VOICE - REJOINDRE UN SALON
+    // VOICE - REJOINDRE UN SALON
     // ============================================================
     function joinVoice(channelId) {
-        if (!peer) {
-            initPeer();
-            setTimeout(() => joinVoice(channelId), 500);
+        if (!isPeerReady) {
+            addMessage('Système', '⏳ Attends que PeerJS soit prêt...');
             return;
         }
 
@@ -1242,28 +1094,25 @@
         overlay.classList.add('active');
         document.getElementById('voiceChannelName').textContent = channelName;
 
+        // Démarrer le micro
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(stream => {
                 localStream = stream;
+                // Ajouter un utilisateur simulé pour tester
+                if (voiceUsers.length === 0) {
+                    setTimeout(() => {
+                        if (inVoice) {
+                            const fakeId = 'peer-' + Math.random().toString(36).substring(2, 8);
+                            voiceUsers.push(fakeId);
+                            updateVoiceUsers();
+                            addMessage('Système', `👤 ${fakeId.substring(0,6)} a rejoint le vocal`);
+                        }
+                    }, 1500);
+                }
                 updateVoiceUsers();
                 addMessage('Système', `🔊 Rejoint le salon vocal **${channelName}**`);
-                
-                // Broadcast aux autres utilisateurs du salon
-                // On simule des utilisateurs pour l'exemple
-                const fakeIds = ['peer-abc123', 'peer-def456', 'peer-ghi789'];
-                fakeIds.forEach((id, index) => {
-                    setTimeout(() => {
-                        if (inVoice && !voiceUsers.includes(id) && id !== myId) {
-                            voiceUsers.push(id);
-                            updateVoiceUsers();
-                            addMessage('Système', `👤 ${id.substring(0,6)} a rejoint le vocal`);
-                            // Simuler un appel
-                            if (localStream && peer) {
-                                // En vrai on appellerait le peer
-                            }
-                        }
-                    }, 2000 + index * 3000);
-                });
+                // Mettre à jour l'indicateur dans les channels
+                renderChannels();
             })
             .catch(err => {
                 addMessage('Système', '❌ Erreur micro: ' + err.message);
@@ -1289,6 +1138,7 @@
         currentVoiceChannel = null;
         document.getElementById('voiceOverlay').classList.remove('active');
         updateVoiceUsers();
+        renderChannels();
         addMessage('Système', '🔇 Quitté le salon vocal');
     }
 
@@ -1312,20 +1162,22 @@
     function setupCall(callObj) {
         const peerId = callObj.peer;
         calls[peerId] = callObj;
-        if (!voiceUsers.includes(peerId)) voiceUsers.push(peerId);
-        updateVoiceUsers();
+        if (!voiceUsers.includes(peerId)) {
+            voiceUsers.push(peerId);
+            updateVoiceUsers();
+            addMessage('Système', `👤 ${peerId.substring(0,6)} a rejoint le vocal`);
+        }
 
         callObj.on('stream', (stream) => {
             remoteStreams[peerId] = stream;
             const audio = new Audio();
             audio.srcObject = stream;
             audio.play().catch(e => console.log(e));
-            addMessage('Système', `🔊 Connecté à **${peerId.substring(0,6)}**`);
             updateVoiceUsers();
         });
 
         callObj.on('close', () => {
-            addMessage('Système', `🔇 Déconnecté de ${peerId.substring(0,6)}`);
+            addMessage('Système', `🔇 ${peerId.substring(0,6)} a quitté le vocal`);
             delete calls[peerId];
             delete remoteStreams[peerId];
             voiceUsers = voiceUsers.filter(p => p !== peerId);
@@ -1344,6 +1196,7 @@
         const container = document.getElementById('voiceUsersList');
         container.innerHTML = '';
         
+        // Soi-même
         const self = document.createElement('div');
         self.className = 'v-user';
         const avatarStyle = currentUser.avatarFile ? `background-image: url('${currentUser.avatarFile}'); background-size: cover; background-position: center;` : 'background:linear-gradient(135deg,#7b2ffc,#5a1fa8);';
@@ -1354,6 +1207,7 @@
         `;
         container.appendChild(self);
 
+        // Les autres
         voiceUsers.forEach(id => {
             if (id === myId) return;
             const div = document.createElement('div');
@@ -1366,6 +1220,24 @@
             `;
             container.appendChild(div);
         });
+
+        // Simuler des utilisateurs qui arrivent/départent
+        if (inVoice && voiceUsers.length < 2) {
+            // Ajouter des utilisateurs factices pour montrer la liste
+            const fakeUsers = ['peer-abc123', 'peer-def456', 'peer-ghi789'];
+            fakeUsers.forEach(id => {
+                if (!voiceUsers.includes(id) && id !== myId) {
+                    voiceUsers.push(id);
+                }
+            });
+            // Re-render après ajout
+            setTimeout(() => {
+                if (inVoice) {
+                    updateVoiceUsers();
+                    renderChannels();
+                }
+            }, 500);
+        }
     }
 
     function toggleMute() {
@@ -1383,7 +1255,7 @@
         isDeafened = !isDeafened;
         const btn = document.querySelector('.voice-controls .deafen-btn');
         btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
-        btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
+        btn.style.background = isDeafenced ? '#ff0000' : '#7b2ffc';
         Object.values(remoteStreams).forEach(stream => {
             stream.getTracks().forEach(t => t.enabled = !isDeafened);
         });
@@ -1391,7 +1263,7 @@
     }
 
     // ============================================================
-    //  UTILS
+    // UTILS
     // ============================================================
     function getTime() {
         const d = new Date();
@@ -1446,8 +1318,11 @@
     }
 
     // ============================================================
-    //  RENDER
+    // RENDER
     // ============================================================
+    let currentServer = 'darkchat';
+    let currentChannel = 'general';
+
     function renderServers() {
         const container = document.getElementById('serverList');
         container.innerHTML = '';
@@ -1494,12 +1369,13 @@
                 div.className = 'channel-item' + (ch.id === currentChannel && cat.key === 'text' ? ' active' : '');
                 if (cat.key === 'voice') {
                     const isActive = inVoice && currentVoiceChannel === ch.id;
+                    const userCount = isActive ? voiceUsers.length + 1 : 0;
                     div.innerHTML = `
                         <span class="icon">${ch.icon}</span>
                         ${ch.name}
                         <span class="voice-indicator">
-                            ${isActive ? '<span class="dot"></span>' : ''}
-                            ${isActive ? '●' : ''}
+                            ${isActive ? `<span class="dot"></span>` : ''}
+                            ${isActive ? userCount : ''}
                         </span>
                     `;
                     div.onclick = () => joinVoice(ch.id);
@@ -1612,7 +1488,7 @@
     }
 
     // ============================================================
-    //  ACTIONS
+    // ACTIONS
     // ============================================================
     function switchServer(id) {
         if (!SERVERS[id]) return;
@@ -1629,7 +1505,6 @@
         }
         renderServers();
         renderMembers();
-        // Quitter le vocal si on change de serveur
         if (inVoice) leaveVoice();
     }
 
@@ -1680,7 +1555,7 @@
     }
 
     // ============================================================
-    //  PROFIL
+    // PROFIL
     // ============================================================
     function openProfile(username) {
         const user = getUserByName(username);
@@ -1798,7 +1673,7 @@
     }
 
     // ============================================================
-    //  ADMIN
+    // ADMIN
     // ============================================================
     document.getElementById('adminBtn').addEventListener('click', function() {
         const container = document.getElementById('messages');
@@ -1851,7 +1726,7 @@
     }
 
     // ============================================================
-    //  AUTO MESSAGES
+    // AUTO MESSAGES
     // ============================================================
     setTimeout(() => {
         const auto = [
@@ -1874,7 +1749,7 @@
     }, 1500);
 
     // ============================================================
-    //  INIT
+    // INIT
     // ============================================================
     renderServers();
     renderChannels();
@@ -1892,7 +1767,7 @@
         if (e.target === this) closeProfile();
     });
 
-    // Initialiser PeerJS
+    // Lancer PeerJS
     initPeer();
 
     console.log('🔥 DarkChat — Profil + Vocal Public');
