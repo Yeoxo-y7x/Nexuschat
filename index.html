@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkChat - Profil + Vocal Public</title>
+    <title>DarkChat - Connexion & App</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         * {
@@ -23,19 +23,199 @@
             overflow: hidden;
         }
 
-        .container {
+        /* ===== PAGE DE CONNEXION ===== */
+        .login-container {
+            background: #1a1a2e;
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 440px;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 0 80px rgba(123, 47, 252, 0.3);
+            animation: fadeIn 0.5s ease;
+            display: none;
+        }
+
+        .login-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #7b2ffc, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-container .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .login-container .subtitle span {
+            color: #7b2ffc;
+        }
+
+        .login-container label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #0a0a0f;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            margin-bottom: 18px;
+        }
+
+        .login-container input:focus {
+            border-color: #7b2ffc;
+            box-shadow: 0 0 20px rgba(123, 47, 252, 0.15);
+        }
+
+        .login-container .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7b2ffc, #5a1fa8);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-container .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(123, 47, 252, 0.4);
+        }
+
+        .login-container .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-container .code-section {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #2a2a4a;
+        }
+
+        .login-container .code-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .login-container .code-section .code-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .login-container .code-section .code-inputs input {
+            width: 50px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 0;
+            margin: 0;
+        }
+
+        .login-container .code-section .resend {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .login-container .code-section .resend a {
+            color: #7b2ffc;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .login-container .code-section .resend a:hover {
+            text-decoration: underline;
+        }
+
+        .login-container .error {
+            color: #ff6b6b;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-container .error.active {
+            display: block;
+        }
+
+        .login-container .success {
+            color: #00ff88;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-container .success.active {
+            display: block;
+        }
+
+        .login-container .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            font-size: 12px;
+        }
+
+        .login-container .footer a {
+            color: #7b2ffc;
+            cursor: pointer;
+        }
+
+        /* ===== APP PRINCIPALE ===== */
+        .app-container {
             width: 100%;
             max-width: 1600px;
             height: 98vh;
             background: #1a1a2e;
             border-radius: 20px;
-            display: flex;
+            display: none;
             overflow: hidden;
             box-shadow: 0 0 80px rgba(123, 47, 252, 0.5);
             position: relative;
             border: 1px solid #2a2a4a;
         }
 
+        .app-container.active {
+            display: flex;
+        }
+
+        /* Sidebar gauche */
         .sidebar-left {
             width: 80px;
             background: #12121f;
@@ -107,6 +287,7 @@
             transform: scale(1.05);
         }
 
+        /* Sidebar serveurs */
         .sidebar-servers {
             width: 250px;
             background: #16162a;
@@ -201,6 +382,7 @@
             50% { opacity: 0.3; }
         }
 
+        /* Chat principal */
         .main-chat {
             flex: 1;
             display: flex;
@@ -500,7 +682,92 @@
         .status-dot.admin { background: #7b2ffc; box-shadow: 0 0 8px rgba(123,47,252,0.4); }
         .status-dot.owner { background: #ff6b6b; box-shadow: 0 0 8px rgba(255,107,107,0.4); }
 
-        /* ===== PROFIL MODAL ===== */
+        /* Voice Overlay */
+        .voice-overlay {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 12px 22px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            box-shadow: 0 0 50px rgba(123, 47, 252, 0.25);
+            backdrop-filter: blur(15px);
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 95%;
+        }
+        .voice-overlay.active { display: flex; }
+        .voice-overlay .voice-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .voice-overlay .voice-info .channel-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .voice-overlay .voice-info .status-text {
+            color: #00ff88;
+            font-size: 12px;
+        }
+        .voice-overlay .voice-users-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .voice-overlay .voice-users-list .v-user {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px 3px 6px;
+            background: #0a0a0f;
+            border-radius: 16px;
+            font-size: 12px;
+        }
+        .voice-overlay .voice-users-list .v-user .v-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            background-size: cover;
+            background-position: center;
+            background-color: #2a2a4a;
+        }
+        .voice-overlay .voice-users-list .v-user .speaking {
+            color: #00ff88;
+            font-size: 10px;
+            animation: pulse 1s infinite;
+        }
+        .voice-overlay .voice-controls {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .voice-overlay .voice-controls button {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            font-size: 11px;
+        }
+        .voice-overlay .voice-controls button:hover { transform: scale(1.05); }
+        .voice-overlay .voice-controls .mute-btn { background: #ff6b6b; color: #fff; }
+        .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
+        .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
+
+        /* Profil Modal */
         .profile-modal {
             position: fixed;
             top: 0;
@@ -687,91 +954,6 @@
         .profile-edit-section .edit-btn:hover { transform: scale(1.02); }
         .file-input-hidden { display: none; }
 
-        /* ===== VOICE OVERLAY ===== */
-        .voice-overlay {
-            position: absolute;
-            bottom: 85px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 26, 46, 0.95);
-            border: 1px solid #2a2a4a;
-            border-radius: 16px;
-            padding: 12px 22px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            z-index: 100;
-            box-shadow: 0 0 50px rgba(123, 47, 252, 0.25);
-            backdrop-filter: blur(15px);
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 95%;
-        }
-        .voice-overlay.active { display: flex; }
-        .voice-overlay .voice-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .voice-overlay .voice-info .channel-name {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .voice-overlay .voice-info .status-text {
-            color: #00ff88;
-            font-size: 12px;
-        }
-        .voice-overlay .voice-users-list {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .voice-overlay .voice-users-list .v-user {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 3px 10px 3px 6px;
-            background: #0a0a0f;
-            border-radius: 16px;
-            font-size: 12px;
-        }
-        .voice-overlay .voice-users-list .v-user .v-avatar {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            background-size: cover;
-            background-position: center;
-            background-color: #2a2a4a;
-        }
-        .voice-overlay .voice-users-list .v-user .speaking {
-            color: #00ff88;
-            font-size: 10px;
-            animation: pulse 1s infinite;
-        }
-        .voice-overlay .voice-controls {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .voice-overlay .voice-controls button {
-            padding: 5px 12px;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            font-size: 11px;
-        }
-        .voice-overlay .voice-controls button:hover { transform: scale(1.05); }
-        .voice-overlay .voice-controls .mute-btn { background: #ff6b6b; color: #fff; }
-        .voice-overlay .voice-controls .deafen-btn { background: #7b2ffc; color: #fff; }
-        .voice-overlay .voice-controls .leave-btn { background: #ff0000; color: #fff; }
-
         @media (max-width: 1100px) { .sidebar-right { display: none; } }
         @media (max-width: 800px) {
             .sidebar-left { width: 60px; }
@@ -780,16 +962,63 @@
         }
         @media (max-width: 600px) {
             .sidebar-left, .sidebar-servers, .sidebar-right { display: none; }
-            .container { border-radius: 0; height: 100vh; }
+            .app-container { border-radius: 0; height: 100vh; }
             .voice-overlay { width: 95%; bottom: 80px; }
             .profile-modal .modal-content { margin: 10px; }
             .profile-info-section { grid-template-columns: 1fr; }
+            .login-container { padding: 30px 20px; margin: 20px; border-radius: 16px; }
+            .login-container .code-section .code-inputs input { width: 42px; height: 48px; font-size: 20px; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ============================================================ -->
+<!-- PAGE DE CONNEXION -->
+<!-- ============================================================ -->
+<div class="login-container active" id="loginContainer">
+    <div class="logo">⚡ DarkChat</div>
+    <div class="subtitle">Connexion sécurisée — <span>vérification par email</span></div>
+
+    <div id="stepEmail">
+        <label>📧 Adresse email</label>
+        <input type="email" id="emailInput" placeholder="ton@email.com" autocomplete="email">
+        <button class="btn" id="sendCodeBtn" onclick="sendCode()">📨 Envoyer le code</button>
+        <div class="error" id="emailError">Veuillez entrer un email valide.</div>
+    </div>
+
+    <div class="code-section" id="stepCode">
+        <label>🔑 Code de vérification</label>
+        <div style="text-align:center;color:#888;font-size:13px;margin-bottom:4px;">
+            Un code à 6 chiffres a été envoyé à <strong id="emailDisplay"></strong>
+        </div>
+        <div class="code-inputs">
+            <input type="text" maxlength="1" class="code-input" data-index="0" autofocus>
+            <input type="text" maxlength="1" class="code-input" data-index="1">
+            <input type="text" maxlength="1" class="code-input" data-index="2">
+            <input type="text" maxlength="1" class="code-input" data-index="3">
+            <input type="text" maxlength="1" class="code-input" data-index="4">
+            <input type="text" maxlength="1" class="code-input" data-index="5">
+        </div>
+        <button class="btn" id="verifyBtn" onclick="verifyCode()">✅ Vérifier</button>
+        <div class="resend">
+            Pas reçu ? <a onclick="resendCode()">Renvoyer le code</a>
+            <span id="countdown" style="color:#666;margin-left:5px;"></span>
+        </div>
+        <div class="error" id="codeError">Code invalide. Veuillez réessayer.</div>
+        <div class="success" id="codeSuccess">✅ Code vérifié ! Redirection...</div>
+    </div>
+
+    <div class="footer">
+        En te connectant, tu acceptes les conditions d'utilisation.<br>
+        <a onclick="alert('DarkChat v3 - Système d\'authentification sécurisé')">À propos</a>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- APP PRINCIPALE -->
+<!-- ============================================================ -->
+<div class="app-container" id="appContainer">
     <div class="sidebar-left" id="serverList"></div>
 
     <div class="sidebar-servers">
@@ -829,7 +1058,6 @@
         <div class="member-list" id="memberList"></div>
     </div>
 
-    <!-- VOICE OVERLAY -->
     <div class="voice-overlay" id="voiceOverlay">
         <div class="voice-info">
             <span style="font-size:18px;">🔊</span>
@@ -851,7 +1079,9 @@
     </div>
 </div>
 
+<!-- ============================================================ -->
 <!-- PROFIL MODAL -->
+<!-- ============================================================ -->
 <div class="profile-modal" id="profileModal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeProfile()">&times;</span>
@@ -889,7 +1119,168 @@
 
 <script>
     // ============================================================
-    // CONFIG
+    // SYSTEME DE CONNEXION
+    // ============================================================
+    let generatedCode = '';
+    let countdownInterval = null;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
+
+    function generateCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    function sendEmail(email, code) {
+        console.log(`📨 Email envoyé à ${email} avec le code: ${code}`);
+        sessionStorage.setItem('verificationCode', code);
+        sessionStorage.setItem('verificationEmail', email);
+        return true;
+    }
+
+    function sendCode() {
+        const email = document.getElementById('emailInput').value.trim();
+        const errorEl = document.getElementById('emailError');
+        const btn = document.getElementById('sendCodeBtn');
+
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            errorEl.classList.add('active');
+            return;
+        }
+        errorEl.classList.remove('active');
+
+        generatedCode = generateCode();
+        sendEmail(email, generatedCode);
+
+        document.getElementById('stepEmail').style.display = 'none';
+        document.getElementById('stepCode').classList.add('active');
+        document.getElementById('emailDisplay').textContent = email;
+
+        document.querySelector('.code-input').focus();
+        startCountdown(60);
+
+        console.log('🔑 Code:', generatedCode);
+        alert(`📨 Code envoyé à ${email}\n\n🔑 Code: ${generatedCode}`);
+    }
+
+    function startCountdown(seconds) {
+        const countdownEl = document.getElementById('countdown');
+        const resendLink = document.querySelector('.resend a');
+        let remaining = seconds;
+
+        if (countdownInterval) clearInterval(countdownInterval);
+
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.color = '#444';
+
+        countdownInterval = setInterval(() => {
+            remaining--;
+            countdownEl.textContent = `(${remaining}s)`;
+            if (remaining <= 0) {
+                clearInterval(countdownInterval);
+                countdownEl.textContent = '';
+                resendLink.style.pointerEvents = 'auto';
+                resendLink.style.color = '#7b2ffc';
+            }
+        }, 1000);
+    }
+
+    function resendCode() {
+        const email = document.getElementById('emailDisplay').textContent;
+        generatedCode = generateCode();
+        sendEmail(email, generatedCode);
+        startCountdown(60);
+        document.querySelectorAll('.code-input').forEach(inp => inp.value = '');
+        document.querySelector('.code-input').focus();
+        document.getElementById('codeError').classList.remove('active');
+        document.getElementById('codeSuccess').classList.remove('active');
+        console.log('🔄 Nouveau code:', generatedCode);
+        alert(`📨 Nouveau code envoyé à ${email}\n\n🔑 Code: ${generatedCode}`);
+    }
+
+    function verifyCode() {
+        const inputs = document.querySelectorAll('.code-input');
+        let enteredCode = '';
+        inputs.forEach(inp => enteredCode += inp.value);
+
+        const errorEl = document.getElementById('codeError');
+        const successEl = document.getElementById('codeSuccess');
+        const btn = document.getElementById('verifyBtn');
+
+        if (enteredCode.length !== 6) {
+            errorEl.textContent = 'Veuillez entrer les 6 chiffres.';
+            errorEl.classList.add('active');
+            return;
+        }
+
+        const storedCode = sessionStorage.getItem('verificationCode') || generatedCode;
+
+        if (enteredCode === storedCode) {
+            errorEl.classList.remove('active');
+            successEl.classList.add('active');
+            btn.disabled = true;
+            btn.innerHTML = '✅ Vérifié';
+
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('userEmail', document.getElementById('emailDisplay').textContent);
+
+            setTimeout(() => {
+                document.getElementById('loginContainer').classList.remove('active');
+                document.getElementById('appContainer').classList.add('active');
+                initApp();
+            }, 1500);
+        } else {
+            attempts++;
+            if (attempts >= MAX_ATTEMPTS) {
+                errorEl.textContent = '❌ Trop de tentatives. Un nouveau code a été envoyé.';
+                errorEl.classList.add('active');
+                resendCode();
+                attempts = 0;
+            } else {
+                errorEl.textContent = `❌ Code incorrect (${MAX_ATTEMPTS - attempts} tentatives restantes)`;
+                errorEl.classList.add('active');
+                document.querySelectorAll('.code-input').forEach(inp => inp.value = '');
+                document.querySelector('.code-input').focus();
+            }
+        }
+    }
+
+    // Code input events
+    document.querySelectorAll('.code-input').forEach((input, index) => {
+        input.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length === 1 && index < 5) {
+                document.querySelector(`.code-input[data-index="${index + 1}"]`).focus();
+            }
+        });
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                document.querySelector(`.code-input[data-index="${index - 1}"]`).focus();
+            }
+            if (e.key === 'Enter') verifyCode();
+        });
+
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const digits = paste.replace(/[^0-9]/g, '').slice(0, 6);
+            document.querySelectorAll('.code-input').forEach((inp, i) => {
+                inp.value = digits[i] || '';
+            });
+            if (digits.length === 6) {
+                document.querySelector('.code-input[data-index="5"]').focus();
+            } else {
+                document.querySelector(`.code-input[data-index="${digits.length}"]`).focus();
+            }
+        });
+    });
+
+    document.getElementById('emailInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendCode();
+    });
+
+    // ============================================================
+    // APP PRINCIPALE
     // ============================================================
     const currentUser = {
         name: 'Tu',
@@ -913,9 +1304,6 @@
         '🏆': { name: 'Légende', color: '#ffd700' }
     };
 
-    // ============================================================
-    // SERVEURS
-    // ============================================================
     const SERVERS = {
         'darkchat': {
             name: 'DarkChat V2',
@@ -963,9 +1351,6 @@
         }
     };
 
-    // ============================================================
-    // UTILISATEURS
-    // ============================================================
     const baseUsers = [
         { name: 'DarkMaster', tag: '#1337', avatar: 'DM', avatarFile: null, status: 'online', role: 'admin', badges: ['👑', '⭐'], since: '2024-01-15', messages: 156, voiceTime: '12h 34m' },
         { name: 'HackerMan', tag: '#6969', avatar: 'HM', avatarFile: null, status: 'online', role: 'member', badges: ['💎'], since: '2024-02-20', messages: 89, voiceTime: '5h 20m' },
@@ -977,24 +1362,20 @@
         { name: 'AdminBot', tag: '#0001', avatar: 'AB', avatarFile: null, status: 'online', role: 'admin', badges: ['👑'], since: '2024-01-01', messages: 999, voiceTime: '100h 0m' }
     ];
 
-    const owner = { 
-        name: 'Tu', 
-        tag: '#0001', 
-        avatar: 'T', 
+    const owner = {
+        name: 'Tu',
+        tag: '#0001',
+        avatar: 'T',
         avatarFile: null,
-        status: 'online', 
-        role: 'owner', 
+        status: 'online',
+        role: 'owner',
         badges: ['👑', '⭐', '💎', '🏆'],
         since: '2024-01-01',
         messages: 420,
         voiceTime: '24h 0m'
     };
-    
-    const USERS = [owner, ...baseUsers];
 
-    // ============================================================
-    // MESSAGES
-    // ============================================================
+    const USERS = [owner, ...baseUsers];
     const MESSAGES = [
         { user: 'DarkMaster', content: 'Bienvenue sur DarkChat V2 🔥', time: '12:34' },
         { user: 'HackerMan', content: 'Ici on parle de tout, même des trucs illégaux 😈', time: '12:35' },
@@ -1036,7 +1417,6 @@
             document.getElementById('myIdDisplay').textContent = 'ID: ' + id;
             addMessage('Système', '✅ Connecté avec l\'ID: ' + id);
             addMessage('Système', '📞 Clique sur un salon vocal pour parler !');
-            // Rejoindre automatiquement le vocal général
             setTimeout(() => {
                 joinVoice('general-vc');
             }, 1000);
@@ -1063,7 +1443,7 @@
     }
 
     // ============================================================
-    // VOICE - REJOINDRE UN SALON
+    // VOICE FUNCTIONS
     // ============================================================
     function joinVoice(channelId) {
         if (!isPeerReady) {
@@ -1076,9 +1456,7 @@
             return;
         }
 
-        if (inVoice) {
-            leaveVoice();
-        }
+        if (inVoice) leaveVoice();
 
         currentVoiceChannel = channelId;
         inVoice = true;
@@ -1094,11 +1472,9 @@
         overlay.classList.add('active');
         document.getElementById('voiceChannelName').textContent = channelName;
 
-        // Démarrer le micro
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(stream => {
                 localStream = stream;
-                // Ajouter un utilisateur simulé pour tester
                 if (voiceUsers.length === 0) {
                     setTimeout(() => {
                         if (inVoice) {
@@ -1111,7 +1487,6 @@
                 }
                 updateVoiceUsers();
                 addMessage('Système', `🔊 Rejoint le salon vocal **${channelName}**`);
-                // Mettre à jour l'indicateur dans les channels
                 renderChannels();
             })
             .catch(err => {
@@ -1195,8 +1570,7 @@
     function updateVoiceUsers() {
         const container = document.getElementById('voiceUsersList');
         container.innerHTML = '';
-        
-        // Soi-même
+
         const self = document.createElement('div');
         self.className = 'v-user';
         const avatarStyle = currentUser.avatarFile ? `background-image: url('${currentUser.avatarFile}'); background-size: cover; background-position: center;` : 'background:linear-gradient(135deg,#7b2ffc,#5a1fa8);';
@@ -1207,7 +1581,6 @@
         `;
         container.appendChild(self);
 
-        // Les autres
         voiceUsers.forEach(id => {
             if (id === myId) return;
             const div = document.createElement('div');
@@ -1221,16 +1594,13 @@
             container.appendChild(div);
         });
 
-        // Simuler des utilisateurs qui arrivent/départent
         if (inVoice && voiceUsers.length < 2) {
-            // Ajouter des utilisateurs factices pour montrer la liste
             const fakeUsers = ['peer-abc123', 'peer-def456', 'peer-ghi789'];
             fakeUsers.forEach(id => {
                 if (!voiceUsers.includes(id) && id !== myId) {
                     voiceUsers.push(id);
                 }
             });
-            // Re-render après ajout
             setTimeout(() => {
                 if (inVoice) {
                     updateVoiceUsers();
@@ -1255,7 +1625,7 @@
         isDeafened = !isDeafened;
         const btn = document.querySelector('.voice-controls .deafen-btn');
         btn.textContent = isDeafened ? '🔊 Assourdir (ON)' : '🔊 Assourdir';
-        btn.style.background = isDeafenced ? '#ff0000' : '#7b2ffc';
+        btn.style.background = isDeafened ? '#ff0000' : '#7b2ffc';
         Object.values(remoteStreams).forEach(stream => {
             stream.getTracks().forEach(t => t.enabled = !isDeafened);
         });
@@ -1263,11 +1633,14 @@
     }
 
     // ============================================================
-    // UTILS
+    // APP UTILS
     // ============================================================
+    let currentServer = 'darkchat';
+    let currentChannel = 'general';
+
     function getTime() {
         const d = new Date();
-        return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+        return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
     }
 
     function getRandomUser() { return USERS[Math.floor(Math.random() * USERS.length)]; }
@@ -1318,11 +1691,8 @@
     }
 
     // ============================================================
-    // RENDER
+    // RENDER FUNCTIONS
     // ============================================================
-    let currentServer = 'darkchat';
-    let currentChannel = 'general';
-
     function renderServers() {
         const container = document.getElementById('serverList');
         container.innerHTML = '';
@@ -1403,8 +1773,8 @@
             div.className = 'member-item';
             const statusClass = u.role === 'owner' ? 'owner' : u.role === 'admin' ? 'admin' : u.status;
             const bg = u.role === 'owner' ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
-                       u.role === 'admin' ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
-                       'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+                u.role === 'admin' ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+                'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
             const avatarStyle = u.avatarFile ? `background-image: url('${u.avatarFile}'); background-size: cover; background-position: center;` : '';
             div.innerHTML = `
                 <div class="avatar-sm" style="${avatarStyle || `background:${bg}`}">
@@ -1429,8 +1799,8 @@
             const isOwner = user.role === 'owner' || msg.isOwner;
             const isAdmin = user.role === 'admin' || msg.isAdmin;
             const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
-                      isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
-                      'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+                isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+                'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
             const avatarStyle = user.avatarFile ? `background-image: url('${user.avatarFile}'); background-size: cover; background-position: center;` : '';
             const statusDot = user.status === 'online' ? 'online' : user.status === 'idle' ? 'idle' : 'offline';
             div.innerHTML = `
@@ -1460,8 +1830,8 @@
         const div = document.createElement('div');
         div.className = 'message' + (isOwn ? ' own' : '');
         const bg = isOwner ? 'linear-gradient(135deg,#ff6b6b,#ff0000)' :
-                  isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
-                  'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
+            isAdmin ? 'linear-gradient(135deg,#ff6b6b,#7b2ffc)' :
+            'linear-gradient(135deg,#7b2ffc,#5a1fa8)';
         const avatarStyle = user.avatarFile ? `background-image: url('${user.avatarFile}'); background-size: cover; background-position: center;` : '';
         const statusDot = user.status === 'online' ? 'online' : user.status === 'idle' ? 'idle' : 'offline';
         const badgeHTML = user.badges ? getBadgeHTML(user.badges) : '';
@@ -1488,7 +1858,7 @@
     }
 
     // ============================================================
-    // ACTIONS
+    // APP ACTIONS
     // ============================================================
     function switchServer(id) {
         if (!SERVERS[id]) return;
@@ -1627,46 +1997,46 @@
         const newName = document.getElementById('editNameInput').value.trim();
         const newTag = document.getElementById('editTagInput').value.trim();
         if (!newName) return;
-        
+
         const oldName = currentUser.name;
         currentUser.name = newName;
         if (newTag) currentUser.tag = newTag.startsWith('#') ? newTag : '#' + newTag;
-        
+
         const userIndex = USERS.findIndex(u => u.name === oldName);
         if (userIndex !== -1) {
             USERS[userIndex].name = newName;
             USERS[userIndex].tag = currentUser.tag;
         }
-        
+
         MESSAGES.forEach(msg => {
             if (msg.user === oldName) msg.user = newName;
         });
-        
+
         renderMembers();
         renderMessages();
         showProfileModal(currentUser);
-        
+
         addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `✏️ **${oldName}** a changé son pseudo en **${newName}**`, false, false, false);
     }
 
     function uploadAvatar(event) {
         const file = event.target.files[0];
         if (!file) return;
-        
+
         const reader = new FileReader();
         reader.onload = function(e) {
             const dataUrl = e.target.result;
             currentUser.avatarFile = dataUrl;
-            
+
             const userIndex = USERS.findIndex(u => u.name === currentUser.name);
             if (userIndex !== -1) {
                 USERS[userIndex].avatarFile = dataUrl;
             }
-            
+
             renderMembers();
             renderMessages();
             showProfileModal(currentUser);
-            
+
             addMessage({ name: 'Système', avatar: '⚡', tag: '#0000', badges: [], status: 'online', avatarFile: null }, `📷 **${currentUser.name}** a changé sa photo de profil !`, false, false, false);
         };
         reader.readAsDataURL(file);
@@ -1728,52 +2098,66 @@
     // ============================================================
     // AUTO MESSAGES
     // ============================================================
-    setTimeout(() => {
-        const auto = [
-            "Qui est chaud pour un raid ?",
-            "J'ai trouvé une faille sur un site du gouvernement",
-            "DarkChat V2 c'est le futur",
-            "Ici on parle de tout, même des trucs interdits",
-            "Bientôt un leak de 50 millions de comptes",
-            "Vive l'anarchie numérique",
-            "Le propriétaire est là 👑",
-            "Serveur 100% sans censure"
-        ];
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i >= auto.length) { clearInterval(interval); return; }
-            const u = getRandomUser();
-            addMessage(u, auto[i], false, u.role === 'admin', u.role === 'owner');
-            i++;
-        }, 4000);
-    }, 1500);
+    function startAutoMessages() {
+        setTimeout(() => {
+            const auto = [
+                "Qui est chaud pour un raid ?",
+                "J'ai trouvé une faille sur un site du gouvernement",
+                "DarkChat V2 c'est le futur",
+                "Ici on parle de tout, même des trucs interdits",
+                "Bientôt un leak de 50 millions de comptes",
+                "Vive l'anarchie numérique",
+                "Le propriétaire est là 👑",
+                "Serveur 100% sans censure"
+            ];
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i >= auto.length) { clearInterval(interval); return; }
+                const u = getRandomUser();
+                addMessage(u, auto[i], false, u.role === 'admin', u.role === 'owner');
+                i++;
+            }, 4000);
+        }, 1500);
+    }
 
     // ============================================================
-    // INIT
+    // INIT APP
     // ============================================================
-    renderServers();
-    renderChannels();
-    renderMembers();
-    renderMessages();
-    document.getElementById('serverName').innerHTML = SERVERS[currentServer].name + ' <span style="font-size:12px;color:#888;">▼</span>';
-    document.getElementById('channelName').textContent = '# général';
-    document.getElementById('channelTopic').textContent = '📍 Hub principal — Pas de limites';
+    function initApp() {
+        renderServers();
+        renderChannels();
+        renderMembers();
+        renderMessages();
+        document.getElementById('serverName').innerHTML = SERVERS[currentServer].name + ' <span style="font-size:12px;color:#888;">▼</span>';
+        document.getElementById('channelName').textContent = '# général';
+        document.getElementById('channelTopic').textContent = '📍 Hub principal — Pas de limites';
 
-    document.getElementById('messageInput').addEventListener('keypress', e => {
-        if (e.key === 'Enter') sendMessage();
-    });
+        document.getElementById('messageInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendMessage();
+        });
 
-    document.getElementById('profileModal').addEventListener('click', function(e) {
-        if (e.target === this) closeProfile();
-    });
+        document.getElementById('profileModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProfile();
+        });
 
-    // Lancer PeerJS
-    initPeer();
+        initPeer();
+        startAutoMessages();
 
-    console.log('🔥 DarkChat — Profil + Vocal Public');
-    console.log('👑 Propriétaire: ' + currentUser.name);
-    console.log('📸 Clique sur l\'avatar dans le profil pour changer ta PP');
-    console.log('🔊 Clique sur un salon vocal pour parler !');
+        console.log('🔥 DarkChat — Connecté en tant que: ' + currentUser.name);
+        console.log('📧 Email: ' + sessionStorage.getItem('userEmail'));
+        console.log('👑 Propriétaire: ' + currentUser.name);
+        console.log('🔊 Clique sur un salon vocal pour parler !');
+    }
+
+    // ============================================================
+    // CHECK SESSION
+    // ============================================================
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+        document.getElementById('loginContainer').classList.remove('active');
+        document.getElementById('appContainer').classList.add('active');
+        initApp();
+    }
 </script>
 
 </body>
